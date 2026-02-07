@@ -5,6 +5,10 @@ export const productQuerySchema = z.object({
   storeIds: z.string().optional(),
   vendorIds: z.string().optional(),
   productTypes: z.string().optional(),
+  missingSku: z.enum(['true', 'false']).optional(),
+  missingBarcode: z.enum(['true', 'false']).optional(),
+  missingPrice: z.enum(['true', 'false']).optional(),
+  missingImage: z.enum(['true', 'false']).optional(),
   sortBy: z.enum(['name', 'price', 'updatedAt', 'vendorName']).optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),
   page: z.coerce.number().min(1).optional().default(1),
@@ -31,6 +35,31 @@ export interface ProductItem {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ProductDetail {
+  id: string;
+  name: string;
+  description: string | null;
+  imageUrl: string | null;
+  sku: string | null;
+  shopifyBarcode: string | null;
+  barcodePrefix: string;
+  productType: string | null;
+  price: string | null;
+  compareAtPrice: string | null;
+  vendorName: string | null;
+  variantTitle: string | null;
+  variantOptions: { name: string; value: string }[] | null;
+  shopifyProductId: string | null;
+  shopifyVariantId: string | null;
+  shopifySynced: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  shopifyStore: { id: string; name: string } | null;
+  vendor: { id: string; name: string } | null;
+  productGroup: { id: string; name: string } | null;
 }
 
 export interface FilterOption {

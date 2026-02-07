@@ -51,5 +51,10 @@
     "label": "Language",
     "en": "English",
     "ko": "한국어"
+  },
+  "theme": {
+    "light": "Light mode",
+    "dark": "Dark mode",
+    "toggle": "Toggle theme"
   }
 }

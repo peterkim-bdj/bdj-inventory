@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
+import { cookies } from 'next/headers';
 import { QueryProvider } from '@/lib/query-provider';
 import "./globals.css";
 
@@ -27,9 +28,21 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const cookieStore = await cookies();
+  const theme = cookieStore.get('NEXT_THEME')?.value ?? 'dark';
 
   return (
-    <html lang={locale}>
+    <html lang={locale} className={theme === 'dark' ? 'dark' : ''}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function(){
+            var m = document.cookie.match(/NEXT_THEME=(\\w+)/);
+            var t = m ? m[1] : 'dark';
+            if (t === 'dark') document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+          })()
+        `}} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

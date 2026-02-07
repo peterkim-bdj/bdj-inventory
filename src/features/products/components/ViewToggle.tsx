@@ -11,23 +11,23 @@ export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
   const t = useTranslations('products');
 
   return (
-    <div className="flex rounded-md border">
+    <div className="flex rounded-full border border-gray-200 p-0.5 dark:border-zinc-700">
       <button
         onClick={() => onViewChange('list')}
-        className={`px-3 py-1.5 text-xs font-medium ${
+        className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
           view === 'list'
-            ? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100'
-            : 'text-zinc-500 hover:text-zinc-700'
+            ? 'bg-black text-white dark:bg-white dark:text-black'
+            : 'text-gray-500 hover:text-gray-700 dark:hover:text-zinc-300'
         }`}
       >
         {t('view.list')}
       </button>
       <button
         onClick={() => onViewChange('card')}
-        className={`px-3 py-1.5 text-xs font-medium border-l ${
+        className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
           view === 'card'
-            ? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100'
-            : 'text-zinc-500 hover:text-zinc-700'
+            ? 'bg-black text-white dark:bg-white dark:text-black'
+            : 'text-gray-500 hover:text-gray-700 dark:hover:text-zinc-300'
         }`}
       >
         {t('view.card')}

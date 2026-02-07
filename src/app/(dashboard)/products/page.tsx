@@ -8,6 +8,8 @@ import { ProductFilters } from '@/features/products/components/ProductFilters';
 import { ViewToggle } from '@/features/products/components/ViewToggle';
 import { ProductList } from '@/features/products/components/ProductList';
 import { ProductGrid } from '@/features/products/components/ProductGrid';
+import { QuickFilters } from '@/features/products/components/QuickFilters';
+import { ProductDetailPanel } from '@/features/products/components/ProductDetailPanel';
 
 export default function ProductsPage() {
   const t = useTranslations('products');
@@ -21,12 +23,15 @@ export default function ProductsPage() {
   const [sortOrder, setSortOrder] = useState('asc');
   const [page, setPage] = useState(1);
   const [view, setView] = useState<'list' | 'card'>('list');
+  const [quickFilters, setQuickFilters] = useState<Record<string, string>>({});
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
 
   const { data, isLoading } = useProducts({
     search: search || undefined,
     storeIds: storeIds.length ? storeIds : undefined,
     vendorIds: vendorIds.length ? vendorIds : undefined,
     productTypes: productTypes.length ? productTypes : undefined,
+    ...quickFilters,
     sortBy,
     sortOrder,
     page,
@@ -38,14 +43,34 @@ export default function ProductsPage() {
     setPage(1);
   }, []);
 
+  const handleQuickFilterToggle = useCallback((key: string, value: string) => {
+    setQuickFilters((prev) => {
+      const next = { ...prev };
+      if (next[key] === value) {
+        delete next[key];
+      } else {
+        next[key] = value;
+      }
+      return next;
+    });
+    setPage(1);
+  }, []);
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">{t('title')}</h1>
+        <div className="flex items-baseline gap-3">
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+          {data?.pagination && (
+            <span className="text-sm text-gray-400">
+              {t('totalCount', { count: data.pagination.total })}
+            </span>
+          )}
+        </div>
         <ViewToggle view={view} onViewChange={setView} />
       </div>
 
-      <div className="flex flex-wrap items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3">
         <ProductSearch value={search} onChange={handleSearchChange} />
         {data?.filters && (
           <ProductFilters
@@ -66,7 +91,7 @@ export default function ProductsPage() {
             setSortOrder(so);
             setPage(1);
           }}
-          className="rounded-md border px-2 py-1.5 text-xs dark:bg-zinc-800 dark:border-zinc-700"
+          className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent dark:bg-zinc-800 dark:border-zinc-700 dark:focus:ring-zinc-400"
         >
           <option value="name:asc">{t('sort.nameAsc')}</option>
           <option value="name:desc">{t('sort.nameDesc')}</option>
@@ -76,33 +101,39 @@ export default function ProductsPage() {
         </select>
       </div>
 
+      <QuickFilters activeFilters={quickFilters} onToggle={handleQuickFilterToggle} />
+
       {isLoading ? (
-        <p className="text-zinc-500">{tCommon('status.loading')}</p>
+        <div className="flex items-center justify-center py-20">
+          <p className="text-lg text-gray-400">{tCommon('status.loading')}</p>
+        </div>
       ) : !data || data.products.length === 0 ? (
-        <p className="text-zinc-500">{tCommon('status.noData')}</p>
+        <div className="flex items-center justify-center py-20">
+          <p className="text-lg text-gray-400">{tCommon('status.noData')}</p>
+        </div>
       ) : (
         <>
           {view === 'list' ? (
-            <ProductList products={data.products} />
+            <ProductList products={data.products} onProductClick={setSelectedProductId} />
           ) : (
-            <ProductGrid products={data.products} />
+            <ProductGrid products={data.products} onProductClick={setSelectedProductId} />
           )}
 
           {/* Pagination */}
           {data.pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between pt-2">
-              <p className="text-sm text-zinc-500">
+            <div className="flex items-center justify-between pt-4">
+              <p className="text-sm text-gray-400">
                 {t('pagination.showing', {
                   from: (page - 1) * data.pagination.limit + 1,
                   to: Math.min(page * data.pagination.limit, data.pagination.total),
                   total: data.pagination.total,
                 })}
               </p>
-              <div className="flex gap-1">
+              <div className="flex items-center gap-1">
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="rounded border px-3 py-1 text-sm disabled:opacity-50"
+                  className="rounded-full border border-gray-200 px-4 py-1.5 text-sm font-medium transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
                 >
                   {tCommon('button.previous')}
                 </button>
@@ -114,18 +145,20 @@ export default function ProductsPage() {
                     <button
                       key={pageNum}
                       onClick={() => setPage(pageNum)}
-                      className={`rounded border px-3 py-1 text-sm ${
-                        pageNum === page ? 'bg-blue-600 text-white border-blue-600' : ''
+                      className={`min-w-[36px] h-9 rounded-full text-sm font-medium transition-colors ${
+                        pageNum === page
+                          ? 'bg-black text-white dark:bg-white dark:text-black'
+                          : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-zinc-800'
                       }`}
                     >
-                      {pageNum}
+                      {String(pageNum).padStart(2, '0')}
                     </button>
                   );
                 })}
                 <button
                   onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
                   disabled={page === data.pagination.totalPages}
-                  className="rounded border px-3 py-1 text-sm disabled:opacity-50"
+                  className="rounded-full border border-gray-200 px-4 py-1.5 text-sm font-medium transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
                 >
                   {tCommon('button.next')}
                 </button>
@@ -134,6 +167,11 @@ export default function ProductsPage() {
           )}
         </>
       )}
+
+      <ProductDetailPanel
+        productId={selectedProductId}
+        onClose={() => setSelectedProductId(null)}
+      />
     </div>
   );
 }

@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const { search, storeIds, vendorIds, productTypes, sortBy, sortOrder, page, limit } = parsed.data;
+  const { search, storeIds, vendorIds, productTypes, missingSku, missingBarcode, missingPrice, missingImage, sortBy, sortOrder, page, limit } = parsed.data;
 
   const where: Prisma.ProductWhereInput = { isActive: true };
 
@@ -37,6 +37,19 @@ export async function GET(request: NextRequest) {
   if (productTypes) {
     where.productType = { in: productTypes.split(',') };
   }
+
+  // Quick filters (null/non-null checks)
+  if (missingSku === 'true') where.sku = null;
+  else if (missingSku === 'false') where.sku = { not: null };
+
+  if (missingBarcode === 'true') where.shopifyBarcode = null;
+  else if (missingBarcode === 'false') where.shopifyBarcode = { not: null };
+
+  if (missingPrice === 'true') where.price = null;
+  else if (missingPrice === 'false') where.price = { not: null };
+
+  if (missingImage === 'true') where.imageUrl = null;
+  else if (missingImage === 'false') where.imageUrl = { not: null };
 
   const orderBy: Prisma.ProductOrderByWithRelationInput =
     sortBy === 'price'

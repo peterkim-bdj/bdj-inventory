@@ -1,8 +1,18 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-07T05:20:00.000Z",
-  "activeFeatures": ["i18n"],
-  "primaryFeature": "i18n",
+  "lastUpdated": "2026-02-07T20:45:03.904Z",
+  "activeFeatures": [
+    "i18n",
+    "inventory-with-shopfipy",
+    "shopify",
+    "shops",
+    "products",
+    "(dashboard)",
+    "products-ui-redesign",
+    "products-enhancement",
+    "[id]"
+  ],
+  "primaryFeature": "products-enhancement",
   "features": {
     "Phase0-1": {
       "phase": "archived",
@@ -13,14 +23,120 @@
       "archivedTo": "docs/archive/2026-02/Phase0-1/"
     },
     "i18n": {
-      "phase": "completed",
+      "phase": "do",
       "startedAt": "2026-02-07T03:35:00.000Z",
       "planPath": "docs/01-plan/features/i18n.plan.md",
       "designPath": "docs/02-design/features/i18n.design.md",
       "analysisPath": "docs/03-analysis/i18n.analysis.md",
       "reportPath": "docs/04-report/i18n.report.md",
       "matchRate": 98,
-      "iterationCount": 0
+      "iterationCount": 0,
+      "phaseNumber": 3,
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/i18n/request.ts",
+      "timestamps": {
+        "lastUpdated": "2026-02-07T07:01:25.136Z"
+      }
+    },
+    "inventory-with-shopfipy": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-07T05:43:54.074Z",
+        "lastUpdated": "2026-02-07T20:45:03.904Z"
+      },
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/components/LanguageSwitcher.tsx"
+    },
+    "shopify": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-07T05:44:23.741Z",
+        "lastUpdated": "2026-02-07T07:19:43.826Z"
+      },
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/lib/shopify/transform.test.ts"
+    },
+    "shops": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-07T05:44:40.631Z",
+        "lastUpdated": "2026-02-07T07:20:39.019Z"
+      },
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/features/shops/services/diff.test.ts"
+    },
+    "products": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-07T05:47:45.754Z",
+        "lastUpdated": "2026-02-07T20:44:36.909Z"
+      },
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/app/(dashboard)/products/page.tsx"
+    },
+    "(dashboard)": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-07T19:58:13.731Z",
+        "lastUpdated": "2026-02-07T20:24:50.855Z"
+      },
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/app/(dashboard)/layout.tsx"
+    },
+    "products-enhancement": {
+      "phase": "completed",
+      "startedAt": "2026-02-07T20:15:00.000Z",
+      "planPath": "docs/01-plan/features/products-enhancement.plan.md",
+      "designPath": "docs/02-design/features/products-enhancement.design.md",
+      "analysisPath": "docs/03-analysis/products-enhancement.analysis.md",
+      "reportPath": "docs/04-report/products-enhancement.report.md",
+      "matchRate": 100,
+      "iterationCount": 0,
+      "timestamps": {
+        "lastUpdated": "2026-02-07T21:10:00.000Z"
+      }
+    },
+    "products-ui-redesign": {
+      "phase": "completed",
+      "startedAt": "2026-02-07T19:55:00.000Z",
+      "reportPath": "docs/04-report/products-ui-redesign.report.md",
+      "matchRate": 100,
+      "iterationCount": 0,
+      "timestamps": {
+        "lastUpdated": "2026-02-07T20:10:00.000Z"
+      }
+    },
+    "[id]": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-07T20:28:48.866Z",
+        "lastUpdated": "2026-02-07T20:28:48.866Z"
+      },
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/app/api/products/[id]/route.ts"
     }
   },
   "pipeline": {
@@ -31,7 +147,476 @@
   "session": {
     "startedAt": "2026-02-07T03:26:19.690Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-02-07T05:20:00.000Z"
+    "lastActivity": "2026-02-07T20:45:03.904Z"
   },
-  "history": []
+  "history": [
+    {
+      "timestamp": "2026-02-07T05:43:54.074Z",
+      "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T05:44:10.274Z",
+      "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T05:44:23.741Z",
+      "feature": "shopify",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T05:44:40.631Z",
+      "feature": "shops",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T05:45:07.100Z",
+      "feature": "shops",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T05:45:23.314Z",
+      "feature": "shops",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T05:45:54.794Z",
+      "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T05:46:55.650Z",
+      "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T05:47:29.169Z",
+      "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T05:47:41.875Z",
+      "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T05:47:45.754Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T05:47:47.532Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T05:47:49.066Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T05:47:50.752Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:01:25.136Z",
+      "feature": "i18n",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:18:34.286Z",
+      "feature": "shopify",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:18:44.380Z",
+      "feature": "shopify",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:18:49.597Z",
+      "feature": "shopify",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:19:16.465Z",
+      "feature": "shopify",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:19:26.472Z",
+      "feature": "shopify",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:19:31.532Z",
+      "feature": "shopify",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:19:36.583Z",
+      "feature": "shopify",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:19:43.826Z",
+      "feature": "shopify",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:19:57.564Z",
+      "feature": "shops",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:20:02.806Z",
+      "feature": "shops",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:20:11.204Z",
+      "feature": "shops",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:20:16.867Z",
+      "feature": "shops",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:20:20.882Z",
+      "feature": "shops",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:20:35.395Z",
+      "feature": "shops",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:20:39.019Z",
+      "feature": "shops",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:20:55.470Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:21:01.716Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:21:11.652Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:21:18.829Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:44:26.812Z",
+      "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:44:28.473Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:44:37.286Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:44:38.933Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:44:43.727Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T07:44:46.096Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T19:58:13.731Z",
+      "feature": "(dashboard)",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T19:58:39.889Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T19:58:55.429Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T19:59:11.358Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T19:59:20.111Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T19:59:28.210Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T19:59:31.944Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T19:59:43.700Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:24:33.742Z",
+      "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:24:41.896Z",
+      "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:24:50.855Z",
+      "feature": "(dashboard)",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:25:35.902Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:25:43.773Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:25:50.108Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:25:59.640Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:27:49.669Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:27:58.949Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:28:02.909Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:28:07.064Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:28:11.825Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:28:16.833Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:28:21.094Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:28:48.866Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:28:56.437Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:29:01.387Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:29:25.065Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:29:30.733Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:29:36.138Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:29:41.463Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:29:46.676Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:29:54.854Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:29:58.924Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:30:02.923Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:30:07.089Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:44:17.775Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:44:24.335Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:44:36.909Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-07T20:45:03.904Z",
+      "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    }
+  ]
 }

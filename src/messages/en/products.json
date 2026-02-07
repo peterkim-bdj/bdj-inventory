@@ -1,5 +1,6 @@
 {
   "title": "Products",
+  "totalCount": "{count} items",
   "view": {
     "list": "List",
     "card": "Card"
@@ -50,6 +51,35 @@
     "price": "Price",
     "stock": "Stock",
     "noImage": "No image"
+  },
+  "detail": {
+    "details": "Details",
+    "sku": "SKU",
+    "barcodePrefix": "Barcode Prefix",
+    "barcode": "Barcode",
+    "price": "Price",
+    "compareAtPrice": "Compare at Price",
+    "productType": "Product Type",
+    "vendor": "Vendor",
+    "store": "Store",
+    "shopifyInfo": "Shopify Info",
+    "shopifyProductId": "Product ID",
+    "shopifyVariantId": "Variant ID",
+    "synced": "Synced",
+    "productGroup": "Product Group",
+    "timestamps": "Timestamps",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "quickFilter": {
+    "missingSku": "Missing SKU",
+    "hasSku": "Has SKU",
+    "missingBarcode": "Missing Barcode",
+    "hasBarcode": "Has Barcode",
+    "missingPrice": "Missing Price",
+    "missingImage": "Missing Image"
   },
   "group": {
     "title": "Product Groups",

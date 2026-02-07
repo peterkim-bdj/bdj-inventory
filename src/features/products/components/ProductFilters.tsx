@@ -39,7 +39,7 @@ function MultiSelect({
         const val = e.target.value;
         onChange(val ? [val] : []);
       }}
-      className="rounded-md border px-2 py-1.5 text-xs dark:bg-zinc-800 dark:border-zinc-700"
+      className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent dark:bg-zinc-800 dark:border-zinc-700 dark:focus:ring-zinc-400"
     >
       <option value="">{label}</option>
       {options.map((opt) => (
@@ -63,7 +63,7 @@ export function ProductFilters({
   const t = useTranslations('products');
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-3">
       <MultiSelect
         label={t('filter.store')}
         options={filters.stores}

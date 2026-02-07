@@ -1,5 +1,6 @@
 {
   "title": "상품",
+  "totalCount": "{count}개",
   "view": {
     "list": "리스트",
     "card": "카드"
@@ -50,6 +51,35 @@
     "price": "가격",
     "stock": "재고",
     "noImage": "이미지 없음"
+  },
+  "detail": {
+    "details": "상세 정보",
+    "sku": "SKU",
+    "barcodePrefix": "바코드 프리픽스",
+    "barcode": "바코드",
+    "price": "가격",
+    "compareAtPrice": "비교가격",
+    "productType": "상품 유형",
+    "vendor": "벤더",
+    "store": "쇼핑몰",
+    "shopifyInfo": "Shopify 정보",
+    "shopifyProductId": "상품 ID",
+    "shopifyVariantId": "옵션 ID",
+    "synced": "동기화",
+    "productGroup": "상품 그룹",
+    "timestamps": "일시",
+    "createdAt": "생성일",
+    "updatedAt": "수정일",
+    "yes": "예",
+    "no": "아니오"
+  },
+  "quickFilter": {
+    "missingSku": "SKU 없음",
+    "hasSku": "SKU 있음",
+    "missingBarcode": "바코드 없음",
+    "hasBarcode": "바코드 있음",
+    "missingPrice": "가격 없음",
+    "missingImage": "이미지 없음"
   },
   "group": {
     "title": "상품 그룹",
