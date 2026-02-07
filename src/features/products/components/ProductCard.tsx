@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { Barcode } from '@/components/Barcode';
 import type { ProductItem } from '../types';
 
 interface ProductCardProps {
@@ -45,6 +46,11 @@ export function ProductCard({ product }: ProductCardProps) {
         {product.sku && <span>{product.sku}</span>}
         {product.vendorName && <span>{product.vendorName}</span>}
       </div>
+      {product.shopifyBarcode && (
+        <div className="mt-2 flex justify-center">
+          <Barcode value={product.shopifyBarcode} height={30} width={1} fontSize={10} />
+        </div>
+      )}
       <div className="mt-2 flex items-center justify-between">
         <span className="text-sm font-semibold">
           {product.price ? `${product.price}` : '—'}

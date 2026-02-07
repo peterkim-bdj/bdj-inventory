@@ -37,7 +37,8 @@
     "vendor": "Vendor",
     "store": "Store",
     "price": "Price",
-    "type": "Type"
+    "type": "Type",
+    "barcode": "Barcode"
   },
   "pagination": {
     "showing": "Showing {from}-{to} of {total}"

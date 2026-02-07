@@ -37,7 +37,8 @@
     "vendor": "벤더",
     "store": "쇼핑몰",
     "price": "가격",
-    "type": "유형"
+    "type": "유형",
+    "barcode": "바코드"
   },
   "pagination": {
     "showing": "{total}개 중 {from}-{to}"

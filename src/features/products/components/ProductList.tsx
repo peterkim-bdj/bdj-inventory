@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { Barcode } from '@/components/Barcode';
 import type { ProductItem } from '../types';
 
 interface ProductListProps {
@@ -20,6 +21,7 @@ export function ProductList({ products }: ProductListProps) {
             <th className="px-4 py-3 text-left font-medium">{t('table.sku')}</th>
             <th className="px-4 py-3 text-left font-medium">{t('table.vendor')}</th>
             <th className="px-4 py-3 text-left font-medium">{t('table.store')}</th>
+            <th className="px-4 py-3 text-left font-medium">{t('table.barcode')}</th>
             <th className="px-4 py-3 text-right font-medium">{t('table.price')}</th>
             <th className="px-4 py-3 text-left font-medium">{t('table.type')}</th>
           </tr>
@@ -49,6 +51,13 @@ export function ProductList({ products }: ProductListProps) {
               <td className="px-4 py-3 text-zinc-500">{product.sku ?? '—'}</td>
               <td className="px-4 py-3 text-zinc-500">{product.vendorName ?? '—'}</td>
               <td className="px-4 py-3 text-zinc-500">{product.shopifyStore?.name ?? '—'}</td>
+              <td className="px-4 py-3">
+                {product.shopifyBarcode ? (
+                  <Barcode value={product.shopifyBarcode} height={24} width={1} fontSize={9} />
+                ) : (
+                  <span className="text-zinc-500">—</span>
+                )}
+              </td>
               <td className="px-4 py-3 text-right">
                 {product.price ? `${product.price}` : '—'}
               </td>
