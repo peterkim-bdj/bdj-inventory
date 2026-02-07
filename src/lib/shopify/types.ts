@@ -1,9 +1,11 @@
 export interface ShopifyVariant {
   id: string;
+  title: string;
   sku: string | null;
   barcode: string | null;
   price: string;
   compareAtPrice: string | null;
+  selectedOptions: { name: string; value: string }[];
 }
 
 export interface ShopifyProduct {
@@ -29,6 +31,8 @@ export interface TransformedProduct {
   price: string | null;
   compareAtPrice: string | null;
   vendorName: string | null;
+  variantTitle: string | null;
+  variantOptions: { name: string; value: string }[] | null;
   shopifyProductId: string;
   shopifyVariantId: string;
   shopifyStoreId: string;

@@ -15,19 +15,29 @@ const mockShopifyProduct: ShopifyProduct = {
       {
         node: {
           id: 'gid://shopify/ProductVariant/67890',
+          title: 'S / Red',
           sku: 'SKU-001',
           barcode: '1234567890',
           price: '29.99',
           compareAtPrice: '39.99',
+          selectedOptions: [
+            { name: 'Size', value: 'S' },
+            { name: 'Color', value: 'Red' },
+          ],
         },
       },
       {
         node: {
           id: 'gid://shopify/ProductVariant/67891',
+          title: 'M / Blue',
           sku: 'SKU-002',
           barcode: null,
           price: '34.99',
           compareAtPrice: null,
+          selectedOptions: [
+            { name: 'Size', value: 'M' },
+            { name: 'Color', value: 'Blue' },
+          ],
         },
       },
     ],
@@ -62,6 +72,11 @@ describe('transformToProductData', () => {
     expect(first.price).toBe('29.99');
     expect(first.compareAtPrice).toBe('39.99');
     expect(first.vendorName).toBe('Test Vendor');
+    expect(first.variantTitle).toBe('S / Red');
+    expect(first.variantOptions).toEqual([
+      { name: 'Size', value: 'S' },
+      { name: 'Color', value: 'Red' },
+    ]);
     expect(first.shopifyStoreId).toBe('store-1');
   });
 
@@ -86,6 +101,30 @@ describe('transformToProductData', () => {
 
     expect(result[0].description).toBeNull();
   });
+
+  it('maps "Default Title" variant title to null', () => {
+    const defaultVariant: ShopifyProduct = {
+      ...mockShopifyProduct,
+      variants: {
+        edges: [
+          {
+            node: {
+              id: 'gid://shopify/ProductVariant/99999',
+              title: 'Default Title',
+              sku: 'SKU-DEF',
+              barcode: null,
+              price: '10.00',
+              compareAtPrice: null,
+              selectedOptions: [{ name: 'Title', value: 'Default Title' }],
+            },
+          },
+        ],
+      },
+    };
+    const result = transformToProductData(defaultVariant, 'store-1');
+
+    expect(result[0].variantTitle).toBeNull();
+  });
 });
 
 describe('transformAllProducts', () => {
@@ -99,10 +138,12 @@ describe('transformAllProducts', () => {
           {
             node: {
               id: 'gid://shopify/ProductVariant/11111',
+              title: 'Default Title',
               sku: 'SKU-X',
               barcode: null,
               price: '10.00',
               compareAtPrice: null,
+              selectedOptions: [{ name: 'Title', value: 'Default Title' }],
             },
           },
         ],

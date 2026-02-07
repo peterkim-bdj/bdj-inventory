@@ -25,6 +25,8 @@ export interface ProductItem {
   price: string | null;
   compareAtPrice: string | null;
   vendorName: string | null;
+  variantTitle: string | null;
+  variantOptions: { name: string; value: string }[] | null;
   shopifyStore: { id: string; name: string } | null;
   isActive: boolean;
   createdAt: string;

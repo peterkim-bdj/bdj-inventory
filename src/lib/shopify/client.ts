@@ -18,10 +18,15 @@ const PRODUCTS_QUERY = `
             edges {
               node {
                 id
+                title
                 sku
                 barcode
                 price
                 compareAtPrice
+                selectedOptions {
+                  name
+                  value
+                }
               }
             }
           }

@@ -23,7 +23,24 @@ export function ProductCard({ product }: ProductCardProps) {
           No Image
         </div>
       )}
-      <h3 className="font-medium text-sm line-clamp-2">{product.name}</h3>
+      <h3 className="font-medium text-sm line-clamp-2">
+        {product.name}
+        {product.variantTitle && (
+          <span className="ml-1 font-normal text-zinc-500">— {product.variantTitle}</span>
+        )}
+      </h3>
+      {product.variantOptions && product.variantOptions.length > 0 && (
+        <div className="mt-1 flex flex-wrap gap-1">
+          {product.variantOptions.map((opt) => (
+            <span
+              key={opt.name}
+              className="inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
+            >
+              {opt.value}
+            </span>
+          ))}
+        </div>
+      )}
       <div className="mt-1 flex items-center gap-2 text-xs text-zinc-500">
         {product.sku && <span>{product.sku}</span>}
         {product.vendorName && <span>{product.vendorName}</span>}

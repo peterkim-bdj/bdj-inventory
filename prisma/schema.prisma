@@ -119,6 +119,8 @@ model Product {
   vendorId         String?
   vendor           Vendor?       @relation(fields: [vendorId], references: [id])
   vendorName       String?
+  variantTitle    String?
+  variantOptions  Json?
   shopifyProductId String?
   shopifyVariantId String?
   shopifyStoreId   String?

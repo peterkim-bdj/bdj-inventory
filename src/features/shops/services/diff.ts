@@ -36,6 +36,7 @@ interface DbProduct {
   compareAtPrice: unknown;
   imageUrl: string | null;
   vendorName: string | null;
+  variantTitle: string | null;
   shopifyProductId: string | null;
   shopifyVariantId: string | null;
 }
@@ -50,6 +51,7 @@ const COMPARE_FIELDS = [
   'compareAtPrice',
   'imageUrl',
   'vendorName',
+  'variantTitle',
 ] as const;
 
 export function generateDiff(

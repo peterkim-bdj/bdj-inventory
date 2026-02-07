@@ -65,6 +65,8 @@ export async function GET(request: NextRequest) {
         price: true,
         compareAtPrice: true,
         vendorName: true,
+        variantTitle: true,
+        variantOptions: true,
         isActive: true,
         createdAt: true,
         updatedAt: true,

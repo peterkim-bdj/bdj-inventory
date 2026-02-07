@@ -18,6 +18,8 @@ export function transformToProductData(
     price: variant.price || null,
     compareAtPrice: variant.compareAtPrice || null,
     vendorName: shopifyProduct.vendor || null,
+    variantTitle: variant.title && variant.title !== 'Default Title' ? variant.title : null,
+    variantOptions: variant.selectedOptions?.length ? variant.selectedOptions : null,
     shopifyProductId: extractNumericId(shopifyProduct.id),
     shopifyVariantId: extractNumericId(variant.id),
     shopifyStoreId: storeId,

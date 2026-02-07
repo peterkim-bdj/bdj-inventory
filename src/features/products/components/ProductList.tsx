@@ -38,7 +38,12 @@ export function ProductList({ products }: ProductListProps) {
                       className="h-8 w-8 rounded object-cover"
                     />
                   )}
-                  <span className="font-medium">{product.name}</span>
+                  <span className="font-medium">
+                    {product.name}
+                    {product.variantTitle && (
+                      <span className="ml-1 font-normal text-zinc-500">— {product.variantTitle}</span>
+                    )}
+                  </span>
                 </div>
               </td>
               <td className="px-4 py-3 text-zinc-500">{product.sku ?? '—'}</td>
