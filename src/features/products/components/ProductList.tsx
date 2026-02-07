@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import type { ProductItem } from '../types';
 
@@ -29,9 +30,11 @@ export function ProductList({ products }: ProductListProps) {
               <td className="px-4 py-3">
                 <div className="flex items-center gap-2">
                   {product.imageUrl && (
-                    <img
+                    <Image
                       src={product.imageUrl}
                       alt=""
+                      width={32}
+                      height={32}
                       className="h-8 w-8 rounded object-cover"
                     />
                   )}

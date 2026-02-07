@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import type { ProductItem } from '../types';
 
 interface ProductCardProps {
@@ -10,9 +11,11 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="rounded-lg border bg-white p-4 dark:bg-zinc-900 hover:shadow-md transition-shadow">
       {product.imageUrl ? (
-        <img
+        <Image
           src={product.imageUrl}
           alt={product.name}
+          width={400}
+          height={160}
           className="mb-3 h-40 w-full rounded object-cover"
         />
       ) : (

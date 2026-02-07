@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.env
+.env.*
+!.env.example
+coverage
+docs
+*.md
+.DS_Store
+.vscode
+.idea

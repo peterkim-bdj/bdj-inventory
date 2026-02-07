@@ -1,19 +1,22 @@
 'use client';
 
+import { useCallback } from 'react';
 import { useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { locales, localeNames, LOCALE_COOKIE, type Locale } from '@/i18n/config';
+
+function setCookie(name: string, value: string) {
+  document.cookie = `${name}=${value};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax`;
+}
 
 export function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
 
-  function handleLocaleChange(newLocale: Locale) {
-    // Set cookie
-    document.cookie = `${LOCALE_COOKIE}=${newLocale};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax`;
-    // Trigger server re-render to pick up new locale
+  const handleLocaleChange = useCallback((newLocale: Locale) => {
+    setCookie(LOCALE_COOKIE, newLocale);
     router.refresh();
-  }
+  }, [router]);
 
   return (
     <div className="flex items-center gap-1">
