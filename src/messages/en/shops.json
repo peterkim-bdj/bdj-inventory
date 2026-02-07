@@ -1,0 +1,42 @@
+{
+  "title": "Shop Management",
+  "addShop": "Add Shop",
+  "editShop": "Edit Shop",
+  "deleteShop": "Delete Shop",
+  "syncAll": "Sync All",
+  "form": {
+    "name": "Shop Name",
+    "namePlaceholder": "e.g., Store A",
+    "domain": "Shopify Domain",
+    "domainPlaceholder": "store-a.myshopify.com",
+    "accessToken": "Access Token",
+    "accessTokenPlaceholder": "shpat_...",
+    "apiVersion": "API Version"
+  },
+  "list": {
+    "domain": "Domain",
+    "productCount": "Products",
+    "lastSynced": "Last Synced",
+    "syncStatus": "Status",
+    "actions": "Actions",
+    "neverSynced": "—"
+  },
+  "status": {
+    "never": "Never synced",
+    "synced": "Synced",
+    "inProgress": "Syncing...",
+    "diffReview": "Diff Review Pending",
+    "failed": "Sync Failed"
+  },
+  "delete": {
+    "title": "Delete Shop",
+    "confirm": "This will deactivate {count} products linked to this shop. Continue?",
+    "success": "Shop deleted successfully"
+  },
+  "sync": {
+    "start": "Sync",
+    "startAll": "Sync All Shops",
+    "initialComplete": "{productCount} products and {vendorCount} vendors imported",
+    "inProgress": "Syncing {shopName}..."
+  }
+}

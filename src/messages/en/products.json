@@ -1,0 +1,59 @@
+{
+  "title": "Products",
+  "view": {
+    "list": "List",
+    "card": "Card"
+  },
+  "filter": {
+    "store": "Store",
+    "allStores": "All Stores",
+    "vendor": "Vendor",
+    "allVendors": "All Vendors",
+    "productType": "Product Type",
+    "allTypes": "All Types",
+    "stockStatus": "Stock Status",
+    "all": "All",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock"
+  },
+  "sort": {
+    "label": "Sort by",
+    "nameAsc": "Name (A-Z)",
+    "nameDesc": "Name (Z-A)",
+    "priceAsc": "Price (Low to High)",
+    "priceDesc": "Price (High to Low)",
+    "priceLow": "Price (Low to High)",
+    "priceHigh": "Price (High to Low)",
+    "newest": "Recent Update",
+    "recentUpdate": "Recent Update",
+    "vendor": "Vendor"
+  },
+  "search": {
+    "placeholder": "Search by name, SKU, or barcode..."
+  },
+  "table": {
+    "name": "Name",
+    "sku": "SKU",
+    "vendor": "Vendor",
+    "store": "Store",
+    "price": "Price",
+    "type": "Type"
+  },
+  "pagination": {
+    "showing": "Showing {from}-{to} of {total}"
+  },
+  "card": {
+    "sku": "SKU",
+    "vendor": "Vendor",
+    "store": "Store",
+    "price": "Price",
+    "stock": "Stock",
+    "noImage": "No image"
+  },
+  "group": {
+    "title": "Product Groups",
+    "mapped": "Mapped",
+    "unmapped": "Unmapped",
+    "stores": "{count} stores"
+  }
+}

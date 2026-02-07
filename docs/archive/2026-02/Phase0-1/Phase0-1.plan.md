@@ -26,6 +26,7 @@ BDJ Inventory 시스템의 **데이터 기반**을 구축한다. 4개 Shopify �
 
 - Design: [Phase 0-1. Product 초기 데이터 구축 - BDJ Inventory](../../Phase%200-1.%20%20Product%20초기%20데이터%20구축%20-%20BDJ%20Inventory.md)
 - Schema: [Schema Reference - BDJ Inventory](../../Schema%20Reference%20-%20BDJ%20Inventory.md)
+- Prerequisite: [i18n (Internationalization) Planning Document](./i18n.plan.md)
 - Dependency: [Phase 0-2. Inventory 초기 데이터 구축](../../Phase%200-2.%20Inventory%20초기%20데이터%20구축%20-%20BDJ%20Inventory.md)
 
 ---
@@ -226,6 +227,9 @@ src/
 ## 8. Implementation Order
 
 Phase 0-1 구현은 다음 순서로 진행:
+
+> **Prerequisites**: i18n 인프라 (next-intl 설정, common.json 번역)가 먼저 완료되어야 함.
+> [i18n.plan.md](./i18n.plan.md) Sprint 0 참고. 모든 UI 텍스트는 번역 키(`t()`) 기반으로 작성.
 
 ### Sprint 1: DB & 기본 API (Days 1-2)
 

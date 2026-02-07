@@ -1,0 +1,42 @@
+{
+  "title": "Shop 관리",
+  "addShop": "Shop 추가",
+  "editShop": "Shop 수정",
+  "deleteShop": "Shop 삭제",
+  "syncAll": "전체 동기화",
+  "form": {
+    "name": "Shop 이름",
+    "namePlaceholder": "예: Store A",
+    "domain": "Shopify 도메인",
+    "domainPlaceholder": "store-a.myshopify.com",
+    "accessToken": "Access Token",
+    "accessTokenPlaceholder": "shpat_...",
+    "apiVersion": "API 버전"
+  },
+  "list": {
+    "domain": "도메인",
+    "productCount": "상품 수",
+    "lastSynced": "마지막 동기화",
+    "syncStatus": "상태",
+    "actions": "액션",
+    "neverSynced": "—"
+  },
+  "status": {
+    "never": "미동기화",
+    "synced": "동기화 완료",
+    "inProgress": "동기화 중...",
+    "diffReview": "Diff 확인 대기",
+    "failed": "동기화 실패"
+  },
+  "delete": {
+    "title": "Shop 삭제",
+    "confirm": "이 몰에 연결된 상품 {count}개도 함께 비활성화됩니다. 계속하시겠습니까?",
+    "success": "Shop이 삭제되었습니다"
+  },
+  "sync": {
+    "start": "동기화",
+    "startAll": "전체 Shop 동기화",
+    "initialComplete": "상품 {productCount}개, 벤더 {vendorCount}개 추가 완료",
+    "inProgress": "{shopName} 동기화 중..."
+  }
+}

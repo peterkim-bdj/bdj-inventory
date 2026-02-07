@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---- Phase 0-1 Models ----
+
+model ShopifyStore {
+  id           String         @id @default(cuid())
+  name         String
+  domain       String         @unique
+  accessToken  String
+  apiVersion   String         @default("2025-01")
+  isActive     Boolean        @default(true)
+  lastSyncedAt DateTime?
+  syncStatus   ShopSyncStatus @default(NEVER)
+  productCount Int            @default(0)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  products Product[]
+  syncLogs SyncLog[]
+}
+
+enum ShopSyncStatus {
+  NEVER
+  SYNCED
+  IN_PROGRESS
+  DIFF_REVIEW
+  FAILED
+}
+
+model SyncLog {
+  id             String        @id @default(cuid())
+  shopifyStoreId String
+  shopifyStore   ShopifyStore  @relation(fields: [shopifyStoreId], references: [id])
+  syncType       SyncType
+  status         SyncLogStatus @default(FETCHING)
+  totalFetched   Int           @default(0)
+  newCount       Int           @default(0)
+  modifiedCount  Int           @default(0)
+  removedCount   Int           @default(0)
+  unchangedCount Int           @default(0)
+  appliedCount   Int           @default(0)
+  diffData       Json?
+  startedAt      DateTime      @default(now())
+  completedAt    DateTime?
+  error          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([shopifyStoreId])
+  @@index([status])
+}
+
+enum SyncType {
+  INITIAL
+  RESYNC
+}
+
+enum SyncLogStatus {
+  FETCHING
+  DIFF_REVIEW
+  APPLYING
+  COMPLETED
+  FAILED
+}
+
+model Vendor {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String?  @unique
+  contactName String?
+  phone       String?
+  email       String?
+  website     String?
+  address     String?
+  notes       String?
+  autoNotify  Boolean  @default(false)
+  minLeadDays Int      @default(3)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products      Product[]
+  productGroups ProductGroup[]
+}
+
+model ProductGroup {
+  id               String   @id @default(cuid())
+  canonicalSku     String?  @unique
+  canonicalBarcode String?  @unique
+  name             String
+  productType      String?
+  vendorId         String?
+  vendor           Vendor?  @relation(fields: [vendorId], references: [id])
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  products Product[]
+}
+
+model Product {
+  id               String        @id @default(cuid())
+  name             String
+  description      String?
+  imageUrl         String?
+  sku              String?
+  shopifyBarcode   String?
+  barcodePrefix    String        @unique
+  productType      String?
+  price            Decimal?
+  compareAtPrice   Decimal?
+  vendorId         String?
+  vendor           Vendor?       @relation(fields: [vendorId], references: [id])
+  vendorName       String?
+  shopifyProductId String?
+  shopifyVariantId String?
+  shopifyStoreId   String?
+  shopifyStore     ShopifyStore? @relation(fields: [shopifyStoreId], references: [id])
+  shopifySynced    Boolean       @default(true)
+  productGroupId   String?
+  productGroup     ProductGroup? @relation(fields: [productGroupId], references: [id])
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([sku])
+  @@index([shopifyBarcode])
+  @@index([name])
+  @@index([vendorId])
+  @@index([productType])
+  @@index([shopifyStoreId])
+  @@index([productGroupId])
+  @@unique([shopifyStoreId, shopifyProductId, shopifyVariantId])
+}

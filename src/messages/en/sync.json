@@ -1,0 +1,80 @@
+{
+  "button": {
+    "sync": "Sync",
+    "syncing": "Syncing...",
+    "reviewDiff": "Review Diff",
+    "syncAll": "Sync All"
+  },
+  "diff": {
+    "new": "New",
+    "modified": "Modified",
+    "removed": "Removed",
+    "unchanged": "Unchanged",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "applySelected": "Apply Selected",
+    "applying": "Applying...",
+    "noDiff": "No diff review in progress.",
+    "noItems": "No items in this category."
+  },
+  "diffReview": {
+    "title": "Diff Review",
+    "summary": {
+      "new": "New",
+      "modified": "Modified",
+      "removed": "Removed",
+      "unchanged": "Unchanged",
+      "items": "{count} items"
+    },
+    "tabs": {
+      "new": "New ({count})",
+      "modified": "Modified ({count})",
+      "removed": "Removed ({count})"
+    },
+    "actions": {
+      "applySelected": "Apply Selected ({count})",
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All"
+    },
+    "new": {
+      "defaultAction": "Add",
+      "ignore": "Ignore"
+    },
+    "modified": {
+      "defaultAction": "Update to Shopify value",
+      "keep": "Keep current"
+    },
+    "removed": {
+      "defaultAction": "Keep (safe)",
+      "deactivate": "Deactivate",
+      "hint": "Default: Keep. Only deactivate if the Shopify deletion was intentional."
+    },
+    "field": {
+      "changed": "changed",
+      "price": "Price",
+      "name": "Name",
+      "imageUrl": "Image",
+      "productType": "Product Type",
+      "description": "Description"
+    }
+  },
+  "log": {
+    "title": "Sync History",
+    "type": {
+      "initial": "Initial",
+      "resync": "Re-sync"
+    },
+    "status": {
+      "fetching": "Fetching",
+      "diffReview": "Diff Review",
+      "applying": "Applying",
+      "completed": "Completed",
+      "failed": "Failed"
+    },
+    "detail": {
+      "totalFetched": "Fetched",
+      "applied": "Applied",
+      "duration": "Duration"
+    }
+  }
+}

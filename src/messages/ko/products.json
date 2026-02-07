@@ -1,0 +1,59 @@
+{
+  "title": "상품",
+  "view": {
+    "list": "리스트",
+    "card": "카드"
+  },
+  "filter": {
+    "store": "쇼핑몰",
+    "allStores": "전체 몰",
+    "vendor": "벤더",
+    "allVendors": "전체 벤더",
+    "productType": "상품 유형",
+    "allTypes": "전체 유형",
+    "stockStatus": "재고 상태",
+    "all": "전체",
+    "inStock": "재고 있음",
+    "outOfStock": "재고 없음"
+  },
+  "sort": {
+    "label": "정렬",
+    "nameAsc": "이름 (A-Z)",
+    "nameDesc": "이름 (Z-A)",
+    "priceAsc": "가격 (낮은순)",
+    "priceDesc": "가격 (높은순)",
+    "priceLow": "가격 (낮은순)",
+    "priceHigh": "가격 (높은순)",
+    "newest": "최근 업데이트",
+    "recentUpdate": "최근 업데이트",
+    "vendor": "벤더명"
+  },
+  "search": {
+    "placeholder": "상품명, SKU 또는 바코드로 검색..."
+  },
+  "table": {
+    "name": "상품명",
+    "sku": "SKU",
+    "vendor": "벤더",
+    "store": "쇼핑몰",
+    "price": "가격",
+    "type": "유형"
+  },
+  "pagination": {
+    "showing": "{total}개 중 {from}-{to}"
+  },
+  "card": {
+    "sku": "SKU",
+    "vendor": "벤더",
+    "store": "몰",
+    "price": "가격",
+    "stock": "재고",
+    "noImage": "이미지 없음"
+  },
+  "group": {
+    "title": "상품 그룹",
+    "mapped": "매핑됨",
+    "unmapped": "미매핑",
+    "stores": "{count}개 몰"
+  }
+}

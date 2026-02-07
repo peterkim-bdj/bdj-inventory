@@ -1,0 +1,283 @@
+{
+  "timestamp": "2026-02-07T05:07:39.483Z",
+  "reason": "compaction",
+  "status": {
+    "version": "2.0",
+    "lastUpdated": "2026-02-07T05:07:27.505Z",
+    "activeFeatures": [
+      "Phase0-1",
+      "i18n",
+      "inventory-with-shopfipy",
+      "api",
+      "shops",
+      "[id]",
+      "(dashboard)",
+      "new",
+      "edit"
+    ],
+    "primaryFeature": "Phase0-1",
+    "features": {
+      "Phase0-1": {
+        "phase": "do",
+        "startedAt": "2026-02-07T03:30:00.000Z",
+        "planPath": "docs/01-plan/features/Phase0-1.plan.md",
+        "designPath": "docs/02-design/features/Phase0-1.design.md",
+        "analysisPath": null,
+        "reportPath": null,
+        "matchRate": null,
+        "iterationCount": 0
+      },
+      "i18n": {
+        "phase": "completed",
+        "startedAt": "2026-02-07T03:35:00.000Z",
+        "planPath": "docs/01-plan/features/i18n.plan.md",
+        "designPath": "docs/02-design/features/i18n.design.md",
+        "analysisPath": "docs/03-analysis/i18n.analysis.md",
+        "reportPath": "docs/04-report/i18n.report.md",
+        "matchRate": 98,
+        "iterationCount": 0
+      },
+      "inventory-with-shopfipy": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-07T05:04:21.007Z",
+          "lastUpdated": "2026-02-07T05:07:25.617Z"
+        },
+        "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/lib/prisma.ts"
+      },
+      "api": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-07T05:04:23.362Z",
+          "lastUpdated": "2026-02-07T05:04:23.362Z"
+        },
+        "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/lib/api/error.ts"
+      },
+      "shops": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-07T05:04:26.478Z",
+          "lastUpdated": "2026-02-07T05:07:27.505Z"
+        },
+        "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/app/api/shops/route.ts"
+      },
+      "[id]": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-07T05:04:52.319Z",
+          "lastUpdated": "2026-02-07T05:04:52.319Z"
+        },
+        "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/app/api/shops/[id]/route.ts"
+      },
+      "(dashboard)": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-07T05:05:35.821Z",
+          "lastUpdated": "2026-02-07T05:05:35.821Z"
+        },
+        "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/app/(dashboard)/layout.tsx"
+      },
+      "new": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-07T05:06:15.207Z",
+          "lastUpdated": "2026-02-07T05:06:15.207Z"
+        },
+        "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/app/(dashboard)/shops/new/page.tsx"
+      },
+      "edit": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-07T05:06:20.698Z",
+          "lastUpdated": "2026-02-07T05:06:20.698Z"
+        },
+        "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/app/(dashboard)/shops/[id]/edit/page.tsx"
+      }
+    },
+    "pipeline": {
+      "currentPhase": 3,
+      "level": "Dynamic",
+      "phaseHistory": []
+    },
+    "session": {
+      "startedAt": "2026-02-07T03:26:19.690Z",
+      "onboardingCompleted": false,
+      "lastActivity": "2026-02-07T05:07:27.505Z"
+    },
+    "history": [
+      {
+        "timestamp": "2026-02-07T05:04:21.007Z",
+        "feature": "inventory-with-shopfipy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:04:23.362Z",
+        "feature": "api",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:04:26.478Z",
+        "feature": "shops",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:04:43.476Z",
+        "feature": "shops",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:04:47.776Z",
+        "feature": "shops",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:04:52.319Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:05:13.392Z",
+        "feature": "shops",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:05:19.464Z",
+        "feature": "inventory-with-shopfipy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:05:27.370Z",
+        "feature": "shops",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:05:35.821Z",
+        "feature": "(dashboard)",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:05:50.803Z",
+        "feature": "shops",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:05:55.814Z",
+        "feature": "shops",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:06:05.537Z",
+        "feature": "shops",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:06:11.345Z",
+        "feature": "shops",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:06:15.207Z",
+        "feature": "new",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:06:20.698Z",
+        "feature": "edit",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:06:30.218Z",
+        "feature": "inventory-with-shopfipy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:06:31.640Z",
+        "feature": "inventory-with-shopfipy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:06:40.157Z",
+        "feature": "shops",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:06:51.387Z",
+        "feature": "shops",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:06:54.999Z",
+        "feature": "inventory-with-shopfipy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:07:25.617Z",
+        "feature": "inventory-with-shopfipy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-07T05:07:27.505Z",
+        "feature": "shops",
+        "phase": "do",
+        "action": "updated"
+      }
+    ]
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "shops": "Shops",
+    "products": "Products",
+    "vendors": "Vendors",
+    "inventory": "Inventory",
+    "settings": "Settings"
+  },
+  "button": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "confirm": "Confirm",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "refresh": "Refresh",
+    "previous": "Previous",
+    "export": "Export",
+    "import": "Import"
+  },
+  "status": {
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "deleting": "Deleting...",
+    "success": "Success",
+    "error": "Error",
+    "noData": "No data found",
+    "noResults": "No results"
+  },
+  "error": {
+    "generic": "Something went wrong. Please try again.",
+    "notFound": "Not found",
+    "unauthorized": "Unauthorized access",
+    "network": "Network error. Please check your connection.",
+    "validation": "Please check your input"
+  },
+  "table": {
+    "showing": "Showing {from}-{to} of {total}",
+    "rowsPerPage": "Rows per page",
+    "page": "Page {current} of {total}",
+    "previous": "Previous",
+    "next": "Next",
+    "first": "First",
+    "last": "Last"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "ko": "한국어"
+  }
+}

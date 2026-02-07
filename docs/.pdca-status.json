@@ -1,39 +1,37 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-07T03:40:00.000Z",
-  "activeFeatures": ["Phase0-1", "i18n"],
-  "primaryFeature": "Phase0-1",
+  "lastUpdated": "2026-02-07T05:20:00.000Z",
+  "activeFeatures": ["i18n"],
+  "primaryFeature": "i18n",
   "features": {
     "Phase0-1": {
-      "phase": "design",
+      "phase": "archived",
+      "matchRate": 96,
+      "iterationCount": 0,
       "startedAt": "2026-02-07T03:30:00.000Z",
-      "planPath": "docs/01-plan/features/Phase0-1.plan.md",
-      "designPath": "docs/02-design/features/Phase0-1.design.md",
-      "analysisPath": null,
-      "reportPath": null,
-      "matchRate": null,
-      "iterationCount": 0
+      "archivedAt": "2026-02-07T05:31:00.000Z",
+      "archivedTo": "docs/archive/2026-02/Phase0-1/"
     },
     "i18n": {
-      "phase": "design",
+      "phase": "completed",
       "startedAt": "2026-02-07T03:35:00.000Z",
       "planPath": "docs/01-plan/features/i18n.plan.md",
       "designPath": "docs/02-design/features/i18n.design.md",
-      "analysisPath": null,
-      "reportPath": null,
-      "matchRate": null,
+      "analysisPath": "docs/03-analysis/i18n.analysis.md",
+      "reportPath": "docs/04-report/i18n.report.md",
+      "matchRate": 98,
       "iterationCount": 0
     }
   },
   "pipeline": {
-    "currentPhase": 1,
+    "currentPhase": 3,
     "level": "Dynamic",
     "phaseHistory": []
   },
   "session": {
     "startedAt": "2026-02-07T03:26:19.690Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-02-07T03:40:00.000Z"
+    "lastActivity": "2026-02-07T05:20:00.000Z"
   },
   "history": []
 }
