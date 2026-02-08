@@ -93,7 +93,7 @@ export default function InventoryPage() {
         <div className="flex items-center justify-center py-20">
           <p className="text-lg text-gray-400">{t('loading')}</p>
         </div>
-      ) : data?.items.length === 0 ? (
+      ) : !data?.items || data.items.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20">
           <p className="text-lg text-gray-400">{t('noItems')}</p>
           <Link
