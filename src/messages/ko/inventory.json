@@ -1,0 +1,85 @@
+{
+  "title": "재고",
+  "totalCount": "{count}개",
+  "registerButton": "재고 등록",
+  "loading": "로딩 중...",
+  "noItems": "등록된 재고가 없습니다",
+  "scan": {
+    "title": "바코드 스캔",
+    "placeholder": "바코드를 스캔하거나 검색어를 입력하세요...",
+    "useCamera": "카메라 사용",
+    "stopCamera": "카메라 중지",
+    "results": "검색 결과",
+    "found": "건",
+    "searching": "검색 중...",
+    "noMatch": "일치하는 상품이 없습니다",
+    "createNew": "신규 상품 생성"
+  },
+  "register": {
+    "title": "재고 등록",
+    "formTitle": "아이템 등록",
+    "registeringFor": "등록 대상: {product}",
+    "quantity": "수량",
+    "location": "위치",
+    "noLocation": "위치 없음",
+    "condition": "컨디션",
+    "notes": "메모",
+    "notesPlaceholder": "선택 사항...",
+    "submit": "{count}개 등록",
+    "registering": "등록 중...",
+    "recentTitle": "최근 등록",
+    "itemsCreated": "{count}개 생성됨",
+    "printLabels": "라벨 인쇄",
+    "currentStock": "재고 {count}개"
+  },
+  "newProduct": {
+    "title": "신규 상품 생성",
+    "name": "상품명",
+    "sku": "SKU",
+    "barcode": "바코드",
+    "productType": "유형",
+    "price": "가격",
+    "vendorName": "벤더",
+    "create": "상품 생성",
+    "creating": "생성 중...",
+    "cancel": "취소"
+  },
+  "labels": {
+    "title": "라벨 인쇄",
+    "print": "인쇄"
+  },
+  "status": {
+    "AVAILABLE": "이용 가능",
+    "RESERVED": "예약됨",
+    "SOLD": "판매됨",
+    "RETURNED": "반품",
+    "DAMAGED": "손상"
+  },
+  "condition": {
+    "NEW": "새 상품",
+    "LIKE_NEW": "거의 새것",
+    "GOOD": "좋음",
+    "FAIR": "보통",
+    "POOR": "나쁨"
+  },
+  "table": {
+    "product": "상품",
+    "barcode": "바코드",
+    "location": "위치",
+    "status": "상태",
+    "condition": "컨디션",
+    "receivedAt": "입고일"
+  },
+  "filter": {
+    "allStatuses": "전체 상태",
+    "allLocations": "전체 위치"
+  },
+  "search": {
+    "placeholder": "바코드, 상품명, SKU로 검색..."
+  },
+  "pagination": {
+    "previous": "이전",
+    "next": "다음",
+    "page": "{total}페이지 중 {current}"
+  }
+}

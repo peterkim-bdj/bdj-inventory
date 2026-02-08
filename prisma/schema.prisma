@@ -132,6 +132,8 @@ model Product {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
+  inventoryItems InventoryItem[]
+
   @@index([sku])
   @@index([shopifyBarcode])
   @@index([name])
@@ -139,5 +141,64 @@ model Product {
   @@index([productType])
   @@index([shopifyStoreId])
   @@index([productGroupId])
+  @@index([shopifySynced])
   @@unique([shopifyStoreId, shopifyProductId, shopifyVariantId])
+}
+
+// ---- Phase 0-2 Models ----
+
+enum InventoryStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
+  RETURNED
+  DAMAGED
+}
+
+enum ItemCondition {
+  NEW
+  LIKE_NEW
+  GOOD
+  FAIR
+  POOR
+}
+
+model Location {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  parentId    String?
+  parent      Location?  @relation("LocationTree", fields: [parentId], references: [id])
+  children    Location[] @relation("LocationTree")
+  level       Int        @default(0)
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  inventoryItems InventoryItem[]
+
+  @@index([parentId])
+  @@index([level])
+}
+
+model InventoryItem {
+  id         String          @id @default(cuid())
+  barcode    String          @unique
+  productId  String
+  product    Product         @relation(fields: [productId], references: [id])
+  locationId String?
+  location   Location?       @relation(fields: [locationId], references: [id])
+  status     InventoryStatus @default(AVAILABLE)
+  condition  ItemCondition   @default(NEW)
+  notes      String?
+  receivedAt DateTime        @default(now())
+  soldAt     DateTime?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  @@index([productId])
+  @@index([locationId])
+  @@index([status])
+  @@index([barcode])
 }

@@ -1,0 +1,85 @@
+{
+  "title": "Inventory",
+  "totalCount": "{count} items",
+  "registerButton": "Register Items",
+  "loading": "Loading...",
+  "noItems": "No inventory items yet",
+  "scan": {
+    "title": "Scan Barcode",
+    "placeholder": "Scan barcode or type to search...",
+    "useCamera": "Use Camera",
+    "stopCamera": "Stop Camera",
+    "results": "Results",
+    "found": "found",
+    "searching": "Searching...",
+    "noMatch": "No matching product found",
+    "createNew": "Create New Product"
+  },
+  "register": {
+    "title": "Register Inventory",
+    "formTitle": "Register Items",
+    "registeringFor": "Adding inventory for: {product}",
+    "quantity": "Quantity",
+    "location": "Location",
+    "noLocation": "No location",
+    "condition": "Condition",
+    "notes": "Notes",
+    "notesPlaceholder": "Optional notes...",
+    "submit": "Register {count} items",
+    "registering": "Registering...",
+    "recentTitle": "Recent Registrations",
+    "itemsCreated": "{count} items created",
+    "printLabels": "Print Labels",
+    "currentStock": "{count} in stock"
+  },
+  "newProduct": {
+    "title": "Create New Product",
+    "name": "Product Name",
+    "sku": "SKU",
+    "barcode": "Barcode",
+    "productType": "Type",
+    "price": "Price",
+    "vendorName": "Vendor",
+    "create": "Create Product",
+    "creating": "Creating...",
+    "cancel": "Cancel"
+  },
+  "labels": {
+    "title": "Print Labels",
+    "print": "Print"
+  },
+  "status": {
+    "AVAILABLE": "Available",
+    "RESERVED": "Reserved",
+    "SOLD": "Sold",
+    "RETURNED": "Returned",
+    "DAMAGED": "Damaged"
+  },
+  "condition": {
+    "NEW": "New",
+    "LIKE_NEW": "Like New",
+    "GOOD": "Good",
+    "FAIR": "Fair",
+    "POOR": "Poor"
+  },
+  "table": {
+    "product": "Product",
+    "barcode": "Barcode",
+    "location": "Location",
+    "status": "Status",
+    "condition": "Condition",
+    "receivedAt": "Received"
+  },
+  "filter": {
+    "allStatuses": "All Statuses",
+    "allLocations": "All Locations"
+  },
+  "search": {
+    "placeholder": "Search by barcode, product name, SKU..."
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {current} of {total}"
+  }
+}

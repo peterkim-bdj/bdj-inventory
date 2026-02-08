@@ -25,6 +25,9 @@ export default function DashboardLayout({
               <Link href="/products" className="text-gray-500 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors">
                 {t('nav.products')}
               </Link>
+              <Link href="/inventory" className="text-gray-500 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors">
+                {t('nav.inventory')}
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-2">
