@@ -2,15 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createShopSchema } from '@/features/shops/types';
 import { getShops, createShop } from '@/features/shops/services/shopService';
 import { apiError } from '@/lib/api/error';
+import { requireAuth } from '@/lib/auth';
 import { Prisma } from '@/generated/prisma/client';
 const PrismaClientKnownRequestError = Prisma.PrismaClientKnownRequestError;
 
 export async function GET() {
+  const { error } = await requireAuth('ADMIN');
+  if (error) return error;
+
   const shops = await getShops();
   return NextResponse.json({ shops });
 }
 
 export async function POST(request: NextRequest) {
+  const { error } = await requireAuth('ADMIN');
+  if (error) return error;
+
   const body = await request.json();
   const parsed = createShopSchema.safeParse(body);
 

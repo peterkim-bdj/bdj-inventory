@@ -5,6 +5,7 @@
     "products": "Products",
     "vendors": "Vendors",
     "inventory": "Inventory",
+    "admin": "Admin",
     "settings": "Settings"
   },
   "button": {
@@ -20,7 +21,8 @@
     "refresh": "Refresh",
     "previous": "Previous",
     "export": "Export",
-    "import": "Import"
+    "import": "Import",
+    "logout": "Sign Out"
   },
   "status": {
     "loading": "Loading...",
@@ -56,5 +58,20 @@
     "light": "Light mode",
     "dark": "Dark mode",
     "toggle": "Toggle theme"
+  },
+  "scan": {
+    "barcodeTab": "Barcode",
+    "ocrTab": "Text (OCR)",
+    "starting": "Starting camera...",
+    "cameraUnavailable": "Camera requires HTTPS. Use text input instead.",
+    "barcodeHint": "Point camera at barcode to scan automatically",
+    "capture": "Capture Text",
+    "processing": "Recognizing text...",
+    "recognizedText": "Recognized Text",
+    "originalText": "Original",
+    "retry": "Retry",
+    "useText": "Use This Text",
+    "ocrHint": "Position text within the guide area, then capture",
+    "ocrFailed": "Text recognition failed. Please try again."
   }
 }

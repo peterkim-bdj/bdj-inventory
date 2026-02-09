@@ -2,19 +2,42 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+
+// All 1D + 2D formats for maximum compatibility
+const BARCODE_FORMATS = [
+  Html5QrcodeSupportedFormats.EAN_13,
+  Html5QrcodeSupportedFormats.EAN_8,
+  Html5QrcodeSupportedFormats.CODE_128,
+  Html5QrcodeSupportedFormats.CODE_39,
+  Html5QrcodeSupportedFormats.CODE_93,
+  Html5QrcodeSupportedFormats.UPC_A,
+  Html5QrcodeSupportedFormats.UPC_E,
+  Html5QrcodeSupportedFormats.UPC_EAN_EXTENSION,
+  Html5QrcodeSupportedFormats.QR_CODE,
+  Html5QrcodeSupportedFormats.ITF,
+  Html5QrcodeSupportedFormats.CODABAR,
+  Html5QrcodeSupportedFormats.PDF_417,
+  Html5QrcodeSupportedFormats.AZTEC,
+  Html5QrcodeSupportedFormats.DATA_MATRIX,
+  Html5QrcodeSupportedFormats.RSS_14,
+  Html5QrcodeSupportedFormats.RSS_EXPANDED,
+];
 
 interface BarcodeScannerProps {
   onScan: (barcode: string) => void;
   autoFocus?: boolean;
 }
 
+const READER_ID = 'barcode-reader';
+
 export function BarcodeScanner({ onScan, autoFocus = true }: BarcodeScannerProps) {
   const t = useTranslations('inventory');
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState('');
   const [isCameraMode, setIsCameraMode] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
+  const [cameraError, setCameraError] = useState('');
+  const scannerRef = useRef<Html5Qrcode | null>(null);
 
   useEffect(() => {
     if (autoFocus && inputRef.current && !isCameraMode) {
@@ -30,63 +53,89 @@ export function BarcodeScanner({ onScan, autoFocus = true }: BarcodeScannerProps
     }
   }, [value, onScan]);
 
-  const startCamera = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' },
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
+  const stopCamera = useCallback(async () => {
+    if (scannerRef.current) {
+      try {
+        await scannerRef.current.stop();
+      } catch {
+        // ignore stop errors
       }
-      setIsCameraMode(true);
-
-      // Try BarcodeDetector API
-      if ('BarcodeDetector' in window) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const detector = new (window as any).BarcodeDetector({
-          formats: ['ean_13', 'ean_8', 'code_128', 'code_39', 'upc_a', 'upc_e', 'qr_code'],
-        });
-
-        const detectLoop = async () => {
-          if (!videoRef.current || !streamRef.current) return;
-          try {
-            const barcodes = await detector.detect(videoRef.current);
-            if (barcodes.length > 0) {
-              onScan(barcodes[0].rawValue);
-              stopCamera();
-              return;
-            }
-          } catch {
-            // ignore detection errors
-          }
-          if (streamRef.current) {
-            requestAnimationFrame(detectLoop);
-          }
-        };
-
-        videoRef.current?.addEventListener('loadedmetadata', () => {
-          detectLoop();
-        });
-      }
-    } catch {
-      setIsCameraMode(false);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onScan]);
-
-  const stopCamera = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((t) => t.stop());
-      streamRef.current = null;
+      scannerRef.current = null;
     }
     setIsCameraMode(false);
   }, []);
 
+  const startCamera = useCallback(async () => {
+    setCameraError('');
+    setIsCameraMode(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Start scanner after container div is mounted
+  useEffect(() => {
+    if (!isCameraMode) return;
+
+    let cancelled = false;
+
+    const initScanner = async () => {
+      try {
+        const scanner = new Html5Qrcode(READER_ID, {
+          formatsToSupport: BARCODE_FORMATS,
+          verbose: false,
+          experimentalFeatures: {
+            useBarCodeDetectorIfSupported: true,
+          },
+        });
+        scannerRef.current = scanner;
+
+        await scanner.start(
+          { facingMode: 'environment' },
+          {
+            fps: 15,
+            qrbox: (viewfinderWidth, viewfinderHeight) => ({
+              width: Math.floor(viewfinderWidth * 0.9),
+              height: Math.floor(viewfinderHeight * 0.5),
+            }),
+            disableFlip: false,
+            aspectRatio: 16 / 9,
+          },
+          (decodedText) => {
+            if (!cancelled) {
+              onScan(decodedText);
+              scanner.stop().catch(() => {});
+              scannerRef.current = null;
+              setIsCameraMode(false);
+            }
+          },
+          () => {
+            // ignore per-frame scan failures
+          },
+        );
+      } catch {
+        if (!cancelled) {
+          setCameraError(t('scan.cameraUnavailable'));
+          setIsCameraMode(false);
+        }
+      }
+    };
+
+    initScanner();
+
+    return () => {
+      cancelled = true;
+      if (scannerRef.current) {
+        scannerRef.current.stop().catch(() => {});
+        scannerRef.current = null;
+      }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCameraMode]);
+
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((t) => t.stop());
+      if (scannerRef.current) {
+        scannerRef.current.stop().catch(() => {});
       }
     };
   }, []);
@@ -114,6 +163,7 @@ export function BarcodeScanner({ onScan, autoFocus = true }: BarcodeScannerProps
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={t('scan.placeholder')}
+            suppressHydrationWarning
             className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-lg placeholder:text-gray-400 focus:border-transparent focus:ring-2 focus:ring-black dark:border-zinc-700 dark:bg-zinc-900 dark:focus:ring-zinc-400"
           />
         </div>
@@ -121,20 +171,18 @@ export function BarcodeScanner({ onScan, autoFocus = true }: BarcodeScannerProps
 
       {isCameraMode && (
         <div className="relative overflow-hidden rounded-xl">
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="w-full aspect-video rounded-xl bg-black"
-          />
+          <div id={READER_ID} className="w-full" />
           <button
             onClick={stopCamera}
-            className="absolute bottom-3 right-3 rounded-full bg-black/70 px-4 py-2 text-sm text-white"
+            className="absolute bottom-3 right-3 z-10 rounded-full bg-black/70 px-4 py-2 text-sm text-white"
           >
             {t('scan.stopCamera')}
           </button>
         </div>
+      )}
+
+      {cameraError && (
+        <p className="text-sm text-red-500">{cameraError}</p>
       )}
 
       <button

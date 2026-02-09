@@ -12,8 +12,8 @@ export default function NewShopPage() {
 
   return (
     <div className="max-w-lg">
-      <h1 className="text-2xl font-semibold mb-6">{t('addShop')}</h1>
-      <div className="rounded-lg border bg-white p-6 dark:bg-zinc-900">
+      <h1 className="text-3xl font-bold tracking-tight mb-6">{t('addShop')}</h1>
+      <div className="rounded-xl border border-gray-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
         <ShopForm
           onSubmit={(data) => {
             createMutation.mutate(data, {

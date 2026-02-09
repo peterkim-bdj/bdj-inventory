@@ -36,6 +36,8 @@ export const inventoryQuerySchema = z.object({
   status: z.enum(INVENTORY_STATUS).optional(),
   locationId: z.string().optional(),
   productId: z.string().optional(),
+  shopifyStoreId: z.string().optional(),
+  vendorId: z.string().optional(),
   sortBy: z.enum(['barcode', 'receivedAt', 'status', 'productName']).optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),
   page: z.coerce.number().min(1).optional().default(1),
@@ -45,6 +47,14 @@ export const inventoryQuerySchema = z.object({
 export const locationQuerySchema = z.object({
   parentId: z.string().optional(),
   includeInactive: z.enum(['true', 'false']).optional(),
+});
+
+export const locationCreateSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(100),
+  code: z.string().min(1, 'Code is required').max(50),
+  parentId: z.string().optional(),
+  level: z.number().int().min(0).default(0),
+  description: z.string().max(500).optional(),
 });
 
 // === Interfaces ===
@@ -75,6 +85,10 @@ export interface InventoryItemDetail {
     imageUrl: string | null;
     barcodePrefix: string;
     shopifyBarcode: string | null;
+    shopifyStoreId: string | null;
+    vendorName: string | null;
+    shopifyStore: { id: string; name: string } | null;
+    vendor: { id: string; name: string } | null;
   };
   location: {
     id: string;
@@ -96,6 +110,17 @@ export interface ScanResult {
     vendorName: string | null;
     _count: { inventoryItems: number };
   }>;
+}
+
+export interface InventoryFilterOption {
+  id: string;
+  name: string;
+  count: number;
+}
+
+export interface InventoryFiltersMeta {
+  stores: InventoryFilterOption[];
+  vendors: InventoryFilterOption[];
 }
 
 export interface RegisterResult {

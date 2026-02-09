@@ -1,18 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { CreateShopInput, UpdateShopInput } from '../types';
-
-interface Shop {
-  id: string;
-  name: string;
-  domain: string;
-  apiVersion: string;
-  productCount: number;
-  lastSyncedAt: string | null;
-  syncStatus: string;
-  isActive: boolean;
-}
+import type { CreateShopInput, UpdateShopInput, Shop } from '../types';
 
 async function fetchShops(): Promise<{ shops: Shop[] }> {
   const res = await fetch('/api/shops');

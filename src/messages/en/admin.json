@@ -1,0 +1,14 @@
+{
+  "users": {
+    "title": "User Management",
+    "loading": "Loading users...",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "joined": "Joined",
+    "actions": "Actions",
+    "approve": "Approve",
+    "promote": "Make Admin",
+    "demote": "Remove Admin"
+  }
+}

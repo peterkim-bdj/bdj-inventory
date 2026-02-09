@@ -3,7 +3,8 @@
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useProducts } from '@/features/products/hooks/useProducts';
-import { ProductSearch } from '@/features/products/components/ProductSearch';
+import { SmartSearchInput } from '@/components/SmartSearchInput';
+import { Pagination } from '@/components/Pagination';
 import { ProductFilters } from '@/features/products/components/ProductFilters';
 import { ViewToggle } from '@/features/products/components/ViewToggle';
 import { ProductList } from '@/features/products/components/ProductList';
@@ -71,7 +72,7 @@ export default function ProductsPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <ProductSearch value={search} onChange={handleSearchChange} />
+        <SmartSearchInput value={search} onChange={handleSearchChange} placeholder={t('search.placeholder')} />
         {data?.filters && (
           <ProductFilters
             filters={data.filters}
@@ -91,6 +92,7 @@ export default function ProductsPage() {
             setSortOrder(so);
             setPage(1);
           }}
+          suppressHydrationWarning
           className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent dark:bg-zinc-800 dark:border-zinc-700 dark:focus:ring-zinc-400"
         >
           <option value="name:asc">{t('sort.nameAsc')}</option>
@@ -119,52 +121,18 @@ export default function ProductsPage() {
             <ProductGrid products={data.products} onProductClick={setSelectedProductId} />
           )}
 
-          {/* Pagination */}
-          {data.pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between pt-4">
-              <p className="text-sm text-gray-400">
-                {t('pagination.showing', {
-                  from: (page - 1) * data.pagination.limit + 1,
-                  to: Math.min(page * data.pagination.limit, data.pagination.total),
-                  total: data.pagination.total,
-                })}
-              </p>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="rounded-full border border-gray-200 px-4 py-1.5 text-sm font-medium transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
-                >
-                  {tCommon('button.previous')}
-                </button>
-                {Array.from({ length: Math.min(5, data.pagination.totalPages) }, (_, i) => {
-                  const start = Math.max(1, Math.min(page - 2, data.pagination.totalPages - 4));
-                  const pageNum = start + i;
-                  if (pageNum > data.pagination.totalPages) return null;
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => setPage(pageNum)}
-                      className={`min-w-[36px] h-9 rounded-full text-sm font-medium transition-colors ${
-                        pageNum === page
-                          ? 'bg-black text-white dark:bg-white dark:text-black'
-                          : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-zinc-800'
-                      }`}
-                    >
-                      {String(pageNum).padStart(2, '0')}
-                    </button>
-                  );
-                })}
-                <button
-                  onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
-                  disabled={page === data.pagination.totalPages}
-                  className="rounded-full border border-gray-200 px-4 py-1.5 text-sm font-medium transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
-                >
-                  {tCommon('button.next')}
-                </button>
-              </div>
-            </div>
-          )}
+          <Pagination
+            page={page}
+            totalPages={data.pagination.totalPages}
+            total={data.pagination.total}
+            limit={data.pagination.limit}
+            onPageChange={setPage}
+            showingLabel={t('pagination.showing', {
+              from: (page - 1) * data.pagination.limit + 1,
+              to: Math.min(page * data.pagination.limit, data.pagination.total),
+              total: data.pagination.total,
+            })}
+          />
         </>
       )}
 

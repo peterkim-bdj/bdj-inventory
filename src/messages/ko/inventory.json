@@ -13,6 +13,7 @@
     "found": "건",
     "searching": "검색 중...",
     "noMatch": "일치하는 상품이 없습니다",
+    "cameraUnavailable": "카메라는 HTTPS가 필요합니다. 텍스트 입력을 사용하세요.",
     "createNew": "신규 상품 생성"
   },
   "register": {
@@ -72,12 +73,34 @@
   },
   "filter": {
     "allStatuses": "전체 상태",
-    "allLocations": "전체 위치"
+    "allLocations": "전체 위치",
+    "allStores": "전체 몰",
+    "allVendors": "전체 벤더"
   },
   "search": {
     "placeholder": "바코드, 상품명, SKU로 검색..."
   },
+  "view": {
+    "list": "리스트",
+    "card": "카드"
+  },
+  "sort": {
+    "newestFirst": "최신순",
+    "oldestFirst": "오래된순",
+    "nameAsc": "이름 A-Z",
+    "nameDesc": "이름 Z-A",
+    "barcodeAsc": "바코드순",
+    "statusAsc": "상태순"
+  },
+  "detail": {
+    "itemInfo": "아이템 정보",
+    "viewProduct": "상품 상세 보기 \u2192",
+    "soldAt": "판매일",
+    "notes": "메모",
+    "print": "라벨 인쇄"
+  },
   "pagination": {
+    "showing": "{total}개 중 {from}-{to}",
     "previous": "이전",
     "next": "다음",
     "page": "{total}페이지 중 {current}"

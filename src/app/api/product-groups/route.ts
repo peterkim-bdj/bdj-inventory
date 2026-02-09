@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { requireAuth } from '@/lib/auth';
 
 export async function GET() {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   const groups = await prisma.productGroup.findMany({
     where: { isActive: true },
     orderBy: { name: 'asc' },

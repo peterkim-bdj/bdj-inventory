@@ -172,6 +172,7 @@ export default function InventoryRegisterPage() {
           onClose={() => setPrintData(null)}
         />
       )}
+
     </div>
   );
 }

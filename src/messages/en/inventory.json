@@ -13,6 +13,7 @@
     "found": "found",
     "searching": "Searching...",
     "noMatch": "No matching product found",
+    "cameraUnavailable": "Camera requires HTTPS. Use the text input instead.",
     "createNew": "Create New Product"
   },
   "register": {
@@ -72,12 +73,34 @@
   },
   "filter": {
     "allStatuses": "All Statuses",
-    "allLocations": "All Locations"
+    "allLocations": "All Locations",
+    "allStores": "All Stores",
+    "allVendors": "All Vendors"
   },
   "search": {
     "placeholder": "Search by barcode, product name, SKU..."
   },
+  "view": {
+    "list": "List",
+    "card": "Card"
+  },
+  "sort": {
+    "newestFirst": "Newest First",
+    "oldestFirst": "Oldest First",
+    "nameAsc": "Name A-Z",
+    "nameDesc": "Name Z-A",
+    "barcodeAsc": "Barcode A-Z",
+    "statusAsc": "Status"
+  },
+  "detail": {
+    "itemInfo": "Item Information",
+    "viewProduct": "View product details \u2192",
+    "soldAt": "Sold At",
+    "notes": "Notes",
+    "print": "Print Label"
+  },
   "pagination": {
+    "showing": "Showing {from}-{to} of {total}",
     "previous": "Previous",
     "next": "Next",
     "page": "Page {current} of {total}"

@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { startSync } from '@/features/shops/services/syncService';
+import { startSync, ShopNotFoundError, SyncInProgressError } from '@/features/shops/services/syncService';
 import { ShopifyApiError } from '@/lib/shopify/client';
 import { apiError } from '@/lib/api/error';
+import { requireAuth } from '@/lib/auth';
 
 export async function POST(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const { error } = await requireAuth('ADMIN');
+  if (error) return error;
+
   const { id } = await params;
 
   try {
@@ -16,10 +20,10 @@ export async function POST(
     if (error instanceof ShopifyApiError) {
       return apiError(error.code, error.message, error.statusCode);
     }
-    if (error instanceof Error && error.message === 'Shop not found') {
+    if (error instanceof ShopNotFoundError) {
       return apiError('SHOP_NOT_FOUND', 'Shop not found', 404);
     }
-    if (error instanceof Error && error.message === 'Sync already in progress') {
+    if (error instanceof SyncInProgressError) {
       return apiError('SYNC_ALREADY_IN_PROGRESS', 'Sync already in progress', 409);
     }
     throw error;

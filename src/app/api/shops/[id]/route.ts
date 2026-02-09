@@ -2,11 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { updateShopSchema } from '@/features/shops/types';
 import { getShopById, updateShop, deleteShop } from '@/features/shops/services/shopService';
 import { apiError } from '@/lib/api/error';
+import { requireAuth } from '@/lib/auth';
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { error } = await requireAuth('ADMIN');
+  if (error) return error;
+
   const { id } = await params;
   const shop = await getShopById(id);
 
@@ -21,6 +25,9 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { error } = await requireAuth('ADMIN');
+  if (error) return error;
+
   const { id } = await params;
   const body = await request.json();
   const parsed = updateShopSchema.safeParse(body);
@@ -44,6 +51,9 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { error } = await requireAuth('ADMIN');
+  if (error) return error;
+
   const { id } = await params;
 
   const existing = await getShopById(id);

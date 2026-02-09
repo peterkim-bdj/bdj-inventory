@@ -19,7 +19,18 @@ async function main() {
     });
   }
 
-  console.log('Seed completed: 2 locations created');
+  // Seed admin user
+  await prisma.user.upsert({
+    where: { email: 'peter.kim@sokimnewyork.com' },
+    update: { role: 'ADMIN' },
+    create: {
+      email: 'peter.kim@sokimnewyork.com',
+      name: 'Peter Kim',
+      role: 'ADMIN',
+    },
+  });
+
+  console.log('Seed completed: 2 locations, 1 admin user');
   await prisma.$disconnect();
 }
 

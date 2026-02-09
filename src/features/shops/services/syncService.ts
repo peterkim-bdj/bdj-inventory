@@ -5,23 +5,34 @@ import { generateUniqueBarcodePrefix } from '@/lib/barcode';
 import { generateDiff, type DiffItem } from './diff';
 import { mapProductToGroup } from './productGroupMapper';
 import { Decimal } from 'decimal.js';
+import { getShopCredentials } from './shopService';
+
+export class ShopNotFoundError extends Error {
+  constructor() {
+    super('Shop not found');
+    this.name = 'ShopNotFoundError';
+  }
+}
+
+export class SyncInProgressError extends Error {
+  constructor() {
+    super('Sync already in progress');
+    this.name = 'SyncInProgressError';
+  }
+}
 
 export async function startSync(shopId: string) {
-  const shop = await prisma.shopifyStore.findUnique({
+  const shop = await getShopCredentials(shopId);
+
+  if (!shop) throw new ShopNotFoundError();
+
+  const syncStatus = (await prisma.shopifyStore.findUnique({
     where: { id: shopId },
-    select: {
-      id: true,
-      domain: true,
-      accessToken: true,
-      apiVersion: true,
-      syncStatus: true,
-    },
-  });
+    select: { syncStatus: true },
+  }))?.syncStatus;
 
-  if (!shop) throw new Error('Shop not found');
-
-  if (shop.syncStatus === 'IN_PROGRESS') {
-    throw new Error('Sync already in progress');
+  if (syncStatus === 'IN_PROGRESS') {
+    throw new SyncInProgressError();
   }
 
   // Check if this is initial or re-sync
@@ -222,7 +233,7 @@ async function performResync(
       modifiedCount: summary.modifiedCount,
       removedCount: summary.removedCount,
       unchangedCount: summary.unchangedCount,
-      diffData: JSON.parse(JSON.stringify(items)),
+      diffData: structuredClone(items) as object[],
     },
   });
 

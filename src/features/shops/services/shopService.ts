@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { encrypt, decrypt } from '@/lib/crypto';
 import type { CreateShopInput, UpdateShopInput } from '../types';
 
 export async function getShops() {
@@ -26,7 +27,6 @@ export async function getShopById(id: string) {
       id: true,
       name: true,
       domain: true,
-      accessToken: true,
       apiVersion: true,
       productCount: true,
       lastSyncedAt: true,
@@ -38,12 +38,30 @@ export async function getShopById(id: string) {
   });
 }
 
+/** Server-only: returns decrypted accessToken for sync operations. */
+export async function getShopCredentials(id: string) {
+  const shop = await prisma.shopifyStore.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      domain: true,
+      accessToken: true,
+      apiVersion: true,
+    },
+  });
+  if (!shop) return null;
+  return {
+    ...shop,
+    accessToken: decrypt(shop.accessToken),
+  };
+}
+
 export async function createShop(data: CreateShopInput) {
   return prisma.shopifyStore.create({
     data: {
       name: data.name,
       domain: data.domain,
-      accessToken: data.accessToken,
+      accessToken: encrypt(data.accessToken),
       apiVersion: data.apiVersion,
     },
     select: {
@@ -60,9 +78,14 @@ export async function createShop(data: CreateShopInput) {
 }
 
 export async function updateShop(id: string, data: UpdateShopInput) {
+  const updateData = { ...data } as Record<string, unknown>;
+  if (data.accessToken) {
+    updateData.accessToken = encrypt(data.accessToken);
+  }
+
   return prisma.shopifyStore.update({
     where: { id },
-    data,
+    data: updateData,
     select: {
       id: true,
       name: true,

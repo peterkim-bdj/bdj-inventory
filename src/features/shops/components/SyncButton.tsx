@@ -18,7 +18,7 @@ export function SyncButton({ shopId, syncStatus }: SyncButtonProps) {
     return (
       <button
         onClick={() => router.push(`/shops/${shopId}/sync`)}
-        className="rounded px-2 py-1 text-xs bg-yellow-50 text-yellow-700 hover:bg-yellow-100 dark:bg-yellow-950/30 dark:hover:bg-yellow-950/50"
+        className="rounded-full border border-yellow-200 px-3 py-1 text-xs font-medium bg-yellow-50 text-yellow-700 hover:bg-yellow-100 dark:bg-yellow-950/30 dark:border-yellow-800 dark:hover:bg-yellow-950/50"
       >
         {t('button.reviewDiff')}
       </button>
@@ -37,7 +37,7 @@ export function SyncButton({ shopId, syncStatus }: SyncButtonProps) {
         });
       }}
       disabled={syncMutation.isPending || syncStatus === 'IN_PROGRESS'}
-      className="rounded px-2 py-1 text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 disabled:opacity-50 dark:bg-blue-950/30 dark:hover:bg-blue-950/50"
+      className="rounded-full border border-gray-200 px-3 py-1 text-xs font-medium transition-colors hover:bg-gray-50 disabled:opacity-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
     >
       {syncMutation.isPending || syncStatus === 'IN_PROGRESS'
         ? t('button.syncing')

@@ -32,13 +32,13 @@ export default function EditShopPage() {
 
   return (
     <div className="max-w-lg">
-      <h1 className="text-2xl font-semibold mb-6">{t('editShop')}</h1>
-      <div className="rounded-lg border bg-white p-6 dark:bg-zinc-900">
+      <h1 className="text-3xl font-bold tracking-tight mb-6">{t('editShop')}</h1>
+      <div className="rounded-xl border border-gray-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
         <ShopForm
           defaultValues={{
             name: shop.name,
             domain: shop.domain,
-            accessToken: shop.accessToken,
+            accessToken: '',
             apiVersion: shop.apiVersion,
           }}
           onSubmit={(data) => {

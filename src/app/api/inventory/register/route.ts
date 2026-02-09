@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { apiError } from '@/lib/api/error';
+import { requireAuth } from '@/lib/auth';
 import { registerSchema } from '@/features/inventory/types';
 
 export async function POST(request: NextRequest) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   const body = await request.json();
   const parsed = registerSchema.safeParse(body);
 
@@ -35,32 +39,37 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Get current max sequence for this product's barcode prefix
-  const existingCount = await prisma.inventoryItem.count({
-    where: { barcode: { startsWith: product.barcodePrefix + '-' } },
-  });
-
-  // Create items with sequential barcodes
-  const items: Array<{ id: string; barcode: string }> = [];
-
-  for (let i = 0; i < quantity; i++) {
-    const seq = existingCount + i + 1;
-    const barcode = `${product.barcodePrefix}-${String(seq).padStart(3, '0')}`;
-
-    const item = await prisma.inventoryItem.create({
-      data: {
-        barcode,
-        productId,
-        locationId: locationId ?? null,
-        condition,
-        notes,
-        status: 'AVAILABLE',
-      },
-      select: { id: true, barcode: true },
+  // Use a serializable transaction to prevent race conditions on barcode sequence
+  const items = await prisma.$transaction(async (tx) => {
+    const existingCount = await tx.inventoryItem.count({
+      where: { barcode: { startsWith: product.barcodePrefix + '-' } },
     });
 
-    items.push(item);
-  }
+    const created: Array<{ id: string; barcode: string }> = [];
+
+    for (let i = 0; i < quantity; i++) {
+      const seq = existingCount + i + 1;
+      const barcode = `${product.barcodePrefix}-${String(seq).padStart(3, '0')}`;
+
+      const item = await tx.inventoryItem.create({
+        data: {
+          barcode,
+          productId,
+          locationId: locationId ?? null,
+          condition,
+          notes,
+          status: 'AVAILABLE',
+        },
+        select: { id: true, barcode: true },
+      });
+
+      created.push(item);
+    }
+
+    return created;
+  }, {
+    isolationLevel: 'Serializable',
+  });
 
   return NextResponse.json({
     items,

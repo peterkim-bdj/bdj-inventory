@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { hostname: 'cdn.shopify.com' },
+      { hostname: 'lh3.googleusercontent.com' },
     ],
   },
 };

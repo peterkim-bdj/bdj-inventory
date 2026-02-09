@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { applyDiff } from '@/features/shops/services/syncService';
 import { apiError } from '@/lib/api/error';
+import { requireAuth } from '@/lib/auth';
 
 const applySchema = z.object({
   syncLogId: z.string().min(1),
@@ -17,6 +18,9 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const { error } = await requireAuth('ADMIN');
+  if (error) return error;
+
   const { id } = await params;
   const body = await request.json();
   const parsed = applySchema.safeParse(body);

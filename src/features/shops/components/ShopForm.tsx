@@ -35,7 +35,7 @@ export function ShopForm({ defaultValues, onSubmit, isLoading, submitLabel }: Sh
         <input
           {...register('name')}
           placeholder={t('form.namePlaceholder')}
-          className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent dark:bg-zinc-800 dark:border-zinc-700 dark:focus:ring-zinc-400"
         />
         {errors.name && (
           <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>
@@ -47,7 +47,7 @@ export function ShopForm({ defaultValues, onSubmit, isLoading, submitLabel }: Sh
         <input
           {...register('domain')}
           placeholder={t('form.domainPlaceholder')}
-          className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent dark:bg-zinc-800 dark:border-zinc-700 dark:focus:ring-zinc-400"
         />
         {errors.domain && (
           <p className="mt-1 text-xs text-red-600">{errors.domain.message}</p>
@@ -60,7 +60,7 @@ export function ShopForm({ defaultValues, onSubmit, isLoading, submitLabel }: Sh
           {...register('accessToken')}
           type="password"
           placeholder={t('form.accessTokenPlaceholder')}
-          className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent dark:bg-zinc-800 dark:border-zinc-700 dark:focus:ring-zinc-400"
         />
         {errors.accessToken && (
           <p className="mt-1 text-xs text-red-600">{errors.accessToken.message}</p>
@@ -71,7 +71,7 @@ export function ShopForm({ defaultValues, onSubmit, isLoading, submitLabel }: Sh
         <label className="block text-sm font-medium mb-1">{t('form.apiVersion')}</label>
         <input
           {...register('apiVersion')}
-          className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent dark:bg-zinc-800 dark:border-zinc-700 dark:focus:ring-zinc-400"
         />
       </div>
 
@@ -79,7 +79,7 @@ export function ShopForm({ defaultValues, onSubmit, isLoading, submitLabel }: Sh
         <button
           type="submit"
           disabled={isLoading}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
+          className="rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-gray-200"
         >
           {isLoading ? tCommon('status.saving') : (submitLabel ?? tCommon('button.save'))}
         </button>

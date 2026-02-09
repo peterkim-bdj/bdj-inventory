@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { apiError } from '@/lib/api/error';
+import { requireAuth } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   const { id } = await params;
 
   const product = await prisma.product.findFirst({

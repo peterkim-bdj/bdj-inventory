@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { apiError } from '@/lib/api/error';
-import { locationQuerySchema } from '@/features/inventory/types';
+import { requireAuth } from '@/lib/auth';
+import { locationQuerySchema, locationCreateSchema } from '@/features/inventory/types';
 
 export async function GET(request: NextRequest) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   const searchParams = Object.fromEntries(request.nextUrl.searchParams);
   const parsed = locationQuerySchema.safeParse(searchParams);
 
@@ -31,16 +35,22 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const { error } = await requireAuth('ADMIN');
+  if (error) return error;
+
   const body = await request.json();
+  const parsed = locationCreateSchema.safeParse(body);
 
-  const { name, code, parentId, level, description } = body;
-
-  if (!name || !code) {
-    return apiError('VALIDATION_ERROR', 'name and code are required', 400);
+  if (!parsed.success) {
+    return apiError('VALIDATION_ERROR', 'Invalid input', 400, {
+      issues: parsed.error.issues,
+    });
   }
 
+  const { name, code, parentId, level, description } = parsed.data;
+
   const location = await prisma.location.create({
-    data: { name, code, parentId, level: level ?? 0, description },
+    data: { name, code, parentId, level, description },
   });
 
   return NextResponse.json({ location }, { status: 201 });

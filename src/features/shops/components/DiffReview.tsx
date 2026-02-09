@@ -103,7 +103,7 @@ export function DiffReview({ shopId }: DiffReviewProps) {
     <div className="space-y-4">
       <DiffSummary summary={data.summary} />
 
-      <div className="rounded-lg border bg-white dark:bg-zinc-900">
+      <div className="rounded-xl border border-gray-200 bg-white dark:bg-zinc-900 dark:border-zinc-800">
         <DiffTabs
           items={data.items}
           selectedIds={selectedIds}
@@ -116,14 +116,14 @@ export function DiffReview({ shopId }: DiffReviewProps) {
       <div className="flex items-center justify-between pt-2">
         <button
           onClick={() => router.push('/shops')}
-          className="rounded-md px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+          className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
         >
           {tCommon('button.cancel')}
         </button>
         <button
           onClick={handleApply}
           disabled={applyMutation.isPending || selectedIds.size === 0}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
+          className="rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-gray-200"
         >
           {applyMutation.isPending
             ? t('diff.applying')

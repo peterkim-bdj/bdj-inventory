@@ -43,7 +43,7 @@ export function DiffTabs({ items, selectedIds, onToggle, onSelectAll, onDeselect
             onClick={() => setActiveTab(tab.key)}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               activeTab === tab.key
-                ? 'border-blue-500 text-blue-600'
+                ? 'border-black text-black dark:border-white dark:text-white'
                 : 'border-transparent text-zinc-500 hover:text-zinc-700'
             }`}
           >
@@ -56,13 +56,13 @@ export function DiffTabs({ items, selectedIds, onToggle, onSelectAll, onDeselect
         <div className="flex gap-2 px-4 py-2 bg-zinc-50 dark:bg-zinc-800/50 text-xs">
           <button
             onClick={() => onSelectAll(activeTab)}
-            className="text-blue-600 hover:underline"
+            className="text-black hover:underline dark:text-white"
           >
             {t('diff.selectAll')}
           </button>
           <button
             onClick={() => onDeselectAll(activeTab)}
-            className="text-blue-600 hover:underline"
+            className="text-black hover:underline dark:text-white"
           >
             {t('diff.deselectAll')}
           </button>

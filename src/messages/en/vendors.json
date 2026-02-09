@@ -1,0 +1,103 @@
+{
+  "title": "Vendors",
+  "totalCount": "{count} vendors",
+  "addVendor": "Add Vendor",
+  "createTitle": "New Vendor",
+  "editTitle": "Edit Vendor",
+  "backToList": "Back to Vendors",
+  "noVendors": "No vendors found",
+  "missingContact": "Missing contact",
+  "active": "Active",
+  "inactive": "Inactive",
+  "leadTimeDays": "{days}d lead",
+  "productCount": "{count} products",
+  "deleteConfirm": "Are you sure you want to deactivate this vendor?",
+  "view": {
+    "list": "List",
+    "card": "Card"
+  },
+  "search": {
+    "placeholder": "Search by name, contact, code..."
+  },
+  "filter": {
+    "allContact": "All Contact Status",
+    "hasContact": "Has Contact",
+    "missingContact": "Missing Contact",
+    "allStatus": "All Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "allNotify": "All Notify",
+    "notifyOn": "Notify ON",
+    "notifyOff": "Notify OFF"
+  },
+  "sort": {
+    "missingFirst": "Missing Contact First",
+    "nameAsc": "Name A-Z",
+    "nameDesc": "Name Z-A",
+    "mostProducts": "Most Products",
+    "shortestLead": "Shortest Lead Time"
+  },
+  "table": {
+    "name": "Vendor",
+    "contact": "Contact",
+    "phone": "Phone",
+    "email": "Email",
+    "products": "Products",
+    "leadTime": "Lead Time",
+    "status": "Status"
+  },
+  "form": {
+    "name": "Vendor Name",
+    "code": "Internal Code",
+    "contactName": "Contact Person",
+    "phone": "Phone",
+    "email": "Email",
+    "website": "Website",
+    "address": "Address",
+    "notes": "Notes",
+    "notesPlaceholder": "e.g., Prefer morning calls on Monday",
+    "minLeadDays": "Lead Time (days)",
+    "autoNotify": "Auto Notify"
+  },
+  "detail": {
+    "contactInfo": "Contact Information",
+    "settings": "Settings",
+    "products": "Products by this Vendor",
+    "noProducts": "No products from this vendor",
+    "stockCount": "{count} in stock"
+  },
+  "pagination": {
+    "showing": "Showing {from}-{to} of {total}"
+  },
+  "import": {
+    "title": "Import Vendors",
+    "dragOrClick": "Drag & drop a file, or click to browse",
+    "dropHere": "Drop file here",
+    "acceptedFormats": "Accepts CSV, XLSX",
+    "downloadTemplate": "Download template (XLSX)",
+    "status": "Status",
+    "new": "New",
+    "duplicate": "Duplicate",
+    "error": "Error",
+    "newCount": "{count} new",
+    "dupCount": "{count} duplicates",
+    "errCount": "{count} errors",
+    "duplicateAction": "Duplicate handling",
+    "skip": "Skip",
+    "update": "Update",
+    "emptyValueAction": "Empty values",
+    "ignoreEmpty": "Keep existing",
+    "overwriteEmpty": "Overwrite with empty",
+    "execute": "Import Now",
+    "importing": "Importing...",
+    "cancel": "Cancel",
+    "resultTitle": "Import Complete",
+    "total": "Total",
+    "created": "Created",
+    "updated": "Updated",
+    "skipped": "Skipped",
+    "errors": "Errors",
+    "errorDetails": "Error Details",
+    "importAnother": "Import Another File"
+  }
+}

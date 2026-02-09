@@ -1,0 +1,14 @@
+{
+  "users": {
+    "title": "사용자 관리",
+    "loading": "사용자 로딩 중...",
+    "name": "이름",
+    "email": "이메일",
+    "role": "역할",
+    "joined": "가입일",
+    "actions": "작업",
+    "approve": "승인",
+    "promote": "관리자 승격",
+    "demote": "관리자 해제"
+  }
+}

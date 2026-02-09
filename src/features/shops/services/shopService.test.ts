@@ -15,10 +15,16 @@ vi.mock('@/lib/prisma', () => ({
   },
 }));
 
+vi.mock('@/lib/crypto', () => ({
+  encrypt: vi.fn((v: string) => `enc:${v}`),
+  decrypt: vi.fn((v: string) => v.replace('enc:', '')),
+}));
+
 import { prisma } from '@/lib/prisma';
 import {
   getShops,
   getShopById,
+  getShopCredentials,
   createShop,
   updateShop,
   deleteShop,
@@ -50,8 +56,8 @@ describe('getShops', () => {
 });
 
 describe('getShopById', () => {
-  it('queries by id and includes accessToken', async () => {
-    const mockShop = { id: '1', name: 'Shop A', accessToken: 'token' };
+  it('queries by id without accessToken', async () => {
+    const mockShop = { id: '1', name: 'Shop A' };
     mockPrisma.shopifyStore.findUnique.mockResolvedValue(mockShop as never);
 
     const result = await getShopById('1');
@@ -60,7 +66,7 @@ describe('getShopById', () => {
     expect(mockPrisma.shopifyStore.findUnique).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: '1' },
-        select: expect.objectContaining({ accessToken: true }),
+        select: expect.not.objectContaining({ accessToken: true }),
       }),
     );
   });
@@ -73,8 +79,20 @@ describe('getShopById', () => {
   });
 });
 
+describe('getShopCredentials', () => {
+  it('returns shop with decrypted accessToken', async () => {
+    const mockShop = { id: '1', domain: 'a.myshopify.com', accessToken: 'enc:shpat_xxx', apiVersion: '2025-01' };
+    mockPrisma.shopifyStore.findUnique.mockResolvedValue(mockShop as never);
+
+    const result = await getShopCredentials('1');
+
+    expect(result).toBeDefined();
+    expect(result!.accessToken).toBe('shpat_xxx');
+  });
+});
+
 describe('createShop', () => {
-  it('creates a shop with provided data', async () => {
+  it('creates a shop with encrypted accessToken', async () => {
     const input = {
       name: 'New Shop',
       domain: 'new.myshopify.com',
@@ -89,19 +107,18 @@ describe('createShop', () => {
     expect(result).toEqual(created);
     expect(mockPrisma.shopifyStore.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: {
+        data: expect.objectContaining({
           name: 'New Shop',
           domain: 'new.myshopify.com',
-          accessToken: 'shpat_xxx',
-          apiVersion: '2025-01',
-        },
+          accessToken: 'enc:shpat_xxx',
+        }),
       }),
     );
   });
 });
 
 describe('updateShop', () => {
-  it('updates shop fields', async () => {
+  it('updates shop fields without accessToken', async () => {
     const updated = { id: '1', name: 'Updated' };
     mockPrisma.shopifyStore.update.mockResolvedValue(updated as never);
 
@@ -112,6 +129,21 @@ describe('updateShop', () => {
       expect.objectContaining({
         where: { id: '1' },
         data: { name: 'Updated' },
+      }),
+    );
+  });
+
+  it('encrypts accessToken when provided', async () => {
+    const updated = { id: '1', name: 'Shop' };
+    mockPrisma.shopifyStore.update.mockResolvedValue(updated as never);
+
+    await updateShop('1', { accessToken: 'new_token' });
+
+    expect(mockPrisma.shopifyStore.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          accessToken: 'enc:new_token',
+        }),
       }),
     );
   });

@@ -5,6 +5,7 @@
     "products": "상품",
     "vendors": "벤더",
     "inventory": "재고",
+    "admin": "관리자",
     "settings": "설정"
   },
   "button": {
@@ -20,7 +21,8 @@
     "refresh": "새로고침",
     "previous": "이전",
     "export": "내보내기",
-    "import": "가져오기"
+    "import": "가져오기",
+    "logout": "로그아웃"
   },
   "status": {
     "loading": "로딩 중...",
@@ -56,5 +58,20 @@
     "light": "라이트 모드",
     "dark": "다크 모드",
     "toggle": "테마 전환"
+  },
+  "scan": {
+    "barcodeTab": "바코드",
+    "ocrTab": "텍스트 (OCR)",
+    "starting": "카메라 시작 중...",
+    "cameraUnavailable": "카메라는 HTTPS가 필요합니다. 텍스트 입력을 사용하세요.",
+    "barcodeHint": "바코드에 카메라를 맞추면 자동으로 스캔됩니다",
+    "capture": "텍스트 캡처",
+    "processing": "텍스트 인식 중...",
+    "recognizedText": "인식된 텍스트",
+    "originalText": "원본",
+    "retry": "다시 시도",
+    "useText": "이 텍스트 사용",
+    "ocrHint": "가이드 영역 안에 텍스트를 맞춘 후 캡처하세요",
+    "ocrFailed": "텍스트 인식에 실패했습니다. 다시 시도해 주세요."
   }
 }

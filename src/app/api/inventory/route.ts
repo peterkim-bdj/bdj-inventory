@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { apiError } from '@/lib/api/error';
+import { requireAuth } from '@/lib/auth';
 import { inventoryQuerySchema } from '@/features/inventory/types';
 import type { Prisma } from '@/generated/prisma/client';
 
 export async function GET(request: NextRequest) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   const searchParams = Object.fromEntries(request.nextUrl.searchParams);
   const parsed = inventoryQuerySchema.safeParse(searchParams);
 
@@ -14,7 +18,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const { search, status, locationId, productId, sortBy, sortOrder, page, limit } = parsed.data;
+  const { search, status, locationId, productId, shopifyStoreId, vendorId, sortBy, sortOrder, page, limit } = parsed.data;
 
   const where: Prisma.InventoryItemWhereInput = {};
 
@@ -29,6 +33,8 @@ export async function GET(request: NextRequest) {
   if (status) where.status = status;
   if (locationId) where.locationId = locationId;
   if (productId) where.productId = productId;
+  if (shopifyStoreId) where.product = { ...(where.product as object), shopifyStoreId };
+  if (vendorId) where.product = { ...(where.product as object), vendorId };
 
   const orderBy: Prisma.InventoryItemOrderByWithRelationInput =
     sortBy === 'barcode' ? { barcode: sortOrder ?? 'asc' }
@@ -51,6 +57,10 @@ export async function GET(request: NextRequest) {
             imageUrl: true,
             barcodePrefix: true,
             shopifyBarcode: true,
+            shopifyStoreId: true,
+            vendorName: true,
+            shopifyStore: { select: { id: true, name: true } },
+            vendor: { select: { id: true, name: true } },
           },
         },
         location: {
@@ -73,6 +83,24 @@ export async function GET(request: NextRequest) {
     where: { locationId: { not: null } },
   });
 
+  // Filter metadata for store/vendor dropdowns
+  const [storeFilters, vendorFilters] = await Promise.all([
+    prisma.$queryRaw<Array<{ id: string; name: string; count: number }>>`
+      SELECT s.id, s.name, COUNT(i.id)::int as count
+      FROM "InventoryItem" i
+      JOIN "Product" p ON i."productId" = p.id
+      JOIN "ShopifyStore" s ON p."shopifyStoreId" = s.id
+      GROUP BY s.id, s.name ORDER BY s.name
+    `,
+    prisma.$queryRaw<Array<{ id: string; name: string; count: number }>>`
+      SELECT v.id, v.name, COUNT(i.id)::int as count
+      FROM "InventoryItem" i
+      JOIN "Product" p ON i."productId" = p.id
+      JOIN "Vendor" v ON p."vendorId" = v.id
+      GROUP BY v.id, v.name ORDER BY v.name
+    `,
+  ]);
+
   return NextResponse.json({
     items,
     pagination: {
@@ -86,5 +114,6 @@ export async function GET(request: NextRequest) {
       byLocation: locationStats,
       total,
     },
+    filters: { stores: storeFilters, vendors: vendorFilters },
   });
 }

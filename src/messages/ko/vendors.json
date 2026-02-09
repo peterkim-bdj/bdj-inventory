@@ -1,0 +1,103 @@
+{
+  "title": "벤더",
+  "totalCount": "{count}개 벤더",
+  "addVendor": "벤더 추가",
+  "createTitle": "새 벤더",
+  "editTitle": "벤더 수정",
+  "backToList": "벤더 목록으로",
+  "noVendors": "벤더가 없습니다",
+  "missingContact": "연락처 미입력",
+  "active": "활성",
+  "inactive": "비활성",
+  "leadTimeDays": "{days}일 리드타임",
+  "productCount": "{count}개 상품",
+  "deleteConfirm": "이 벤더를 비활성화하시겠습니까?",
+  "view": {
+    "list": "리스트",
+    "card": "카드"
+  },
+  "search": {
+    "placeholder": "이름, 담당자, 코드로 검색..."
+  },
+  "filter": {
+    "allContact": "전체 연락처",
+    "hasContact": "연락처 있음",
+    "missingContact": "연락처 미입력",
+    "allStatus": "전체 상태",
+    "active": "활성",
+    "inactive": "비활성",
+    "allNotify": "전체 알림",
+    "notifyOn": "알림 ON",
+    "notifyOff": "알림 OFF"
+  },
+  "sort": {
+    "missingFirst": "연락처 미입력 우선",
+    "nameAsc": "이름 A-Z",
+    "nameDesc": "이름 Z-A",
+    "mostProducts": "상품 많은순",
+    "shortestLead": "리드타임 짧은순"
+  },
+  "table": {
+    "name": "벤더",
+    "contact": "담당자",
+    "phone": "전화번호",
+    "email": "이메일",
+    "products": "상품 수",
+    "leadTime": "리드타임",
+    "status": "상태"
+  },
+  "form": {
+    "name": "벤더명",
+    "code": "내부 코드",
+    "contactName": "담당자명",
+    "phone": "전화번호",
+    "email": "이메일",
+    "website": "웹사이트",
+    "address": "주소",
+    "notes": "메모",
+    "notesPlaceholder": "예: 월요일 오전 연락 선호",
+    "minLeadDays": "리드타임 (일)",
+    "autoNotify": "자동 알림"
+  },
+  "detail": {
+    "contactInfo": "연락처 정보",
+    "settings": "설정",
+    "products": "이 벤더의 상품",
+    "noProducts": "이 벤더의 상품이 없습니다",
+    "stockCount": "재고 {count}개"
+  },
+  "pagination": {
+    "showing": "{total}개 중 {from}-{to}"
+  },
+  "import": {
+    "title": "벤더 가져오기",
+    "dragOrClick": "파일을 드래그하거나 클릭하여 선택",
+    "dropHere": "여기에 놓으세요",
+    "acceptedFormats": "CSV, XLSX 지원",
+    "downloadTemplate": "템플릿 다운로드 (XLSX)",
+    "status": "상태",
+    "new": "신규",
+    "duplicate": "중복",
+    "error": "오류",
+    "newCount": "신규 {count}개",
+    "dupCount": "중복 {count}개",
+    "errCount": "오류 {count}개",
+    "duplicateAction": "중복 처리",
+    "skip": "건너뛰기",
+    "update": "업데이트",
+    "emptyValueAction": "빈 값 처리",
+    "ignoreEmpty": "기존 값 유지",
+    "overwriteEmpty": "빈 값으로 덮어쓰기",
+    "execute": "가져오기 실행",
+    "importing": "가져오는 중...",
+    "cancel": "취소",
+    "resultTitle": "가져오기 완료",
+    "total": "전체",
+    "created": "생성",
+    "updated": "업데이트",
+    "skipped": "건너뜀",
+    "errors": "오류",
+    "errorDetails": "오류 상세",
+    "importAnother": "다른 파일 가져오기"
+  }
+}

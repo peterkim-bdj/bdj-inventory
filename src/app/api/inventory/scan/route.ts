@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { apiError } from '@/lib/api/error';
+import { requireAuth } from '@/lib/auth';
 import { scanQuerySchema } from '@/features/inventory/types';
 
 export async function GET(request: NextRequest) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   const searchParams = Object.fromEntries(request.nextUrl.searchParams);
   const parsed = scanQuerySchema.safeParse(searchParams);
 

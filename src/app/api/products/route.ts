@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { productQuerySchema } from '@/features/products/types';
 import { apiError } from '@/lib/api/error';
+import { requireAuth } from '@/lib/auth';
 import type { Prisma } from '@/generated/prisma/client';
 
 export async function GET(request: NextRequest) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   const searchParams = Object.fromEntries(request.nextUrl.searchParams);
   const parsed = productQuerySchema.safeParse(searchParams);
 

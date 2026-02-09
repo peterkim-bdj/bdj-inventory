@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { apiError } from '@/lib/api/error';
+import { requireAuth } from '@/lib/auth';
 import { createProductSchema } from '@/features/inventory/types';
+import { generateUniqueBarcodePrefix } from '@/lib/barcode';
 
 export async function POST(request: NextRequest) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   const body = await request.json();
   const parsed = createProductSchema.safeParse(body);
 
@@ -15,25 +20,10 @@ export async function POST(request: NextRequest) {
 
   const { name, sku, shopifyBarcode, productType, price, vendorName } = parsed.data;
 
-  // Generate barcodePrefix: BDJ-{random 6 chars}
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let barcodePrefix = '';
-  let attempts = 0;
-
-  do {
-    const random = Array.from({ length: 6 }, () =>
-      chars[Math.floor(Math.random() * chars.length)]
-    ).join('');
-    barcodePrefix = `BDJ-${random}`;
-    const existing = await prisma.product.findUnique({
-      where: { barcodePrefix },
-      select: { id: true },
-    });
-    if (!existing) break;
-    attempts++;
-  } while (attempts < 10);
-
-  if (attempts >= 10) {
+  let barcodePrefix: string;
+  try {
+    barcodePrefix = await generateUniqueBarcodePrefix();
+  } catch {
     return apiError('CONFLICT', 'Could not generate unique barcode prefix', 500);
   }
 
