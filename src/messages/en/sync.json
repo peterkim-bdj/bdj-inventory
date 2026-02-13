@@ -58,6 +58,33 @@
       "description": "Description"
     }
   },
+  "progress": {
+    "title": "Sync Progress",
+    "phase": {
+      "fetching": "Fetching from Shopify",
+      "processing": "Processing Products",
+      "completing": "Completing Sync",
+      "complete": "Sync Complete",
+      "error": "Sync Failed"
+    },
+    "stats": "{processed} / {total} products",
+    "percentage": "{value}%",
+    "console": "Console",
+    "openConsole": "View Details",
+    "close": "Close",
+    "log": {
+      "fetchingPage": "Fetching page {page}... ({count} products)",
+      "fetchComplete": "Fetch complete. Processing {count} products",
+      "processingProduct": "\"{name}\"",
+      "syncComplete": "Sync completed successfully",
+      "syncFailed": "Sync failed: {error}"
+    },
+    "stepper": {
+      "fetching": "Fetch",
+      "processing": "Process",
+      "complete": "Complete"
+    }
+  },
   "log": {
     "title": "Sync History",
     "type": {

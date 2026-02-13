@@ -149,7 +149,7 @@ export default function InventoryRegisterPage() {
                 {t('register.formTitle')}
               </h2>
               <RegisterForm
-                productName={selectedProduct.name}
+                productName={selectedProduct.variantTitle ? `${selectedProduct.name} — ${selectedProduct.variantTitle}` : selectedProduct.name}
                 onSubmit={handleRegister}
                 isSubmitting={registerMutation.isPending}
               />

@@ -8,6 +8,7 @@ interface ProductMatchCardProps {
     id: string;
     name: string;
     sku: string | null;
+    variantTitle: string | null;
     shopifyBarcode: string | null;
     barcodePrefix: string;
     imageUrl: string | null;
@@ -47,6 +48,9 @@ export function ProductMatchCard({ product, isSelected, onSelect }: ProductMatch
         )}
         <div className="flex-1 min-w-0">
           <p className="font-medium truncate">{product.name}</p>
+          {product.variantTitle && (
+            <p className="text-sm text-gray-400 dark:text-zinc-400 truncate">{product.variantTitle}</p>
+          )}
           {product.sku && (
             <p className="text-sm text-gray-500 dark:text-zinc-400">SKU: {product.sku}</p>
           )}

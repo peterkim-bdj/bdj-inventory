@@ -82,7 +82,15 @@
   },
   "view": {
     "list": "List",
+    "grouped": "Grouped",
     "card": "Card"
+  },
+  "grouped": {
+    "product": "Product",
+    "qty": "Qty",
+    "statusSummary": "Status",
+    "loadingItems": "Loading items...",
+    "productCount": "{count} products"
   },
   "sort": {
     "newestFirst": "Newest First",

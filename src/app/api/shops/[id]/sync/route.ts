@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { startSync, ShopNotFoundError, SyncInProgressError } from '@/features/shops/services/syncService';
+import { startSyncAsync, ShopNotFoundError, SyncInProgressError } from '@/features/shops/services/syncService';
 import { ShopifyApiError } from '@/lib/shopify/client';
 import { apiError } from '@/lib/api/error';
 import { requireAuth } from '@/lib/auth';
@@ -14,7 +14,7 @@ export async function POST(
   const { id } = await params;
 
   try {
-    const result = await startSync(id);
+    const result = await startSyncAsync(id);
     return NextResponse.json(result);
   } catch (error) {
     if (error instanceof ShopifyApiError) {

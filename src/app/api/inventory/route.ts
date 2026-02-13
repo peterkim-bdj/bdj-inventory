@@ -54,6 +54,7 @@ export async function GET(request: NextRequest) {
             id: true,
             name: true,
             sku: true,
+            variantTitle: true,
             imageUrl: true,
             barcodePrefix: true,
             shopifyBarcode: true,

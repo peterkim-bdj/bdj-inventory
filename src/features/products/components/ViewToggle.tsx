@@ -10,5 +10,14 @@ interface ViewToggleProps {
 
 export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
   const t = useTranslations('products');
-  return <BaseViewToggle view={view} onViewChange={onViewChange} listLabel={t('view.list')} cardLabel={t('view.card')} />;
+  return (
+    <BaseViewToggle
+      view={view}
+      onViewChange={onViewChange}
+      options={[
+        { value: 'list', label: t('view.list') },
+        { value: 'card', label: t('view.card') },
+      ]}
+    />
+  );
 }

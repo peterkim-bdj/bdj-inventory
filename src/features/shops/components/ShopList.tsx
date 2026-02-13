@@ -74,7 +74,7 @@ export function ShopList() {
                 <td className="px-5 py-4">{statusBadge(shop.syncStatus)}</td>
                 <td className="px-5 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <SyncButton shopId={shop.id} syncStatus={shop.syncStatus} />
+                    <SyncButton shopId={shop.id} shopName={shop.name} syncStatus={shop.syncStatus} />
                     <Link
                       href={`/shops/${shop.id}/edit`}
                       className="rounded-full border border-gray-200 px-3 py-1 text-xs font-medium hover:bg-gray-50 dark:border-zinc-700 dark:hover:bg-zinc-800"

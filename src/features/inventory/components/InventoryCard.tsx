@@ -38,7 +38,12 @@ export function InventoryCard({ item, onClick, onPrint }: InventoryCardProps) {
       )}
 
       {/* Product name + SKU */}
-      <h3 className="font-medium text-sm line-clamp-2">{item.product.name}</h3>
+      <h3 className="font-medium text-sm line-clamp-2">
+        {item.product.name}
+        {item.product.variantTitle && (
+          <span className="ml-1 font-normal text-gray-400">— {item.product.variantTitle}</span>
+        )}
+      </h3>
       {item.product.sku && <p className="text-xs text-gray-400 mt-0.5">{item.product.sku}</p>}
 
       {/* Status + Condition badges */}

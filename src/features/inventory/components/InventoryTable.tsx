@@ -57,6 +57,9 @@ export function InventoryTable({ items, onItemClick, onProductClick, onPrint }: 
                       onClick={(e) => { if (onProductClick) { e.stopPropagation(); onProductClick(item.product.id); } }}
                     >
                       {item.product.name}
+                      {item.product.variantTitle && (
+                        <span className="ml-1 font-normal text-gray-400">— {item.product.variantTitle}</span>
+                      )}
                     </p>
                     {item.product.sku && <p className="text-xs text-gray-400">{item.product.sku}</p>}
                   </div>

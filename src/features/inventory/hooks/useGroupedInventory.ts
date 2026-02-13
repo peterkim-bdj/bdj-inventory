@@ -1,12 +1,12 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import type { GroupedInventoryResponse } from '../types';
 
-interface UseInventoryParams {
+interface UseGroupedInventoryParams {
   search?: string;
   status?: string;
   locationId?: string;
-  productId?: string;
   shopifyStoreId?: string;
   vendorId?: string;
   sortBy?: string;
@@ -16,29 +16,11 @@ interface UseInventoryParams {
   enabled?: boolean;
 }
 
-import type { InventoryItemDetail, InventoryFiltersMeta } from '../types';
-
-interface InventoryResponse {
-  items: InventoryItemDetail[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-  stats: {
-    byStatus: Array<{ status: string; count: number }>;
-    total: number;
-  };
-  filters: InventoryFiltersMeta;
-}
-
-async function fetchInventory(params: UseInventoryParams): Promise<InventoryResponse> {
+async function fetchGroupedInventory(params: UseGroupedInventoryParams): Promise<GroupedInventoryResponse> {
   const searchParams = new URLSearchParams();
   if (params.search) searchParams.set('search', params.search);
   if (params.status) searchParams.set('status', params.status);
   if (params.locationId) searchParams.set('locationId', params.locationId);
-  if (params.productId) searchParams.set('productId', params.productId);
   if (params.shopifyStoreId) searchParams.set('shopifyStoreId', params.shopifyStoreId);
   if (params.vendorId) searchParams.set('vendorId', params.vendorId);
   if (params.sortBy) searchParams.set('sortBy', params.sortBy);
@@ -46,16 +28,16 @@ async function fetchInventory(params: UseInventoryParams): Promise<InventoryResp
   if (params.page) searchParams.set('page', String(params.page));
   if (params.limit) searchParams.set('limit', String(params.limit));
 
-  const res = await fetch(`/api/inventory?${searchParams}`);
-  if (!res.ok) throw new Error('Failed to fetch inventory');
+  const res = await fetch(`/api/inventory/grouped?${searchParams}`);
+  if (!res.ok) throw new Error('Failed to fetch grouped inventory');
   return res.json();
 }
 
-export function useInventory(params: UseInventoryParams = {}) {
+export function useGroupedInventory(params: UseGroupedInventoryParams = {}) {
   const { enabled = true, ...fetchParams } = params;
   return useQuery({
-    queryKey: ['inventory', fetchParams],
-    queryFn: () => fetchInventory(fetchParams),
+    queryKey: ['inventory-grouped', fetchParams],
+    queryFn: () => fetchGroupedInventory(fetchParams),
     enabled,
   });
 }

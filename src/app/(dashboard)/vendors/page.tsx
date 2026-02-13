@@ -66,7 +66,14 @@ export default function VendorsPage() {
           )}
         </div>
         <div className="flex items-center gap-3">
-          <ViewToggle view={view} onViewChange={setView} listLabel={t('view.list')} cardLabel={t('view.card')} />
+          <ViewToggle
+            view={view}
+            onViewChange={setView}
+            options={[
+              { value: 'list', label: t('view.list') },
+              { value: 'card', label: t('view.card') },
+            ]}
+          />
           {isAdmin && (
             <>
               <Link

@@ -67,7 +67,12 @@ export function InventoryDetailPanel({ item, onClose, onProductClick }: Inventor
               <div className="h-12 w-12 rounded-lg bg-gray-100 dark:bg-zinc-800" />
             )}
             <div>
-              <p className="font-medium">{item.product.name}</p>
+              <p className="font-medium">
+                {item.product.name}
+                {item.product.variantTitle && (
+                  <span className="ml-1 font-normal text-gray-400">— {item.product.variantTitle}</span>
+                )}
+              </p>
               {item.product.sku && <p className="text-xs text-gray-400">{item.product.sku}</p>}
               {onProductClick && <p className="text-xs text-blue-500 mt-0.5">{t('detail.viewProduct')}</p>}
             </div>

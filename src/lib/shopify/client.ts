@@ -134,14 +134,22 @@ async function graphqlRequest(
   throw new ShopifyApiError('Max retries exceeded', 0, 'SHOPIFY_API_ERROR');
 }
 
+export interface FetchPageInfo {
+  page: number;
+  count: number;
+}
+
 export async function fetchAllProducts(
   config: ShopifyClientConfig,
+  onPage?: (pageInfo: FetchPageInfo) => void,
 ): Promise<ShopifyProduct[]> {
   const products: ShopifyProduct[] = [];
   let hasNextPage = true;
   let cursor: string | null = null;
+  let page = 0;
 
   while (hasNextPage) {
+    page++;
     const data = (await graphqlRequest(config, PRODUCTS_QUERY, {
       first: 50,
       after: cursor,
@@ -160,6 +168,8 @@ export async function fetchAllProducts(
 
     hasNextPage = pageInfo.hasNextPage;
     cursor = pageInfo.endCursor;
+
+    onPage?.({ page, count: products.length });
   }
 
   return products;

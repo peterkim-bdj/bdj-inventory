@@ -82,6 +82,7 @@ export interface InventoryItemDetail {
     id: string;
     name: string;
     sku: string | null;
+    variantTitle: string | null;
     imageUrl: string | null;
     barcodePrefix: string;
     shopifyBarcode: string | null;
@@ -103,6 +104,7 @@ export interface ScanResult {
     id: string;
     name: string;
     sku: string | null;
+    variantTitle: string | null;
     shopifyBarcode: string | null;
     barcodePrefix: string;
     imageUrl: string | null;
@@ -122,6 +124,48 @@ export interface InventoryFiltersMeta {
   stores: InventoryFilterOption[];
   vendors: InventoryFilterOption[];
 }
+
+export interface ProductInventoryGroup {
+  product: {
+    id: string;
+    name: string;
+    variantTitle: string | null;
+    sku: string | null;
+    imageUrl: string | null;
+    shopifyStoreId: string | null;
+    vendorName: string | null;
+  };
+  totalCount: number;
+  statusCounts: Partial<Record<InventoryStatus, number>>;
+}
+
+export interface GroupedInventoryResponse {
+  groups: ProductInventoryGroup[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    totalItems: number;
+  };
+  stats: {
+    byStatus: Array<{ status: string; count: number }>;
+    total: number;
+  };
+  filters: InventoryFiltersMeta;
+}
+
+export const groupedInventoryQuerySchema = z.object({
+  search: z.string().optional(),
+  status: z.enum(INVENTORY_STATUS).optional(),
+  locationId: z.string().optional(),
+  shopifyStoreId: z.string().optional(),
+  vendorId: z.string().optional(),
+  sortBy: z.enum(['totalCount', 'productName']).optional(),
+  sortOrder: z.enum(['asc', 'desc']).optional(),
+  page: z.coerce.number().min(1).optional().default(1),
+  limit: z.coerce.number().min(1).max(100).optional().default(20),
+});
 
 export interface RegisterResult {
   items: Array<{
