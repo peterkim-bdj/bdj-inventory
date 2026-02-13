@@ -6,9 +6,17 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  debug: process.env.NODE_ENV !== 'production',
+  debug: true,
   adapter: PrismaAdapter(prisma),
   session: { strategy: 'jwt' },
+  logger: {
+    error(code, ...message) {
+      console.error('[NextAuth][error]', code, JSON.stringify(message, null, 2));
+    },
+    warn(code) {
+      console.warn('[NextAuth][warn]', code);
+    },
+  },
   pages: {
     signIn: '/login',
     error: '/login',
