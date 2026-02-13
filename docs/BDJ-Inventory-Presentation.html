@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BDJ Inventory — 쇼피파이 통합 제안</title>
+<style>
+  :root {
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #263548;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-green: #10b981;
+    --accent-green-dim: #065f46;
+    --accent-orange: #f59e0b;
+    --accent-orange-dim: #78350f;
+    --accent-red: #ef4444;
+    --accent-blue: #3b82f6;
+    --accent-purple: #8b5cf6;
+    --border: #334155;
+    --border-green: #059669;
+    --border-orange: #d97706;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    height: 100%;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    line-height: 1.6;
+    height: 100%;
+  }
+
+  /* === Navigation === */
+  .nav-dots {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+  }
+
+  .nav-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    padding: 0;
+  }
+
+  .nav-dot:hover { background: var(--text-secondary); transform: scale(1.3); }
+  .nav-dot.active { background: var(--accent-green); transform: scale(1.4); }
+
+  .nav-labels {
+    position: fixed;
+    left: 24px;
+    bottom: 24px;
+    z-index: 100;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .slide-counter {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 100;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* === Slide base === */
+  .slide {
+    min-height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 80px;
+    position: relative;
+  }
+
+  .slide-inner {
+    max-width: 1200px;
+    width: 100%;
+  }
+
+  /* === Typography === */
+  .slide-label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-green);
+    margin-bottom: 12px;
+  }
+
+  .slide-title {
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .slide-subtitle {
+    font-size: 20px;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    max-width: 700px;
+  }
+
+  h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  /* === Cards === */
+  .card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid var(--border);
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .card-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .card-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .card-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  /* === Tags === */
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .tag-auto { background: var(--accent-green-dim); color: var(--accent-green); }
+  .tag-manual { background: var(--accent-orange-dim); color: var(--accent-orange); }
+  .tag-recommend { background: var(--accent-green); color: #fff; }
+  .tag-phase { background: var(--accent-blue); color: #fff; font-size: 11px; }
+
+  /* === Step items === */
+  .step-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: background 0.2s;
+  }
+
+  .step-item.manual { background: rgba(245, 158, 11, 0.1); border-left: 3px solid var(--accent-orange); }
+  .step-item.auto { background: rgba(16, 185, 129, 0.1); border-left: 3px solid var(--accent-green); }
+  .step-item.wait { background: rgba(100, 116, 139, 0.1); border-left: 3px solid var(--text-muted); font-style: italic; color: var(--text-secondary); }
+
+  .step-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .step-item.manual .step-num { background: var(--accent-orange); color: #000; }
+  .step-item.auto .step-num { background: var(--accent-green); color: #000; }
+  .step-item.wait .step-num { background: var(--text-muted); color: #fff; }
+
+  .step-tag {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* === Comparison columns === */
+  .compare-col {
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  .compare-col.inventory {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(245, 158, 11, 0.02));
+    border: 1px solid rgba(245, 158, 11, 0.2);
+  }
+
+  .compare-col.shopify {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.02));
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+
+  .compare-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .compare-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .compare-icon.inv { background: rgba(245, 158, 11, 0.2); }
+  .compare-icon.shp { background: rgba(16, 185, 129, 0.2); }
+
+  .compare-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .compare-stats {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat-item .x { color: var(--accent-red); }
+  .stat-item .check { color: var(--accent-green); }
+
+  /* === Case header === */
+  .case-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 28px;
+  }
+
+  .case-badge.case1 { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+  .case-badge.case2 { background: rgba(245, 158, 11, 0.15); color: var(--accent-orange); }
+
+  /* === Roadmap === */
+  .roadmap {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    position: relative;
+    margin-top: 40px;
+  }
+
+  .roadmap::before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: 40px;
+    right: 40px;
+    height: 3px;
+    background: var(--border);
+  }
+
+  .roadmap-item {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    padding: 0 8px;
+  }
+
+  .roadmap-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 18px auto 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .roadmap-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+  }
+
+  .roadmap-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* === Phase detail card === */
+  .phase-card {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 40px;
+    border: 1px solid var(--border);
+    max-width: 900px;
+  }
+
+  .phase-number {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-green);
+    margin-bottom: 4px;
+  }
+
+  .phase-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  .phase-desc {
+    font-size: 17px;
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+    line-height: 1.7;
+  }
+
+  .feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    background: rgba(16, 185, 129, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(16, 185, 129, 0.1);
+  }
+
+  .feature-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .feature-text {
+    font-size: 15px;
+  }
+
+  .feature-text strong {
+    color: var(--accent-green);
+  }
+
+  /* === Summary table === */
+  .summary-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+  }
+
+  .summary-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .summary-table td {
+    padding: 14px 16px;
+    font-size: 14px;
+    background: var(--bg-card);
+  }
+
+  .summary-table td:first-child {
+    border-radius: 10px 0 0 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .summary-table td:last-child { border-radius: 0 10px 10px 0; }
+  .summary-table .neg { color: var(--accent-red); }
+  .summary-table .pos { color: var(--accent-green); }
+
+  /* === Data benefit === */
+  .benefit-visual {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .benefit-arrow {
+    font-size: 36px;
+    color: var(--text-muted);
+  }
+
+  .data-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .data-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .data-item.typing {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.15);
+  }
+
+  .data-item.sync {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+  }
+
+  /* === Title slide === */
+  .title-slide {
+    text-align: center;
+  }
+
+  .title-slide .slide-title {
+    font-size: 56px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--text-primary), var(--accent-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .title-slide .slide-subtitle {
+    margin: 0 auto 40px;
+    font-size: 22px;
+  }
+
+  .title-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    border-radius: 30px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--accent-green);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* === Closing === */
+  .closing-points {
+    display: flex;
+    gap: 32px;
+    margin-top: 40px;
+  }
+
+  .closing-point {
+    text-align: center;
+    flex: 1;
+  }
+
+  .closing-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+  }
+
+  .closing-label {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .closing-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  /* === Keyboard hint === */
+  .key-hint {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: var(--text-muted);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .key-hint kbd {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    font-size: 11px;
+    font-family: inherit;
+  }
+
+  /* === Responsive === */
+  @media (max-width: 900px) {
+    .slide { padding: 40px 24px; }
+    .card-grid-2, .card-grid-3, .card-grid-4 { grid-template-columns: 1fr; }
+    .slide-title { font-size: 32px; }
+    .title-slide .slide-title { font-size: 36px; }
+    .benefit-visual { grid-template-columns: 1fr; }
+    .benefit-arrow { transform: rotate(90deg); text-align: center; }
+    .roadmap { flex-direction: column; gap: 16px; }
+    .roadmap::before { display: none; }
+    .nav-dots { right: 12px; }
+    .closing-points { flex-direction: column; gap: 20px; }
+    .phase-card { padding: 24px; }
+  }
+
+  /* approach cards */
+  .approach-card {
+    border-radius: 16px;
+    padding: 32px;
+    height: 100%;
+  }
+  .approach-card.option-a {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.06), rgba(245, 158, 11, 0.02));
+    border: 1px solid rgba(245, 158, 11, 0.2);
+  }
+  .approach-card.option-b {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.06), rgba(16, 185, 129, 0.02));
+    border: 2px solid rgba(16, 185, 129, 0.4);
+    position: relative;
+  }
+  .approach-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+  .approach-list li { font-size: 14px; color: var(--text-secondary); display: flex; align-items: flex-start; gap: 8px; }
+  .approach-list .icon-x { color: var(--accent-red); }
+  .approach-list .icon-check { color: var(--accent-green); }
+
+  /* Proportion bar */
+  .proportion-bar {
+    display: flex;
+    height: 32px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .proportion-bar .seg-manual {
+    background: rgba(245, 158, 11, 0.3);
+    color: var(--accent-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .proportion-bar .seg-auto {
+    background: rgba(16, 185, 129, 0.3);
+    color: var(--accent-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation Dots -->
+<nav class="nav-dots" id="navDots"></nav>
+<div class="slide-counter" id="slideCounter">1 / 14</div>
+<div class="key-hint"><kbd>←</kbd> <kbd>→</kbd> 또는 스크롤로 이동</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 1: Title -->
+<!-- ============================================================ -->
+<section class="slide" id="s1">
+  <div class="slide-inner title-slide">
+    <div class="slide-label">BDJ Inventory</div>
+    <h1 class="slide-title">쇼피파이 통합 제안</h1>
+    <p class="slide-subtitle">
+      인벤토리 관리를 넘어서,<br>쇼피파이와 하나 되는 통합 솔루션
+    </p>
+    <div class="title-badge">
+      🔗 Shopify + Inventory = 하나의 시스템
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 2: Requirements -->
+<!-- ============================================================ -->
+<section class="slide" id="s2">
+  <div class="slide-inner">
+    <div class="slide-label">요구사항 확인</div>
+    <h2 class="slide-title">원래 요청</h2>
+    <p class="slide-subtitle">"인벤토리 관리 시스템 필요"</p>
+
+    <div style="display:flex; justify-content:center;">
+      <div class="card" style="text-align:center; max-width:400px; border-color: rgba(245,158,11,0.3);">
+        <div style="font-size:48px; margin-bottom:16px;">📦</div>
+        <h3 style="font-size:22px;">재고 수량 파악</h3>
+        <p style="font-size:16px; color:var(--text-secondary); margin-top:12px;">어떤 물건이 몇 개 있는지<br>정확히 알고 싶다</p>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:40px;">
+      <p style="font-size:18px; color:var(--accent-green); font-weight:600;">
+        ↓ 여기서 한 걸음 더 — 통합 솔루션 제안
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 3: Two Approaches -->
+<!-- ============================================================ -->
+<section class="slide" id="s3">
+  <div class="slide-inner">
+    <div class="slide-label">두 가지 접근 방식</div>
+    <h2 class="slide-title">어떻게 만들 것인가?</h2>
+    <p class="slide-subtitle">같은 목표, 다른 방법</p>
+
+    <div class="card-grid-2">
+      <div class="approach-card option-a">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+          <span style="font-size:28px;">📱</span>
+          <div>
+            <h3 style="margin:0; font-size:20px; color:var(--accent-orange);">옵션 A</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin:0;">인벤토리 앱 단독</p>
+          </div>
+        </div>
+        <ul class="approach-list">
+          <li><span class="icon-x">✗</span> 재고 관리만 가능</li>
+          <li><span class="icon-x">✗</span> 주문은 쇼피파이에서 별도 확인</li>
+          <li><span class="icon-x">✗</span> 상품/벤더 정보 전부 수동 입력</li>
+          <li><span class="icon-x">✗</span> 시스템 간 동기화 없음</li>
+          <li><span class="icon-x">✗</span> 화면 전환하며 작업</li>
+        </ul>
+      </div>
+
+      <div class="approach-card option-b">
+        <div style="position:absolute; top:16px; right:16px;"><span class="tag tag-recommend">추천</span></div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+          <span style="font-size:28px;">🔗</span>
+          <div>
+            <h3 style="margin:0; font-size:20px; color:var(--accent-green);">옵션 B</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin:0;">쇼피파이 통합</p>
+          </div>
+        </div>
+        <ul class="approach-list">
+          <li><span class="icon-check">✓</span> 재고 + 주문 + 발주 통합 관리</li>
+          <li><span class="icon-check">✓</span> 쇼피파이 데이터 자동 연동</li>
+          <li><span class="icon-check">✓</span> 주문 수신부터 배송까지 자동화</li>
+          <li><span class="icon-check">✓</span> 하나의 화면에서 모든 작업</li>
+          <li><span class="icon-check">✓</span> 이중 예약 방지</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 4: Case 1 Workflow -->
+<!-- ============================================================ -->
+<section class="slide" id="s4" style="align-items: flex-start; padding-top: 48px; padding-bottom: 48px;">
+  <div class="slide-inner">
+    <div style="text-align:center;">
+      <div class="case-badge case1">✅ CASE 1: 재고가 있는 경우</div>
+    </div>
+
+    <div class="card-grid-2" style="margin-top: 8px;">
+      <!-- Inventory Only -->
+      <div class="compare-col inventory">
+        <div class="compare-header">
+          <div class="compare-icon inv">📱</div>
+          <div>
+            <h3 style="margin:0; font-size:18px;">인벤토리 앱 Only</h3>
+            <p class="compare-subtitle" style="margin:0;">수동 작업 중심</p>
+          </div>
+        </div>
+        <div class="step-list">
+          <div class="step-item manual"><span class="step-num">1</span> 몰 A, B, C 각각 열어서 주문 확인 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">2</span> 인벤토리 앱으로 전환 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">3</span> 바코드 스캔 / 상품 검색 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">4</span> 재고 수량 확인 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">5</span> 수량 수동 차감 입력 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">6</span> 쇼피파이로 돌아가기 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">7</span> 배송 처리 + 송장 입력 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+        </div>
+        <div class="proportion-bar" style="margin-top:16px;">
+          <div class="seg-manual" style="width:100%">수동 7단계</div>
+        </div>
+        <div class="compare-stats">
+          <span class="stat-item"><span class="x">✗</span> 화면 전환 4회</span>
+          <span class="stat-item"><span class="x">✗</span> 수동 입력 3회</span>
+          <span class="stat-item"><span class="x">✗</span> 동기화 안됨</span>
+        </div>
+      </div>
+
+      <!-- Shopify Integrated -->
+      <div class="compare-col shopify">
+        <div class="compare-header">
+          <div class="compare-icon shp">🔗</div>
+          <div>
+            <h3 style="margin:0; font-size:18px;">쇼피파이 통합</h3>
+            <p class="compare-subtitle" style="margin:0;">자동화 중심</p>
+          </div>
+          <span class="tag tag-recommend" style="margin-left:auto;">추천</span>
+        </div>
+        <div class="step-list">
+          <div class="step-item auto"><span class="step-num">1</span> 주문 자동 수집 (웹훅) <span class="step-tag"><span class="tag tag-auto">자동</span></span></div>
+          <div class="step-item auto"><span class="step-num">2</span> 재고 자동 확인 + 예약 <span class="step-tag"><span class="tag tag-auto">자동</span></span></div>
+          <div class="step-item manual"><span class="step-num">3</span> 통합 대시보드에서 확인 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">4</span> 출고 처리 클릭 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item auto"><span class="step-num">5</span> 재고 자동 차감 <span class="step-tag"><span class="tag tag-auto">자동</span></span></div>
+          <div class="step-item manual"><span class="step-num">6</span> 배송 처리 + 송장 입력 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+        </div>
+        <div class="proportion-bar" style="margin-top:16px;">
+          <div class="seg-auto" style="width:50%">자동 3</div>
+          <div class="seg-manual" style="width:50%">수동 3</div>
+        </div>
+        <div class="compare-stats">
+          <span class="stat-item"><span class="check">✓</span> 화면 전환 0회</span>
+          <span class="stat-item"><span class="check">✓</span> 자동 동기화</span>
+          <span class="stat-item"><span class="check">✓</span> 이중 예약 방지</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 5: Case 2 Workflow -->
+<!-- ============================================================ -->
+<section class="slide" id="s5" style="align-items: flex-start; padding-top: 48px; padding-bottom: 48px;">
+  <div class="slide-inner">
+    <div style="text-align:center;">
+      <div class="case-badge case2">⚠️ CASE 2: 재고가 없는 경우</div>
+    </div>
+
+    <div class="card-grid-2" style="margin-top: 8px;">
+      <!-- Inventory Only -->
+      <div class="compare-col inventory">
+        <div class="compare-header">
+          <div class="compare-icon inv">📱</div>
+          <div>
+            <h3 style="margin:0; font-size:18px;">인벤토리 앱 Only</h3>
+            <p class="compare-subtitle" style="margin:0;">수동 작업 중심</p>
+          </div>
+        </div>
+        <div class="step-list">
+          <div class="step-item manual"><span class="step-num">1</span> 몰 A, B, C 각각 열어서 주문 확인 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">2</span> 인벤토리 앱에서 재고 확인 → 없음 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">3</span> 엑셀/메모에서 벤더 연락처 찾기 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">4</span> 벤더에게 이메일/카톡 발주 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">5</span> 발주 내역 메모장에 기록 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">6</span> 고객에게 지연 안내 수동 발송 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item wait"><span class="step-num">⏳</span> 며칠 후 물건 도착</div>
+          <div class="step-item manual"><span class="step-num">8</span> 메모 뒤져서 어느 고객 주문인지 찾기 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">9</span> 어느 몰 주문이었는지 확인 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">10</span> 인벤토리 앱에서 입고 수량 추가 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">11</span> 배송 처리 + 송장 입력 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+        </div>
+        <div class="proportion-bar" style="margin-top:16px;">
+          <div class="seg-manual" style="width:100%">수동 10단계</div>
+        </div>
+        <div class="compare-stats">
+          <span class="stat-item"><span class="x">✗</span> 발주 추적 불가</span>
+          <span class="stat-item"><span class="x">✗</span> 고객-주문 매칭 실수 위험</span>
+          <span class="stat-item"><span class="x">✗</span> 기억에 의존</span>
+        </div>
+      </div>
+
+      <!-- Shopify Integrated -->
+      <div class="compare-col shopify">
+        <div class="compare-header">
+          <div class="compare-icon shp">🔗</div>
+          <div>
+            <h3 style="margin:0; font-size:18px;">쇼피파이 통합</h3>
+            <p class="compare-subtitle" style="margin:0;">자동화 중심</p>
+          </div>
+          <span class="tag tag-recommend" style="margin-left:auto;">추천</span>
+        </div>
+        <div class="step-list">
+          <div class="step-item auto"><span class="step-num">1</span> 주문 자동 수집 → 재고 부족 감지 <span class="step-tag"><span class="tag tag-auto">자동</span></span></div>
+          <div class="step-item auto"><span class="step-num">2</span> ⚠️ 발주 필요 알림 (벤더 자동 매칭) <span class="step-tag"><span class="tag tag-auto">자동</span></span></div>
+          <div class="step-item manual"><span class="step-num">3</span> 발주 버튼 클릭 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item auto"><span class="step-num">4</span> 고객 자동 알림: "상품 준비 중" <span class="step-tag"><span class="tag tag-auto">자동</span></span></div>
+          <div class="step-item wait"><span class="step-num">⏳</span> 며칠 후 물건 도착</div>
+          <div class="step-item manual"><span class="step-num">6</span> 바코드 스캔 → 대기 주문 자동 매칭 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">7</span> 입고 확인 + 출고 클릭 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item manual"><span class="step-num">8</span> 배송 처리 + 송장 입력 <span class="step-tag"><span class="tag tag-manual">수동</span></span></div>
+          <div class="step-item auto"><span class="step-num">9</span> 고객 자동 알림: "발송 완료" <span class="step-tag"><span class="tag tag-auto">자동</span></span></div>
+        </div>
+        <div class="proportion-bar" style="margin-top:16px;">
+          <div class="seg-auto" style="width:50%">자동 4</div>
+          <div class="seg-manual" style="width:50%">수동 4</div>
+        </div>
+        <div class="compare-stats">
+          <span class="stat-item"><span class="check">✓</span> 발주 자동 추적</span>
+          <span class="stat-item"><span class="check">✓</span> 고객-주문 자동 매칭</span>
+          <span class="stat-item"><span class="check">✓</span> 고객 자동 알림</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 6: Summary Comparison -->
+<!-- ============================================================ -->
+<section class="slide" id="s6">
+  <div class="slide-inner">
+    <div class="slide-label">종합 비교</div>
+    <h2 class="slide-title">한눈에 보는 차이</h2>
+    <p class="slide-subtitle">인벤토리 앱 Only vs 쇼피파이 통합</p>
+
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th style="width:22%;">항목</th>
+          <th style="width:39%;">📱 인벤토리 앱 Only</th>
+          <th style="width:39%;">🔗 쇼피파이 통합</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>주문 확인</td>
+          <td class="neg">몰별로 따로 열어서 확인</td>
+          <td class="pos">통합 대시보드에서 한번에</td>
+        </tr>
+        <tr>
+          <td>재고 차감</td>
+          <td class="neg">수동으로 수량 입력</td>
+          <td class="pos">주문 시 자동 차감</td>
+        </tr>
+        <tr>
+          <td>재고 없을 때</td>
+          <td class="neg">메모에서 벤더 찾기, 수동 발주</td>
+          <td class="pos">벤더 자동 매칭 + 원클릭 발주</td>
+        </tr>
+        <tr>
+          <td>발주 추적</td>
+          <td class="neg">메모/기억에 의존</td>
+          <td class="pos">시스템이 자동 추적</td>
+        </tr>
+        <tr>
+          <td>고객 안내</td>
+          <td class="neg">수동으로 개별 연락</td>
+          <td class="pos">자동 알림 발송</td>
+        </tr>
+        <tr>
+          <td>입고 후 처리</td>
+          <td class="neg">어떤 주문인지 다시 찾기</td>
+          <td class="pos">바코드 스캔 → 자동 매칭</td>
+        </tr>
+        <tr>
+          <td>데이터 입력</td>
+          <td class="neg">상품 정보 전부 수동 입력</td>
+          <td class="pos">쇼피파이에서 자동 동기화</td>
+        </tr>
+        <tr>
+          <td>화면 전환</td>
+          <td class="neg">여러 앱/사이트 오가며 작업</td>
+          <td class="pos">하나의 시스템에서 완결</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 7: Data Preparation Benefit -->
+<!-- ============================================================ -->
+<section class="slide" id="s7">
+  <div class="slide-inner">
+    <div class="slide-label">초기 데이터 준비</div>
+    <h2 class="slide-title">이미 있는 데이터를<br>왜 다시 입력하는가?</h2>
+    <p class="slide-subtitle">쇼피파이에 이미 등록된 상품·벤더 정보를 그대로 활용</p>
+
+    <div class="benefit-visual">
+      <!-- Manual -->
+      <div class="card" style="border-color: rgba(245,158,11,0.3);">
+        <h3 style="color:var(--accent-orange); font-size:17px; margin-bottom:16px;">📱 인벤토리 Only</h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">전부 수동 입력 필요</p>
+        <div class="data-list">
+          <div class="data-item typing">⌨️ 상품명 직접 입력</div>
+          <div class="data-item typing">⌨️ SKU 직접 입력</div>
+          <div class="data-item typing">⌨️ 바코드 직접 입력</div>
+          <div class="data-item typing">⌨️ 가격 직접 입력</div>
+          <div class="data-item typing">⌨️ 벤더 정보 직접 입력</div>
+          <div class="data-item typing">⌨️ 상품 이미지 수동 등록</div>
+        </div>
+        <p style="font-size:13px; color:var(--accent-red); margin-top:14px;">
+          ✗ 오타 위험 &nbsp; ✗ 시간 소요 &nbsp; ✗ 중복 작업
+        </p>
+      </div>
+
+      <div class="benefit-arrow">→</div>
+
+      <!-- Sync -->
+      <div class="card" style="border-color: rgba(16,185,129,0.3);">
+        <h3 style="color:var(--accent-green); font-size:17px; margin-bottom:16px;">🔗 쇼피파이 통합</h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">동기화 한 번이면 자동 수집</p>
+        <div class="data-list">
+          <div class="data-item sync">✓ 상품명 — 자동</div>
+          <div class="data-item sync">✓ SKU — 자동</div>
+          <div class="data-item sync">✓ 바코드 — 자동</div>
+          <div class="data-item sync">✓ 가격 — 자동</div>
+          <div class="data-item sync">✓ 벤더 — 자동</div>
+          <div class="data-item sync">✓ 상품 이미지 — 자동</div>
+        </div>
+        <p style="font-size:13px; color:var(--accent-green); margin-top:14px;">
+          ✓ 정확한 데이터 &nbsp; ✓ 즉시 완료 &nbsp; ✓ 변경 시 재동기화
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 8: Roadmap Overview -->
+<!-- ============================================================ -->
+<section class="slide" id="s8">
+  <div class="slide-inner">
+    <div class="slide-label">개발 로드맵</div>
+    <h2 class="slide-title">어떻게 만들어 가는가</h2>
+    <p class="slide-subtitle">단계별로 하나씩, 각 Phase 완료 시 바로 사용 가능</p>
+
+    <div class="roadmap">
+      <div class="roadmap-item">
+        <div class="roadmap-label" style="color:var(--accent-blue);">Phase 0-1</div>
+        <div class="roadmap-dot" style="background:var(--accent-blue);"></div>
+        <div class="roadmap-desc">쇼피파이 연결<br>+ 상품 가져오기</div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-label" style="color:var(--accent-blue);">Phase 0-2</div>
+        <div class="roadmap-dot" style="background:var(--accent-blue);"></div>
+        <div class="roadmap-desc">창고 재고<br>바코드 등록</div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-label" style="color:var(--accent-blue);">Phase 0-3</div>
+        <div class="roadmap-dot" style="background:var(--accent-blue);"></div>
+        <div class="roadmap-desc">벤더 정보<br>등록</div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-label" style="color:var(--accent-purple);">Phase 1</div>
+        <div class="roadmap-dot" style="background:var(--accent-purple);"></div>
+        <div class="roadmap-desc">주문 자동 수신<br>(실시간)</div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-label" style="color:var(--accent-green);">Phase 2</div>
+        <div class="roadmap-dot" style="background:var(--accent-green);"></div>
+        <div class="roadmap-desc">주문~배송<br>자동 처리</div>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;">
+      <div class="card-grid-3">
+        <div class="card" style="text-align:center; border-color: rgba(59,130,246,0.3);">
+          <div style="font-size:13px; color:var(--accent-blue); font-weight:700;">Phase 0</div>
+          <div style="font-size:18px; font-weight:700; margin:8px 0;">데이터 준비</div>
+          <div style="font-size:13px; color:var(--text-secondary);">상품 · 재고 · 벤더<br>시스템의 기초를 구축</div>
+        </div>
+        <div class="card" style="text-align:center; border-color: rgba(139,92,246,0.3);">
+          <div style="font-size:13px; color:var(--accent-purple); font-weight:700;">Phase 1</div>
+          <div style="font-size:18px; font-weight:700; margin:8px 0;">실시간 연동</div>
+          <div style="font-size:13px; color:var(--text-secondary);">쇼피파이 주문이<br>자동으로 들어옴</div>
+        </div>
+        <div class="card" style="text-align:center; border-color: rgba(16,185,129,0.3);">
+          <div style="font-size:13px; color:var(--accent-green); font-weight:700;">Phase 2</div>
+          <div style="font-size:18px; font-weight:700; margin:8px 0;">자동화</div>
+          <div style="font-size:13px; color:var(--text-secondary);">확인 · 차감 · 발주 · 배송<br>자동으로 처리</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 9: Phase 0-1 -->
+<!-- ============================================================ -->
+<section class="slide" id="s9">
+  <div class="slide-inner" style="display:flex; justify-content:center;">
+    <div class="phase-card">
+      <div class="phase-number">Phase 0-1</div>
+      <h2 class="phase-title">쇼피파이 연결 + 상품 가져오기</h2>
+      <p class="phase-desc">
+        쇼피파이 스토어를 시스템에 연결 → 등록된 상품 정보 자동 수집.<br>
+        스토어를 하나씩 추가하면서 단계적으로 구축 가능.
+      </p>
+      <div class="feature-list">
+        <div class="feature-item">
+          <span class="feature-icon">🏪</span>
+          <span class="feature-text"><strong>스토어 관리</strong> — 쇼피파이 몰을 하나씩 유연하게 추가·수정·삭제</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🔄</span>
+          <span class="feature-text"><strong>상품 동기화</strong> — 상품명, SKU, 바코드, 가격, 벤더 정보를 한 번에 가져오기</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🔍</span>
+          <span class="feature-text"><strong>변경사항 확인</strong> — 재동기화 시 무엇이 바뀌었는지 확인 후 선택 반영</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🔗</span>
+          <span class="feature-text"><strong>크로스 스토어 매핑</strong> — 여러 몰의 같은 상품을 자동으로 하나로 묶기</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 10: Phase 0-2 -->
+<!-- ============================================================ -->
+<section class="slide" id="s10">
+  <div class="slide-inner" style="display:flex; justify-content:center;">
+    <div class="phase-card">
+      <div class="phase-number">Phase 0-2</div>
+      <h2 class="phase-title">창고 재고 등록</h2>
+      <p class="phase-desc">
+        바코드 스캔으로 창고 실물 재고를 시스템에 등록.<br>
+        어디에 무엇이 있는지 정확히 파악 가능.
+      </p>
+      <div class="feature-list">
+        <div class="feature-item">
+          <span class="feature-icon">📱</span>
+          <span class="feature-text"><strong>바코드 스캔 등록</strong> — 스캔 한 번으로 상품 인식 + 위치 등록</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">📍</span>
+          <span class="feature-text"><strong>위치 관리</strong> — 층 · 구역 · 선반 단위로 재고 위치 추적</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">📦</span>
+          <span class="feature-text"><strong>개별 + 벌크 관리</strong> — 고가 상품은 개별 추적, 소모품은 수량 관리</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 11: Phase 0-3 -->
+<!-- ============================================================ -->
+<section class="slide" id="s11">
+  <div class="slide-inner" style="display:flex; justify-content:center;">
+    <div class="phase-card">
+      <div class="phase-number">Phase 0-3</div>
+      <h2 class="phase-title">납품업체(벤더) 정보 등록</h2>
+      <p class="phase-desc">
+        납품업체 연락처와 리드타임 등록 →<br>
+        재고 부족 시 자동 발주에 활용.
+      </p>
+      <div class="feature-list">
+        <div class="feature-item">
+          <span class="feature-icon">👤</span>
+          <span class="feature-text"><strong>벤더 연락처 관리</strong> — 담당자, 전화번호, 이메일 등 한 곳에서 관리</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">⏱️</span>
+          <span class="feature-text"><strong>리드타임 설정</strong> — 벤더별 발주~입고 소요일 기록</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🔔</span>
+          <span class="feature-text"><strong>자동 알림 기반</strong> — 재고 부족 시 해당 벤더에게 자동 알림 연계</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 12: Phase 1 -->
+<!-- ============================================================ -->
+<section class="slide" id="s12">
+  <div class="slide-inner" style="display:flex; justify-content:center;">
+    <div class="phase-card">
+      <div class="phase-number">Phase 1</div>
+      <h2 class="phase-title">주문 자동 수신</h2>
+      <p class="phase-desc">
+        쇼피파이에서 주문 들어오는 즉시, 시스템이 자동 수집.<br>
+        더 이상 몰별로 따로 확인할 필요 없음.
+      </p>
+      <div class="feature-list">
+        <div class="feature-item">
+          <span class="feature-icon">⚡</span>
+          <span class="feature-text"><strong>실시간 주문 수신</strong> — 어떤 몰에서든 주문 즉시 자동 수집</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">📊</span>
+          <span class="feature-text"><strong>통합 대시보드</strong> — 모든 몰의 주문을 한 화면에서 확인</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🛡️</span>
+          <span class="feature-text"><strong>중복/누락 방지</strong> — 같은 주문 이중 처리나 빠뜨림 자동 방지</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 13: Phase 2 -->
+<!-- ============================================================ -->
+<section class="slide" id="s13">
+  <div class="slide-inner" style="display:flex; justify-content:center;">
+    <div class="phase-card">
+      <div class="phase-number">Phase 2</div>
+      <h2 class="phase-title">주문~배송 자동 처리</h2>
+      <p class="phase-desc">
+        주문 들어오면 재고 확인부터 배송까지 자동 진행.<br>
+        재고 없으면 발주 알림까지 — 사람은 최종 확인만.
+      </p>
+      <div class="feature-list">
+        <div class="feature-item">
+          <span class="feature-icon">🔄</span>
+          <span class="feature-text"><strong>재고 자동 확인 + 예약</strong> — 주문 들어오면 즉시 재고 잡기</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">📋</span>
+          <span class="feature-text"><strong>자동 발주 알림</strong> — 재고 없으면 벤더 자동 매칭 + 발주 안내</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">📬</span>
+          <span class="feature-text"><strong>고객 자동 알림</strong> — "상품 준비 중", "발송 완료" 자동 안내</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🔍</span>
+          <span class="feature-text"><strong>입고 시 자동 매칭</strong> — 물건 도착하면 대기 주문과 자동 연결</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 14: Closing -->
+<!-- ============================================================ -->
+<section class="slide" id="s14">
+  <div class="slide-inner title-slide">
+    <div class="slide-label">마무리</div>
+    <h2 class="slide-title" style="font-size:42px;">인벤토리 앱을 넘어서,<br>쇼피파이와 하나 되는 통합 관리</h2>
+
+    <div class="closing-points">
+      <div class="closing-point">
+        <div class="closing-icon">⏱️</div>
+        <div class="closing-label">시간 절약</div>
+        <div class="closing-desc">수동 작업을 자동화하여<br>주문 처리 시간 대폭 단축</div>
+      </div>
+      <div class="closing-point">
+        <div class="closing-icon">🎯</div>
+        <div class="closing-label">실수 감소</div>
+        <div class="closing-desc">기억·메모에 의존하지 않고<br>시스템이 자동으로 추적</div>
+      </div>
+      <div class="closing-point">
+        <div class="closing-icon">📦</div>
+        <div class="closing-label">데이터 활용</div>
+        <div class="closing-desc">이미 쇼피파이에 있는 데이터를<br>그대로 가져와서 활용</div>
+      </div>
+      <div class="closing-point">
+        <div class="closing-icon">🚀</div>
+        <div class="closing-label">단계별 구축</div>
+        <div class="closing-desc">Phase별로 하나씩 완성하여<br>바로바로 사용 가능</div>
+      </div>
+    </div>
+
+    <div style="margin-top:60px;">
+      <div style="font-size:28px; font-weight:700; color:var(--text-secondary);">Q&A</div>
+      <p style="font-size:16px; color:var(--text-muted); margin-top:8px;">궁금한 점은 질문</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- JavaScript: Navigation -->
+<!-- ============================================================ -->
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const navContainer = document.getElementById('navDots');
+  const counter = document.getElementById('slideCounter');
+  const total = slides.length;
+  let currentSlide = 0;
+
+  // Create nav dots
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => {
+      slides[i].scrollIntoView({ behavior: 'smooth' });
+    };
+    navContainer.appendChild(dot);
+  });
+
+  const dots = document.querySelectorAll('.nav-dot');
+
+  function updateNav(index) {
+    currentSlide = index;
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    counter.textContent = (index + 1) + ' / ' + total;
+  }
+
+  // Intersection Observer for scroll-based navigation
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const index = Array.from(slides).indexOf(entry.target);
+        if (index >= 0) updateNav(index);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  slides.forEach(s => observer.observe(s));
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      const next = Math.min(currentSlide + 1, total - 1);
+      slides[next].scrollIntoView({ behavior: 'smooth' });
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prev = Math.max(currentSlide - 1, 0);
+      slides[prev].scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
