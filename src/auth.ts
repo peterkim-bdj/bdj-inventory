@@ -6,10 +6,12 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  debug: process.env.NODE_ENV !== 'production',
   adapter: PrismaAdapter(prisma),
   session: { strategy: 'jwt' },
   pages: {
     signIn: '/login',
+    error: '/login',
   },
   providers: [
     Google({ allowDangerousEmailAccountLinking: true }),
