@@ -189,7 +189,7 @@ export function LabelPrintView({ items, productName, onClose }: LabelPrintViewPr
             visibility: visible !important;
           }
           .print-labels {
-            position: fixed !important;
+            position: absolute !important;
             left: 0 !important;
             top: 0 !important;
             width: ${labelSize.width}in !important;
