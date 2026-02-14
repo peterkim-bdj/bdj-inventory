@@ -1,3 +1,9 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: { default: 'Login', template: '%s | BDJ Inventory' },
+};
+
 export default function AuthLayout({
   children,
 }: {

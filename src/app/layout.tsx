@@ -17,8 +17,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BDJ Inventory",
-  description: "Shopify multi-store inventory management system",
+  title: {
+    default: 'BDJ Inventory',
+    template: '%s | BDJ Inventory',
+  },
+  description: 'Shopify multi-store inventory management system',
+  robots: { index: false, follow: false },
+  icons: { icon: '/favicon.ico' },
 };
 
 export default async function RootLayout({
