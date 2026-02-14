@@ -208,19 +208,45 @@ export function BarcodeScanner({ onScan, onSkuCandidates, autoFocus = true }: Ba
 
     const video = ocrVideoRef.current;
     const canvas = ocrCanvasRef.current;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+
+    // Crop to guide region only (center 80% width, ~15% height strip)
+    const cropW = Math.floor(vw * 0.8);
+    const cropH = Math.floor(vh * 0.15);
+    const cropX = Math.floor((vw - cropW) / 2);
+    const cropY = Math.floor((vh - cropH) / 2);
+
+    canvas.width = cropW;
+    canvas.height = cropH;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    ctx.drawImage(video, 0, 0);
+
+    // Draw cropped region
+    ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+
+    // Preprocessing: grayscale + high contrast for better OCR
+    const imageData = ctx.getImageData(0, 0, cropW, cropH);
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      // Convert to grayscale
+      const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+      // Threshold for high contrast (Otsu-like simple threshold)
+      const val = gray > 128 ? 255 : 0;
+      data[i] = val;
+      data[i + 1] = val;
+      data[i + 2] = val;
+    }
+    ctx.putImageData(imageData, 0, 0);
 
     setOcrPhase('processing');
 
     try {
-      const { createWorker } = await import('tesseract.js');
-      const worker = await createWorker('eng', 1, { logger: () => {} });
+      const Tesseract = await import('tesseract.js');
+      const worker = await Tesseract.createWorker('eng');
       await worker.setParameters({
-        tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_. ',
+        tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_. /',
+        tessedit_pageseg_mode: Tesseract.PSM.SINGLE_LINE,
       });
 
       const { data: { text } } = await worker.recognize(canvas);
@@ -325,9 +351,9 @@ export function BarcodeScanner({ onScan, onSkuCandidates, autoFocus = true }: Ba
                 muted
                 className="w-full rounded-xl"
               />
-              {/* Guide overlay */}
+              {/* Guide overlay - thin strip matching crop region */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="border-2 border-dashed border-white/50 rounded-lg w-4/5 h-1/3" />
+                <div className="border-2 border-white/60 rounded-lg w-4/5 h-12" />
               </div>
               <p className="absolute top-3 left-0 right-0 text-center text-xs text-white/80 bg-black/30 py-1">
                 {t('scan.ocrHint')}
