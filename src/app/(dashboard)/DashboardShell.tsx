@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -16,6 +16,8 @@ export function DashboardShell({
 }) {
   const t = useTranslations('common');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const handleToggleMobile = useCallback(() => setMobileMenuOpen((prev) => !prev), []);
+  const handleCloseMobile = useCallback(() => setMobileMenuOpen(false), []);
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
@@ -24,7 +26,7 @@ export function DashboardShell({
           <div className="flex items-center gap-4 md:gap-8">
             {/* Mobile hamburger */}
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={handleToggleMobile}
               className="md:hidden rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 dark:hover:bg-zinc-800"
               aria-label="Menu"
             >
@@ -74,25 +76,25 @@ export function DashboardShell({
         {mobileMenuOpen && (
           <nav className="md:hidden border-t border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-3 space-y-1">
             {userRole === 'ADMIN' && (
-              <Link href="/shops" onClick={() => setMobileMenuOpen(false)}
+              <Link href="/shops" onClick={handleCloseMobile}
                 className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-zinc-400 dark:hover:bg-zinc-800">
                 {t('nav.shops')}
               </Link>
             )}
-            <Link href="/products" onClick={() => setMobileMenuOpen(false)}
+            <Link href="/products" onClick={handleCloseMobile}
               className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-zinc-400 dark:hover:bg-zinc-800">
               {t('nav.products')}
             </Link>
-            <Link href="/vendors" onClick={() => setMobileMenuOpen(false)}
+            <Link href="/vendors" onClick={handleCloseMobile}
               className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-zinc-400 dark:hover:bg-zinc-800">
               {t('nav.vendors')}
             </Link>
-            <Link href="/inventory" onClick={() => setMobileMenuOpen(false)}
+            <Link href="/inventory" onClick={handleCloseMobile}
               className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-zinc-400 dark:hover:bg-zinc-800">
               {t('nav.inventory')}
             </Link>
             {userRole === 'ADMIN' && (
-              <Link href="/admin/users" onClick={() => setMobileMenuOpen(false)}
+              <Link href="/admin/users" onClick={handleCloseMobile}
                 className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-zinc-400 dark:hover:bg-zinc-800">
                 {t('nav.admin')}
               </Link>

@@ -18,16 +18,18 @@ export function ThemeToggle() {
   }, []);
 
   const toggleTheme = useCallback(() => {
-    const next = isDark ? 'light' : 'dark';
-    if (next === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    setIsDark(!isDark);
-    setCookie(THEME_COOKIE, next);
+    setIsDark((prev) => {
+      const next = prev ? 'light' : 'dark';
+      if (next === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      setCookie(THEME_COOKIE, next);
+      return !prev;
+    });
     router.refresh();
-  }, [isDark, router]);
+  }, [router]);
 
   return (
     <button

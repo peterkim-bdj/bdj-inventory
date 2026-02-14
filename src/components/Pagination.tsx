@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 
 interface PaginationProps {
@@ -14,6 +15,9 @@ interface PaginationProps {
 export function Pagination({ page, totalPages, total, limit, onPageChange, showingLabel }: PaginationProps) {
   const tCommon = useTranslations('common');
 
+  const handlePrev = useCallback(() => onPageChange(Math.max(1, page - 1)), [onPageChange, page]);
+  const handleNext = useCallback(() => onPageChange(Math.min(totalPages, page + 1)), [onPageChange, totalPages, page]);
+
   if (totalPages <= 1) return null;
 
   const from = (page - 1) * limit + 1;
@@ -26,7 +30,7 @@ export function Pagination({ page, totalPages, total, limit, onPageChange, showi
       </p>
       <div className="flex items-center gap-1">
         <button
-          onClick={() => onPageChange(Math.max(1, page - 1))}
+          onClick={handlePrev}
           disabled={page <= 1}
           className="rounded-full border border-gray-200 px-4 py-1.5 text-sm font-medium transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
         >
@@ -51,7 +55,7 @@ export function Pagination({ page, totalPages, total, limit, onPageChange, showi
           );
         })}
         <button
-          onClick={() => onPageChange(Math.min(totalPages, page + 1))}
+          onClick={handleNext}
           disabled={page >= totalPages}
           className="rounded-full border border-gray-200 px-4 py-1.5 text-sm font-medium transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
         >

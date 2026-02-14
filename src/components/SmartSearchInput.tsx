@@ -42,13 +42,16 @@ export function SmartSearchInput({
     setShowScanModal(false);
   }, []);
 
+  const handleOpenScan = useCallback(() => setShowScanModal(true), []);
+  const handleCloseScan = useCallback(() => setShowScanModal(false), []);
+
   return (
     <>
       <div className="relative">
         {/* Scan icon button (left) */}
         <button
           type="button"
-          onClick={() => setShowScanModal(true)}
+          onClick={handleOpenScan}
           className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           aria-label="Scan"
         >
@@ -78,7 +81,7 @@ export function SmartSearchInput({
       {showScanModal && (
         <ScanModal
           onResult={handleScanResult}
-          onClose={() => setShowScanModal(false)}
+          onClose={handleCloseScan}
         />
       )}
     </>

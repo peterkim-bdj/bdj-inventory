@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 
@@ -21,6 +21,8 @@ interface ScanModalProps {
 export function ScanModal({ onResult, onClose }: ScanModalProps) {
   const t = useTranslations('common');
   const [activeTab, setActiveTab] = useState<'barcode' | 'ocr'>('barcode');
+  const handleBarcode = useCallback(() => setActiveTab('barcode'), []);
+  const handleOcr = useCallback(() => setActiveTab('ocr'), []);
 
   // Escape key handler
   useEffect(() => {
@@ -42,7 +44,7 @@ export function ScanModal({ onResult, onClose }: ScanModalProps) {
         <div className="flex items-center justify-between border-b border-gray-200 dark:border-zinc-700 px-5 py-4">
           <div className="flex gap-1 rounded-full border border-gray-200 dark:border-zinc-700 p-0.5">
             <button
-              onClick={() => setActiveTab('barcode')}
+              onClick={handleBarcode}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 activeTab === 'barcode'
                   ? 'bg-black text-white dark:bg-white dark:text-black'
@@ -52,7 +54,7 @@ export function ScanModal({ onResult, onClose }: ScanModalProps) {
               {t('scan.barcodeTab')}
             </button>
             <button
-              onClick={() => setActiveTab('ocr')}
+              onClick={handleOcr}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 activeTab === 'ocr'
                   ? 'bg-black text-white dark:bg-white dark:text-black'

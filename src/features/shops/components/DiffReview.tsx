@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useDiff, useApplyDiff } from '../hooks/useDiffReview';
@@ -21,23 +21,21 @@ export function DiffReview({ shopId }: DiffReviewProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   // Initialize selections from default actions when data loads
-  const initSelections = useCallback(() => {
-    if (!data) return;
-    const defaults = new Set<string>();
-    for (const item of data.items) {
-      if (item.defaultAction !== 'keep') {
-        defaults.add(item.id);
+  const initialized = useRef(false);
+  useEffect(() => {
+    if (data && !initialized.current && data.items.some((i) => i.defaultAction !== 'keep')) {
+      const defaults = new Set<string>();
+      for (const item of data.items) {
+        if (item.defaultAction !== 'keep') {
+          defaults.add(item.id);
+        }
       }
+      setSelectedIds(defaults);
+      initialized.current = true;
     }
-    setSelectedIds(defaults);
   }, [data]);
 
-  // Call init once data is available
-  if (data && selectedIds.size === 0 && data.items.some((i) => i.defaultAction !== 'keep')) {
-    initSelections();
-  }
-
-  const handleToggle = (id: string) => {
+  const handleToggle = useCallback((id: string) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
@@ -47,9 +45,9 @@ export function DiffReview({ shopId }: DiffReviewProps) {
       }
       return next;
     });
-  };
+  }, []);
 
-  const handleSelectAll = (type: 'NEW' | 'MODIFIED' | 'REMOVED') => {
+  const handleSelectAll = useCallback((type: 'NEW' | 'MODIFIED' | 'REMOVED') => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       for (const item of data?.items ?? []) {
@@ -57,9 +55,9 @@ export function DiffReview({ shopId }: DiffReviewProps) {
       }
       return next;
     });
-  };
+  }, [data]);
 
-  const handleDeselectAll = (type: 'NEW' | 'MODIFIED' | 'REMOVED') => {
+  const handleDeselectAll = useCallback((type: 'NEW' | 'MODIFIED' | 'REMOVED') => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       for (const item of data?.items ?? []) {
@@ -67,9 +65,12 @@ export function DiffReview({ shopId }: DiffReviewProps) {
       }
       return next;
     });
-  };
+  }, [data]);
 
-  const handleApply = () => {
+  const applyMutationRef = useRef(applyMutation);
+  applyMutationRef.current = applyMutation;
+
+  const handleApply = useCallback(() => {
     if (!data) return;
 
     const actions = data.items.map((item) => ({
@@ -83,13 +84,13 @@ export function DiffReview({ shopId }: DiffReviewProps) {
         : ('keep' as const),
     }));
 
-    applyMutation.mutate(
+    applyMutationRef.current.mutate(
       { shopId, syncLogId: data.syncLogId, actions },
       {
         onSuccess: () => router.push('/shops'),
       },
     );
-  };
+  }, [data, selectedIds, shopId, router]);
 
   if (isLoading) {
     return <p className="text-zinc-500">{tCommon('status.loading')}</p>;
