@@ -67,44 +67,49 @@ export function useSyncProgress(syncLogId: string | null) {
     eventSourceRef.current = es;
 
     es.addEventListener('progress', (event) => {
-      const data = JSON.parse(event.data);
-      setState({
-        phase: data.phase,
-        fetchedCount: data.fetchedCount ?? 0,
-        processedCount: data.processedCount ?? 0,
-        totalCount: data.totalCount ?? 0,
-        currentPage: data.currentPage ?? 0,
-        currentProduct: data.currentProduct,
-        logs: data.logs ?? [],
-        percentage: computePercentage(data.phase, data.processedCount ?? 0, data.totalCount ?? 0),
-        error: data.error,
-        summary: data.summary,
-      });
+      try {
+        const data = JSON.parse(event.data);
+        setState({
+          phase: data.phase,
+          fetchedCount: data.fetchedCount ?? 0,
+          processedCount: data.processedCount ?? 0,
+          totalCount: data.totalCount ?? 0,
+          currentPage: data.currentPage ?? 0,
+          currentProduct: data.currentProduct,
+          logs: data.logs ?? [],
+          percentage: computePercentage(data.phase, data.processedCount ?? 0, data.totalCount ?? 0),
+          error: data.error,
+          summary: data.summary,
+        });
+      } catch { /* ignore malformed SSE data */ }
     });
 
     es.addEventListener('complete', (event) => {
-      const data = JSON.parse(event.data);
-      setState((prev) => ({
-        ...prev,
-        phase: 'complete',
-        percentage: 100,
-        logs: data.logs ?? prev.logs,
-        summary: data.summary,
-      }));
+      try {
+        const data = JSON.parse(event.data);
+        setState((prev) => ({
+          ...prev,
+          phase: 'complete',
+          percentage: 100,
+          logs: data.logs ?? prev.logs,
+          summary: data.summary,
+        }));
+      } catch { /* ignore */ }
       es.close();
     });
 
     es.addEventListener('error', (event) => {
-      // Check if it's an SSE error event with data
       if (event instanceof MessageEvent && event.data) {
-        const data = JSON.parse(event.data);
-        setState((prev) => ({
-          ...prev,
-          phase: 'error',
-          percentage: 0,
-          error: data.error ?? 'Unknown error',
-          logs: data.logs ?? prev.logs,
-        }));
+        try {
+          const data = JSON.parse(event.data);
+          setState((prev) => ({
+            ...prev,
+            phase: 'error',
+            percentage: 0,
+            error: data.error ?? 'Unknown error',
+            logs: data.logs ?? prev.logs,
+          }));
+        } catch { /* ignore */ }
       }
       es.close();
     });

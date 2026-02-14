@@ -13,7 +13,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: '/login',
   },
   providers: [
-    Google({ allowDangerousEmailAccountLinking: true }),
+    Google({}),
     Credentials({
       credentials: {
         email: {},
