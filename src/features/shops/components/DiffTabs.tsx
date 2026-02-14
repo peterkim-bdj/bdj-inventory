@@ -26,10 +26,13 @@ export function DiffTabs({ items, selectedIds, onToggle, onSelectAll, onDeselect
   const t = useTranslations('sync');
   const [activeTab, setActiveTab] = useState<TabType>('NEW');
 
+  const typeCounts = { NEW: 0, MODIFIED: 0, REMOVED: 0 };
+  for (const i of items) typeCounts[i.type]++;
+
   const tabs: { key: TabType; label: string; count: number }[] = [
-    { key: 'NEW', label: t('diff.new'), count: items.filter((i) => i.type === 'NEW').length },
-    { key: 'MODIFIED', label: t('diff.modified'), count: items.filter((i) => i.type === 'MODIFIED').length },
-    { key: 'REMOVED', label: t('diff.removed'), count: items.filter((i) => i.type === 'REMOVED').length },
+    { key: 'NEW', label: t('diff.new'), count: typeCounts.NEW },
+    { key: 'MODIFIED', label: t('diff.modified'), count: typeCounts.MODIFIED },
+    { key: 'REMOVED', label: t('diff.removed'), count: typeCounts.REMOVED },
   ];
 
   const filteredItems = items.filter((i) => i.type === activeTab);

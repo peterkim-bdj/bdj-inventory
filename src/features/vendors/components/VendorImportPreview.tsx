@@ -22,9 +22,11 @@ export function VendorImportPreview({ rows, onExecute, onCancel, isImporting }: 
   const [duplicateAction, setDuplicateAction] = useState<'skip' | 'update'>('skip');
   const [emptyValueAction, setEmptyValueAction] = useState<'ignore' | 'overwrite'>('ignore');
 
-  const newCount = rows.filter((r) => r.status === 'new').length;
-  const dupCount = rows.filter((r) => r.status === 'duplicate').length;
-  const errCount = rows.filter((r) => r.status === 'error').length;
+  const counts = { new: 0, duplicate: 0, error: 0 } as Record<string, number>;
+  for (const r of rows) counts[r.status] = (counts[r.status] ?? 0) + 1;
+  const newCount = counts.new ?? 0;
+  const dupCount = counts.duplicate ?? 0;
+  const errCount = counts.error ?? 0;
 
   const selectClass = 'rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm dark:bg-zinc-800 dark:border-zinc-700';
 

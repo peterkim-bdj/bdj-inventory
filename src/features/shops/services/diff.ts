@@ -132,9 +132,12 @@ export function generateDiff(
     }
   }
 
-  const newCount = diff.filter((d) => d.type === 'NEW').length;
-  const modifiedCount = diff.filter((d) => d.type === 'MODIFIED').length;
-  const removedCount = diff.filter((d) => d.type === 'REMOVED').length;
+  let newCount = 0, modifiedCount = 0, removedCount = 0;
+  for (const d of diff) {
+    if (d.type === 'NEW') newCount++;
+    else if (d.type === 'MODIFIED') modifiedCount++;
+    else if (d.type === 'REMOVED') removedCount++;
+  }
 
   return {
     items: diff,

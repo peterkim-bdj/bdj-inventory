@@ -15,14 +15,15 @@ function parseSheet(buffer: ArrayBuffer): ParsedRow[] {
   const sheet = workbook.Sheets[workbook.SheetNames[0]];
   const rows = utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: '' });
 
-  // Auto-detect column mapping
+  // Auto-detect column mapping (pre-compute normalized headers for O(1) lookup)
   const headers = Object.keys(rows[0] || {});
+  const normalizedHeaders = new Map(
+    headers.map((h) => [h.toLowerCase().replace(/[\s_-]/g, ''), h])
+  );
   const mapping: Record<string, string> = {};
 
   for (const expected of EXPECTED_COLUMNS) {
-    const found = headers.find((h) =>
-      h.toLowerCase().replace(/[\s_-]/g, '') === expected.toLowerCase()
-    );
+    const found = normalizedHeaders.get(expected.toLowerCase());
     if (found) mapping[expected] = found;
   }
 
