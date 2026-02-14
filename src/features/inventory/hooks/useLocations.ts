@@ -13,5 +13,6 @@ export function useLocations() {
   return useQuery({
     queryKey: ['locations'],
     queryFn: fetchLocations,
+    staleTime: 30_000,
   });
 }

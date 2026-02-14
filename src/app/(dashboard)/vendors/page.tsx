@@ -44,10 +44,9 @@ export default function VendorsPage() {
     setPage(1);
   }, []);
 
-  const resetFilter = (setter: (v: string) => void) => (val: string) => {
-    setter(val);
-    setPage(1);
-  };
+  const handleHasContactChange = useCallback((val: string) => { setHasContact(val); setPage(1); }, []);
+  const handleIsActiveChange = useCallback((val: string) => { setIsActive(val); setPage(1); }, []);
+  const handleAutoNotifyChange = useCallback((val: string) => { setAutoNotify(val); setPage(1); }, []);
 
   const handleVendorClick = useCallback((id: string) => {
     router.push(`/vendors/${id}`);
@@ -100,9 +99,9 @@ export default function VendorsPage() {
           selectedHasContact={hasContact}
           selectedIsActive={isActive}
           selectedAutoNotify={autoNotify}
-          onHasContactChange={resetFilter(setHasContact)}
-          onIsActiveChange={resetFilter(setIsActive)}
-          onAutoNotifyChange={resetFilter(setAutoNotify)}
+          onHasContactChange={handleHasContactChange}
+          onIsActiveChange={handleIsActiveChange}
+          onAutoNotifyChange={handleAutoNotifyChange}
         />
         <select
           value={`${sortBy}:${sortOrder}`}

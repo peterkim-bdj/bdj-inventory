@@ -27,6 +27,11 @@ export default function ProductsPage() {
   const [quickFilters, setQuickFilters] = useState<Record<string, string>>({});
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
 
+  const handleStoreChange = useCallback((ids: string[]) => { setStoreIds(ids); setPage(1); }, []);
+  const handleVendorChange = useCallback((ids: string[]) => { setVendorIds(ids); setPage(1); }, []);
+  const handleProductTypeChange = useCallback((types: string[]) => { setProductTypes(types); setPage(1); }, []);
+  const handleCloseProduct = useCallback(() => setSelectedProductId(null), []);
+
   const { data, isLoading } = useProducts({
     search: search || undefined,
     storeIds: storeIds.length ? storeIds : undefined,
@@ -79,9 +84,9 @@ export default function ProductsPage() {
             selectedStoreIds={storeIds}
             selectedVendorIds={vendorIds}
             selectedProductTypes={productTypes}
-            onStoreChange={(ids) => { setStoreIds(ids); setPage(1); }}
-            onVendorChange={(ids) => { setVendorIds(ids); setPage(1); }}
-            onProductTypeChange={(types) => { setProductTypes(types); setPage(1); }}
+            onStoreChange={handleStoreChange}
+            onVendorChange={handleVendorChange}
+            onProductTypeChange={handleProductTypeChange}
           />
         )}
         <select
@@ -138,7 +143,7 @@ export default function ProductsPage() {
 
       <ProductDetailPanel
         productId={selectedProductId}
-        onClose={() => setSelectedProductId(null)}
+        onClose={handleCloseProduct}
       />
     </div>
   );

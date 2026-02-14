@@ -33,14 +33,16 @@ export async function GET(
 
   if (isStale) {
     // Reset stale sync
-    await prisma.syncLog.update({
-      where: { id: syncLog.id },
-      data: { status: 'FAILED', error: 'Sync timed out', completedAt: new Date() },
-    });
-    await prisma.shopifyStore.update({
-      where: { id },
-      data: { syncStatus: 'FAILED' },
-    });
+    await Promise.all([
+      prisma.syncLog.update({
+        where: { id: syncLog.id },
+        data: { status: 'FAILED', error: 'Sync timed out', completedAt: new Date() },
+      }),
+      prisma.shopifyStore.update({
+        where: { id },
+        data: { syncStatus: 'FAILED' },
+      }),
+    ]);
     return NextResponse.json({ active: false, reset: true });
   }
 
@@ -65,17 +67,18 @@ export async function DELETE(
     },
   });
 
-  for (const sync of activeSyncs) {
-    await prisma.syncLog.update({
-      where: { id: sync.id },
-      data: { status: 'FAILED', error: 'Manually cancelled', completedAt: new Date() },
-    });
-  }
-
-  await prisma.shopifyStore.update({
-    where: { id },
-    data: { syncStatus: 'SYNCED' },
-  });
+  await Promise.all([
+    ...activeSyncs.map((sync) =>
+      prisma.syncLog.update({
+        where: { id: sync.id },
+        data: { status: 'FAILED', error: 'Manually cancelled', completedAt: new Date() },
+      })
+    ),
+    prisma.shopifyStore.update({
+      where: { id },
+      data: { syncStatus: 'SYNCED' },
+    }),
+  ]);
 
   return NextResponse.json({ reset: true });
 }

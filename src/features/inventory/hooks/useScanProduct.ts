@@ -14,5 +14,6 @@ export function useScanProduct(barcode: string | null) {
     queryKey: ['scan', barcode],
     queryFn: () => scanProduct(barcode!),
     enabled: !!barcode && barcode.length > 0,
+    staleTime: 30_000,
   });
 }

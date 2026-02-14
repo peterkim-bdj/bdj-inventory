@@ -13,5 +13,6 @@ export function useVendor(id: string | null) {
     queryKey: ['vendor', id],
     queryFn: () => fetchVendor(id!),
     enabled: !!id,
+    staleTime: 30_000,
   });
 }

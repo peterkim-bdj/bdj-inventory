@@ -43,5 +43,6 @@ export function useProducts(params: UseProductsParams) {
   return useQuery({
     queryKey: ['products', params],
     queryFn: () => fetchProducts(params),
+    staleTime: 30_000,
   });
 }

@@ -49,6 +49,7 @@ export function useShops() {
     queryKey: ['shops'],
     queryFn: fetchShops,
     select: (data) => data.shops,
+    staleTime: 30_000,
   });
 }
 

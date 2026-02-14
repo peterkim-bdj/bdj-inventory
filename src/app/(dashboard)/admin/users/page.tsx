@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -31,6 +31,7 @@ export default function AdminUsersPage() {
       if (!res.ok) throw new Error('Failed to fetch');
       return res.json() as Promise<{ users: User[] }>;
     },
+    staleTime: 30_000,
   });
 
   const mutation = useMutation({
@@ -46,9 +47,12 @@ export default function AdminUsersPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-users'] }),
   });
 
+  const mutationRef = useRef(mutation);
+  mutationRef.current = mutation;
+
   const handleRoleChange = useCallback((id: string, role: string) => {
-    mutation.mutate({ id, role });
-  }, [mutation]);
+    mutationRef.current.mutate({ id, role });
+  }, []);
 
   return (
     <div className="space-y-6">

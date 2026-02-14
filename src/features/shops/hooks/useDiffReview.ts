@@ -85,6 +85,7 @@ export function useDiff(shopId: string) {
   return useQuery({
     queryKey: ['diff', shopId],
     queryFn: () => fetchDiff(shopId),
+    staleTime: 30_000,
   });
 }
 
@@ -105,5 +106,6 @@ export function useSyncLogs(shopId: string) {
     queryKey: ['syncLogs', shopId],
     queryFn: () => fetchSyncLogs(shopId),
     select: (data) => data.logs,
+    staleTime: 30_000,
   });
 }
