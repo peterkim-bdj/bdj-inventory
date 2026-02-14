@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-14T06:41:33.284Z",
+  "lastUpdated": "2026-02-14T06:59:45.668Z",
   "activeFeatures": [
     "i18n",
     "inventory-with-shopfipy",
@@ -145,9 +145,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-07T05:43:54.074Z",
-        "lastUpdated": "2026-02-14T06:41:24.876Z"
+        "lastUpdated": "2026-02-14T06:59:45.668Z"
       },
-      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/components/UserMenu.tsx"
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/next.config.ts"
     },
     "shopify": {
       "phase": "do",
@@ -171,9 +171,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-07T05:44:40.631Z",
-        "lastUpdated": "2026-02-14T06:41:33.283Z"
+        "lastUpdated": "2026-02-14T06:57:20.762Z"
       },
-      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/features/shops/services/diff.ts"
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/features/shops/hooks/useSyncProgress.ts"
     },
     "products": {
       "phase": "do",
@@ -673,7 +673,7 @@
   "session": {
     "startedAt": "2026-02-07T03:26:19.690Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-02-14T06:41:33.284Z"
+    "lastActivity": "2026-02-14T06:59:45.668Z"
   },
   "history": [
     {
@@ -3361,6 +3361,30 @@
     {
       "timestamp": "2026-02-14T06:41:33.283Z",
       "feature": "shops",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T06:57:13.809Z",
+      "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T06:57:20.762Z",
+      "feature": "shops",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T06:59:42.281Z",
+      "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T06:59:45.668Z",
+      "feature": "inventory-with-shopfipy",
       "phase": "do",
       "action": "updated"
     }
