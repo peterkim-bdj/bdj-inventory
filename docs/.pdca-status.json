@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-13T23:54:46.745Z",
+  "lastUpdated": "2026-02-14T00:23:49.200Z",
   "activeFeatures": [
     "i18n",
     "inventory-with-shopfipy",
@@ -63,6 +63,36 @@
       "timestamps": {
         "started": "2026-02-13T20:30:00.000Z",
         "lastUpdated": "2026-02-13T20:30:00.000Z"
+      }
+    },
+    "label-printing": {
+      "phase": "completed",
+      "phaseNumber": 5,
+      "matchRate": 97,
+      "iterationCount": 0,
+      "planPath": "docs/01-plan/features/label-printing.plan.md",
+      "designPath": "docs/02-design/features/label-printing.design.md",
+      "analysisPath": "docs/03-analysis/label-printing.analysis.md",
+      "reportPath": "docs/04-report/features/label-printing.report.md",
+      "requirements": [
+        "Label size presets (2x1, 2.25x1.25, 4x6, custom)",
+        "Size-adaptive barcode rendering",
+        "CSS @page precise label output",
+        "Single item print (existing)",
+        "Product-level batch print",
+        "Print preview with size selection",
+        "Label size persistence (localStorage)",
+        "i18n EN/KO"
+      ],
+      "documents": {
+        "plan": "docs/01-plan/features/label-printing.plan.md",
+        "design": "docs/02-design/features/label-printing.design.md",
+        "analysis": "docs/03-analysis/label-printing.analysis.md",
+        "report": "docs/04-report/features/label-printing.report.md"
+      },
+      "timestamps": {
+        "started": "2026-02-13T22:15:00.000Z",
+        "lastUpdated": "2026-02-14T01:15:00.000Z"
       }
     },
     "sync-progress": {
@@ -136,9 +166,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-07T05:43:54.074Z",
-        "lastUpdated": "2026-02-13T23:54:46.745Z"
+        "lastUpdated": "2026-02-14T00:21:13.984Z"
       },
-      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/auth.ts"
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/components/Barcode.tsx"
     },
     "shopify": {
       "phase": "do",
@@ -272,9 +302,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-07T22:11:10.492Z",
-        "lastUpdated": "2026-02-13T20:46:10.289Z"
+        "lastUpdated": "2026-02-14T00:23:49.200Z"
       },
-      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/features/inventory/hooks/useGroupedInventory.ts"
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/app/(dashboard)/inventory/page.tsx"
     },
     "locations": {
       "phase": "do",
@@ -651,7 +681,7 @@
   "session": {
     "startedAt": "2026-02-07T03:26:19.690Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-02-13T23:54:46.745Z"
+    "lastActivity": "2026-02-14T00:23:49.200Z"
   },
   "history": [
     {
@@ -2643,6 +2673,78 @@
     {
       "timestamp": "2026-02-13T23:54:46.745Z",
       "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T00:20:50.778Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T00:21:02.659Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T00:21:13.984Z",
+      "feature": "inventory-with-shopfipy",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T00:21:50.634Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T00:22:07.314Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T00:22:15.063Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T00:22:33.679Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T00:22:57.549Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T00:23:19.483Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T00:23:28.791Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T00:23:39.466Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T00:23:49.200Z",
+      "feature": "inventory",
       "phase": "do",
       "action": "updated"
     }

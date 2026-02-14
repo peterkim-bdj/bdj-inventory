@@ -47,7 +47,13 @@
   },
   "labels": {
     "title": "라벨 인쇄",
-    "print": "인쇄"
+    "print": "인쇄",
+    "count": "{count, plural, one {#개 라벨} other {#개 라벨}}",
+    "printCount": "{count, plural, one {#개 라벨 인쇄} other {#개 라벨 인쇄}}",
+    "size": "라벨 사이즈",
+    "custom": "커스텀",
+    "preview": "미리보기",
+    "printAll": "전체 라벨 인쇄"
   },
   "status": {
     "AVAILABLE": "이용 가능",

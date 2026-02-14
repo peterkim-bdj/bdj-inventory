@@ -47,7 +47,13 @@
   },
   "labels": {
     "title": "Print Labels",
-    "print": "Print"
+    "print": "Print",
+    "count": "{count, plural, one {# label} other {# labels}}",
+    "printCount": "Print {count, plural, one {# Label} other {# Labels}}",
+    "size": "Label Size",
+    "custom": "Custom",
+    "preview": "Preview",
+    "printAll": "Print All Labels"
   },
   "status": {
     "AVAILABLE": "Available",

@@ -28,6 +28,7 @@ interface InventoryGroupedTableProps {
   onItemClick?: (id: string) => void;
   onProductClick?: (productId: string) => void;
   onPrint?: (item: InventoryItemDetail) => void;
+  onBatchPrint?: (items: Array<{ barcode: string }>, productName: string) => void;
 }
 
 function StatusDots({ statusCounts }: { statusCounts: Partial<Record<string, number>> }) {
@@ -134,6 +135,7 @@ export function InventoryGroupedTable({
   onItemClick,
   onProductClick,
   onPrint,
+  onBatchPrint,
   filters,
 }: InventoryGroupedTableProps & { filters?: { status?: string; locationId?: string; shopifyStoreId?: string; vendorId?: string } }) {
   const t = useTranslations('inventory');
@@ -150,6 +152,20 @@ export function InventoryGroupedTable({
       return next;
     });
   }, []);
+
+  const handleBatchPrint = useCallback(async (group: ProductInventoryGroup) => {
+    try {
+      const res = await fetch(`/api/inventory?productId=${group.product.id}&limit=100`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const barcodes = data.items.map((item: { barcode: string }) => ({ barcode: item.barcode }));
+      if (barcodes.length > 0) {
+        onBatchPrint?.(barcodes, group.product.name);
+      }
+    } catch {
+      console.error('Failed to fetch items for batch print');
+    }
+  }, [onBatchPrint]);
 
   return (
     <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-zinc-700">
@@ -174,6 +190,7 @@ export function InventoryGroupedTable({
                 onItemClick={onItemClick}
                 onProductClick={onProductClick}
                 onPrint={onPrint}
+                onBatchPrint={onBatchPrint ? () => handleBatchPrint(group) : undefined}
                 filters={filters}
               />
             );
@@ -191,6 +208,7 @@ function ProductGroupSection({
   onItemClick,
   onProductClick,
   onPrint,
+  onBatchPrint,
   filters,
 }: {
   group: ProductInventoryGroup;
@@ -199,8 +217,11 @@ function ProductGroupSection({
   onItemClick?: (id: string) => void;
   onProductClick?: (productId: string) => void;
   onPrint?: (item: InventoryItemDetail) => void;
+  onBatchPrint?: () => void;
   filters?: { status?: string; locationId?: string; shopifyStoreId?: string; vendorId?: string };
 }) {
+  const t = useTranslations('inventory');
+
   return (
     <>
       <tr
@@ -264,9 +285,26 @@ function ProductGroupSection({
           <StatusDots statusCounts={group.statusCounts} />
         </td>
         <td className="px-5 py-3.5">
-          {group.product.vendorName && (
-            <span className="text-xs text-gray-400 truncate">{group.product.vendorName}</span>
-          )}
+          <div className="flex items-center gap-2">
+            {group.product.vendorName && (
+              <span className="text-xs text-gray-400 truncate">{group.product.vendorName}</span>
+            )}
+            {onBatchPrint && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onBatchPrint(); }}
+                className="rounded-full p-1.5 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-zinc-700"
+                aria-label={t('labels.printAll')}
+                title={t('labels.printAll')}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 6 2 18 2 18 9" />
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                  <rect x="6" y="14" width="12" height="8" />
+                </svg>
+              </button>
+            )}
+          </div>
         </td>
       </tr>
       {isExpanded && (

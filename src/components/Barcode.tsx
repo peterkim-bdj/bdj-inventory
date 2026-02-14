@@ -8,9 +8,10 @@ interface BarcodeProps {
   height?: number;
   width?: number;
   fontSize?: number;
+  margin?: number;
 }
 
-export function Barcode({ value, height = 40, width = 1.5, fontSize = 12 }: BarcodeProps) {
+export function Barcode({ value, height = 40, width = 1.5, fontSize = 12, margin = 4 }: BarcodeProps) {
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
@@ -20,11 +21,11 @@ export function Barcode({ value, height = 40, width = 1.5, fontSize = 12 }: Barc
         height,
         width,
         fontSize,
-        margin: 4,
+        margin,
         displayValue: true,
       });
     }
-  }, [value, height, width, fontSize]);
+  }, [value, height, width, fontSize, margin]);
 
   return <svg ref={svgRef} />;
 }

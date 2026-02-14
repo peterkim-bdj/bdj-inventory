@@ -17,7 +17,7 @@ import { InventoryFilters } from '@/features/inventory/components/InventoryFilte
 import { InventoryDetailPanel } from '@/features/inventory/components/InventoryDetailPanel';
 import { LabelPrintView } from '@/features/inventory/components/LabelPrintView';
 import { ProductDetailPanel } from '@/features/products/components/ProductDetailPanel';
-import type { InventoryItemDetail } from '@/features/inventory/types';
+import type { InventoryItemDetail, PrintLabelData } from '@/features/inventory/types';
 
 type InventoryViewMode = 'list' | 'grouped' | 'card';
 
@@ -37,7 +37,7 @@ export default function InventoryPage() {
   // Detail panel state
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
-  const [printData, setPrintData] = useState<{ items: Array<{ barcode: string }>; productName: string } | null>(null);
+  const [printData, setPrintData] = useState<PrintLabelData | null>(null);
 
   // Shared filter params
   const filterParams = {
@@ -97,6 +97,10 @@ export default function InventoryPage() {
 
   const handlePrint = useCallback((item: InventoryItemDetail) => {
     setPrintData({ items: [{ barcode: item.barcode }], productName: item.product.name });
+  }, []);
+
+  const handleBatchPrint = useCallback((items: Array<{ barcode: string }>, productName: string) => {
+    setPrintData({ items, productName });
   }, []);
 
   const selectedItem = data?.items?.find((i: InventoryItemDetail) => i.id === selectedItemId) ?? null;
@@ -203,6 +207,7 @@ export default function InventoryPage() {
               onItemClick={handleItemClick}
               onProductClick={handleProductClick}
               onPrint={handlePrint}
+              onBatchPrint={handleBatchPrint}
               filters={{
                 status: status || undefined,
                 locationId: locationId || undefined,

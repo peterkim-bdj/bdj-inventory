@@ -178,3 +178,37 @@ export interface RegisterResult {
     barcodePrefix: string;
   };
 }
+
+// === Label Printing ===
+
+export interface LabelSize {
+  name: string;
+  key: string;
+  width: number;
+  height: number;
+}
+
+export const LABEL_PRESETS: LabelSize[] = [
+  { name: '2" × 1"', key: '2x1', width: 2, height: 1 },
+  { name: '2.25" × 1.25"', key: '2.25x1.25', width: 2.25, height: 1.25 },
+  { name: '4" × 6"', key: '4x6', width: 4, height: 6 },
+];
+
+export const LABEL_SIZE_STORAGE_KEY = 'bdj-label-size';
+
+export interface PrintLabelData {
+  items: Array<{ barcode: string }>;
+  productName: string;
+}
+
+export function getLabelBarcodeParams(label: LabelSize) {
+  const area = label.width * label.height;
+
+  if (area <= 2.5) {
+    return { barcodeWidth: 1.0, barcodeHeight: 30, fontSize: 8, showProductName: false, productNameMaxChars: 0, margin: 2 };
+  } else if (area <= 4) {
+    return { barcodeWidth: 1.2, barcodeHeight: 40, fontSize: 9, showProductName: true, productNameMaxChars: 25, margin: 3 };
+  } else {
+    return { barcodeWidth: 2.0, barcodeHeight: 80, fontSize: 14, showProductName: true, productNameMaxChars: 50, margin: 4 };
+  }
+}
