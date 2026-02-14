@@ -173,7 +173,7 @@ export function BarcodeScanner({ onScan, onSkuCandidates, autoFocus = true }: Ba
     const initCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+          video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } },
         });
         if (cancelled) {
           stream.getTracks().forEach(t => t.stop());
@@ -211,28 +211,43 @@ export function BarcodeScanner({ onScan, onSkuCandidates, autoFocus = true }: Ba
     const vw = video.videoWidth;
     const vh = video.videoHeight;
 
-    // Crop to guide region only (center 80% width, ~15% height strip)
-    const cropW = Math.floor(vw * 0.8);
-    const cropH = Math.floor(vh * 0.15);
+    // Crop to guide region (center 85% width, ~20% height strip)
+    const cropW = Math.floor(vw * 0.85);
+    const cropH = Math.floor(vh * 0.2);
     const cropX = Math.floor((vw - cropW) / 2);
     const cropY = Math.floor((vh - cropH) / 2);
 
-    canvas.width = cropW;
-    canvas.height = cropH;
+    // Upscale 3x for better Tesseract accuracy on small text
+    const scale = 3;
+    canvas.width = cropW * scale;
+    canvas.height = cropH * scale;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Draw cropped region
-    ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+    // Disable image smoothing for sharp upscale
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, cropW * scale, cropH * scale);
 
-    // Preprocessing: grayscale + high contrast for better OCR
-    const imageData = ctx.getImageData(0, 0, cropW, cropH);
+    // Preprocessing: grayscale + adaptive contrast (not binary threshold)
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
+
+    // Pass 1: find min/max for contrast stretching
+    let min = 255, max = 0;
     for (let i = 0; i < data.length; i += 4) {
-      // Convert to grayscale
       const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
-      // Threshold for high contrast (Otsu-like simple threshold)
-      const val = gray > 128 ? 255 : 0;
+      if (gray < min) min = gray;
+      if (gray > max) max = gray;
+    }
+    const range = max - min || 1;
+
+    // Pass 2: contrast stretch + sharpen via sigmoid
+    for (let i = 0; i < data.length; i += 4) {
+      const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+      // Normalize to 0-1, apply sigmoid for enhanced contrast
+      const norm = (gray - min) / range;
+      const sig = 1 / (1 + Math.exp(-12 * (norm - 0.5)));
+      const val = Math.round(sig * 255);
       data[i] = val;
       data[i + 1] = val;
       data[i + 2] = val;
@@ -246,7 +261,7 @@ export function BarcodeScanner({ onScan, onSkuCandidates, autoFocus = true }: Ba
       const worker = await Tesseract.createWorker('eng');
       await worker.setParameters({
         tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_. /',
-        tessedit_pageseg_mode: Tesseract.PSM.SINGLE_LINE,
+        tessedit_pageseg_mode: Tesseract.PSM.SINGLE_BLOCK,
       });
 
       const { data: { text } } = await worker.recognize(canvas);
@@ -351,9 +366,9 @@ export function BarcodeScanner({ onScan, onSkuCandidates, autoFocus = true }: Ba
                 muted
                 className="w-full rounded-xl"
               />
-              {/* Guide overlay - thin strip matching crop region */}
+              {/* Guide overlay - strip matching crop region (85% width, ~20% height) */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="border-2 border-white/60 rounded-lg w-4/5 h-12" />
+                <div className="border-2 border-white/60 rounded-lg" style={{ width: '85%', height: '20%' }} />
               </div>
               <p className="absolute top-3 left-0 right-0 text-center text-xs text-white/80 bg-black/30 py-1">
                 {t('scan.ocrHint')}
