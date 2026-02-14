@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslations } from 'next-intl';
 import { Barcode } from '@/components/Barcode';
 import { useLabelSize } from '../hooks/useLabelSize';
@@ -15,6 +17,8 @@ export function LabelPrintView({ items, productName, onClose }: LabelPrintViewPr
   const t = useTranslations('inventory');
   const { labelSize, setLabelSize } = useLabelSize();
   const barcodeParams = getLabelBarcodeParams(labelSize);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   const previewScale = Math.min(180 / (labelSize.width * 96), 1);
   const previewWidth = labelSize.width * 96 * previewScale;
@@ -31,6 +35,7 @@ export function LabelPrintView({ items, productName, onClose }: LabelPrintViewPr
   };
 
   return (
+    <>
     <div className="fixed inset-0 z-50">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
 
@@ -155,47 +160,32 @@ export function LabelPrintView({ items, productName, onClose }: LabelPrintViewPr
         </button>
       </div>
 
-      {/* Hidden print area */}
-      <div className="print-labels">
-        {items.map((item) => (
-          <div key={item.barcode} className="label-item">
-            {barcodeParams.showProductName && (
-              <p className="label-product-name">
-                {productName.slice(0, barcodeParams.productNameMaxChars)}
-              </p>
-            )}
-            <Barcode
-              value={item.barcode}
-              height={barcodeParams.barcodeHeight}
-              width={barcodeParams.barcodeWidth}
-              fontSize={barcodeParams.fontSize}
-              margin={barcodeParams.margin}
-            />
-          </div>
-        ))}
-      </div>
-
+      {/* Print styles (always in DOM) */}
       <style>{`
+        .print-labels-portal {
+          position: absolute;
+          left: -9999px;
+          top: 0;
+          opacity: 0;
+          pointer-events: none;
+        }
         @page {
           size: ${labelSize.width}in ${labelSize.height}in;
           margin: 0;
         }
         @media print {
-          body * {
-            visibility: hidden !important;
+          body > *:not(.print-labels-portal) {
+            display: none !important;
           }
-          .print-labels,
-          .print-labels * {
-            visibility: visible !important;
-          }
-          .print-labels {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
+          .print-labels-portal {
+            position: static !important;
+            left: auto !important;
+            top: auto !important;
+            opacity: 1 !important;
+            display: block !important;
             width: ${labelSize.width}in !important;
             background: white !important;
             color: black !important;
-            z-index: 99999 !important;
           }
           .label-item {
             width: ${labelSize.width}in;
@@ -230,5 +220,29 @@ export function LabelPrintView({ items, productName, onClose }: LabelPrintViewPr
         }
       `}</style>
     </div>
+
+    {/* Print area: portal to body so page-break works (not inside fixed overlay) */}
+    {mounted && createPortal(
+      <div className="print-labels-portal">
+        {items.map((item) => (
+          <div key={item.barcode} className="label-item">
+            {barcodeParams.showProductName && (
+              <p className="label-product-name">
+                {productName.slice(0, barcodeParams.productNameMaxChars)}
+              </p>
+            )}
+            <Barcode
+              value={item.barcode}
+              height={barcodeParams.barcodeHeight}
+              width={barcodeParams.barcodeWidth}
+              fontSize={barcodeParams.fontSize}
+              margin={barcodeParams.margin}
+            />
+          </div>
+        ))}
+      </div>,
+      document.body
+    )}
+    </>
   );
 }
