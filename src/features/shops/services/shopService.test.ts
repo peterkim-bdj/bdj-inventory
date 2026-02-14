@@ -30,7 +30,17 @@ import {
   deleteShop,
 } from './shopService';
 
-const mockPrisma = vi.mocked(prisma);
+type MockFn = ReturnType<typeof vi.fn>;
+const mockPrisma = prisma as unknown as {
+  shopifyStore: {
+    findMany: MockFn;
+    findUnique: MockFn;
+    create: MockFn;
+    update: MockFn;
+  };
+  product: { updateMany: MockFn };
+  $transaction: MockFn;
+};
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -41,7 +51,7 @@ describe('getShops', () => {
     const mockShops = [
       { id: '1', name: 'Shop A', domain: 'a.myshopify.com' },
     ];
-    mockPrisma.shopifyStore.findMany.mockResolvedValue(mockShops as never);
+    mockPrisma.shopifyStore.findMany.mockResolvedValue(mockShops );
 
     const result = await getShops();
 
@@ -58,7 +68,7 @@ describe('getShops', () => {
 describe('getShopById', () => {
   it('queries by id without accessToken', async () => {
     const mockShop = { id: '1', name: 'Shop A' };
-    mockPrisma.shopifyStore.findUnique.mockResolvedValue(mockShop as never);
+    mockPrisma.shopifyStore.findUnique.mockResolvedValue(mockShop );
 
     const result = await getShopById('1');
 
@@ -72,7 +82,7 @@ describe('getShopById', () => {
   });
 
   it('returns null for non-existent shop', async () => {
-    mockPrisma.shopifyStore.findUnique.mockResolvedValue(null as never);
+    mockPrisma.shopifyStore.findUnique.mockResolvedValue(null );
 
     const result = await getShopById('nonexistent');
     expect(result).toBeNull();
@@ -82,7 +92,7 @@ describe('getShopById', () => {
 describe('getShopCredentials', () => {
   it('returns shop with decrypted accessToken', async () => {
     const mockShop = { id: '1', domain: 'a.myshopify.com', accessToken: 'enc:shpat_xxx', apiVersion: '2025-01' };
-    mockPrisma.shopifyStore.findUnique.mockResolvedValue(mockShop as never);
+    mockPrisma.shopifyStore.findUnique.mockResolvedValue(mockShop );
 
     const result = await getShopCredentials('1');
 
@@ -100,7 +110,7 @@ describe('createShop', () => {
       apiVersion: '2025-01',
     };
     const created = { id: 'new-1', ...input, syncStatus: 'NEVER' };
-    mockPrisma.shopifyStore.create.mockResolvedValue(created as never);
+    mockPrisma.shopifyStore.create.mockResolvedValue(created );
 
     const result = await createShop(input);
 
@@ -120,7 +130,7 @@ describe('createShop', () => {
 describe('updateShop', () => {
   it('updates shop fields without accessToken', async () => {
     const updated = { id: '1', name: 'Updated' };
-    mockPrisma.shopifyStore.update.mockResolvedValue(updated as never);
+    mockPrisma.shopifyStore.update.mockResolvedValue(updated );
 
     const result = await updateShop('1', { name: 'Updated' });
 
@@ -135,7 +145,7 @@ describe('updateShop', () => {
 
   it('encrypts accessToken when provided', async () => {
     const updated = { id: '1', name: 'Shop' };
-    mockPrisma.shopifyStore.update.mockResolvedValue(updated as never);
+    mockPrisma.shopifyStore.update.mockResolvedValue(updated );
 
     await updateShop('1', { accessToken: 'new_token' });
 
@@ -154,7 +164,7 @@ describe('deleteShop', () => {
     mockPrisma.$transaction.mockResolvedValue([
       { id: '1', isActive: false },
       { count: 5 },
-    ] as never);
+    ] );
 
     const result = await deleteShop('1');
 
