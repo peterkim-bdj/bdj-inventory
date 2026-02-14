@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
 
 const ScanModal = dynamic(
@@ -23,6 +23,21 @@ export function SmartSearchInput({
 }: SmartSearchInputProps) {
   const [local, setLocal] = useState(value);
   const [showScanModal, setShowScanModal] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Global "/" shortcut to focus search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        const tag = (e.target as HTMLElement)?.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Debounce: local → parent
   useEffect(() => {
@@ -68,13 +83,15 @@ export function SmartSearchInput({
 
         {/* Search input */}
         <input
+          ref={inputRef}
           type="text"
           value={local}
           onChange={(e) => setLocal(e.target.value)}
           placeholder={placeholder}
           suppressHydrationWarning
-          className="w-full sm:w-72 rounded-xl border border-gray-200 bg-white pl-11 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent dark:bg-zinc-800 dark:border-zinc-700 dark:focus:ring-zinc-400"
+          className="w-full sm:w-72 rounded-xl border border-gray-200 bg-white pl-11 pr-8 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent dark:bg-zinc-800 dark:border-zinc-700 dark:focus:ring-zinc-400"
         />
+        <kbd className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden sm:inline-block rounded border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-[10px] font-mono text-gray-400 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-400">/</kbd>
       </div>
 
       {/* Scan Modal */}
