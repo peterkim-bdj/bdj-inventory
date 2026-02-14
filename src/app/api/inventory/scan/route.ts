@@ -63,8 +63,8 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  // --- Barcode mode (existing flow) ---
-  // Priority 1: Exact shopifyBarcode match
+  // --- Barcode mode ---
+  // Priority 1: Exact shopifyBarcode match (for actual barcode scans)
   const byBarcode = await prisma.product.findMany({
     where: { shopifyBarcode: barcode, isActive: true },
     select: selectFields,
@@ -74,25 +74,28 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ type: 'exact', products: byBarcode });
   }
 
-  // Priority 2: Exact SKU match
-  const bySku = await prisma.product.findMany({
-    where: { sku: barcode, isActive: true },
-    select: selectFields,
-  });
-
-  if (bySku.length > 0) {
-    return NextResponse.json({ type: 'sku', products: bySku });
-  }
-
-  // Priority 3: Name contains (partial match)
-  const byName = await prisma.product.findMany({
-    where: { name: { contains: barcode, mode: 'insensitive' }, isActive: true },
+  // Priority 2: SKU or name partial match (case-insensitive)
+  const bySkuOrName = await prisma.product.findMany({
+    where: {
+      OR: [
+        { sku: { contains: barcode, mode: 'insensitive' } },
+        { name: { contains: barcode, mode: 'insensitive' } },
+      ],
+      isActive: true,
+    },
     select: selectFields,
     take: 10,
   });
 
-  if (byName.length > 0) {
-    return NextResponse.json({ type: 'name', products: byName });
+  if (bySkuOrName.length > 0) {
+    // Determine type: if any result has exact SKU match, type is 'sku'
+    const hasExactSku = bySkuOrName.some(p =>
+      p.sku?.toLowerCase() === barcode?.toLowerCase()
+    );
+    return NextResponse.json({
+      type: hasExactSku ? 'sku' : 'name',
+      products: bySkuOrName,
+    });
   }
 
   // No match
