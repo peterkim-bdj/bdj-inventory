@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-14T03:16:01.377Z",
+  "lastUpdated": "2026-02-14T05:17:12.444Z",
   "activeFeatures": [
     "i18n",
     "inventory-with-shopfipy",
@@ -35,7 +35,8 @@
     "active",
     "scripts",
     "grouped",
-    "auth"
+    "auth",
+    "batch"
   ],
   "primaryFeature": "inventory-soft-delete",
   "features": {
@@ -183,9 +184,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-07T05:47:45.754Z",
-        "lastUpdated": "2026-02-13T20:44:33.169Z"
+        "lastUpdated": "2026-02-14T05:12:43.433Z"
       },
-      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/features/products/components/ViewToggle.tsx"
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/features/products/components/ProductFilters.tsx"
     },
     "(dashboard)": {
       "phase": "do",
@@ -280,9 +281,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-07T22:11:10.492Z",
-        "lastUpdated": "2026-02-14T03:16:01.377Z"
+        "lastUpdated": "2026-02-14T05:17:12.444Z"
       },
-      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/features/inventory/components/InventoryGroupedTable.tsx"
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/features/inventory/components/InventoryFilters.tsx"
     },
     "locations": {
       "phase": "do",
@@ -649,6 +650,19 @@
         "lastUpdated": "2026-02-14T03:07:51.477Z"
       },
       "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/app/api/inventory/grouped/route.ts"
+    },
+    "batch": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-14T04:20:43.446Z",
+        "lastUpdated": "2026-02-14T04:20:43.446Z"
+      },
+      "lastFile": "/Users/beomseokpeterkim/dev/bdj/inventory-with-shopfipy/src/app/api/inventory/batch/route.ts"
     }
   },
   "pipeline": {
@@ -659,7 +673,7 @@
   "session": {
     "startedAt": "2026-02-07T03:26:19.690Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-02-14T03:16:01.377Z"
+    "lastActivity": "2026-02-14T05:17:12.444Z"
   },
   "history": [
     {
@@ -2890,6 +2904,78 @@
     },
     {
       "timestamp": "2026-02-14T03:16:01.377Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T04:20:43.446Z",
+      "feature": "batch",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T04:20:55.564Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T04:21:38.394Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T04:21:45.989Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T04:21:53.250Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T04:22:00.921Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T04:22:07.722Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T04:22:17.335Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T04:22:30.942Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T04:22:39.022Z",
+      "feature": "inventory",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T05:12:43.433Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-14T05:17:12.444Z",
       "feature": "inventory",
       "phase": "do",
       "action": "updated"
