@@ -143,6 +143,7 @@ model Product {
   @@index([shopifyStoreId])
   @@index([productGroupId])
   @@index([shopifySynced])
+  @@index([shopifyStoreId, isActive])
   @@unique([shopifyStoreId, shopifyProductId, shopifyVariantId])
 }
 
@@ -204,6 +205,8 @@ model InventoryItem {
   @@index([status])
   @@index([barcode])
   @@index([deletedAt])
+  @@index([deletedAt, status])
+  @@index([deletedAt, productId])
 }
 
 // ---- Auth Models ----
@@ -246,6 +249,7 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -255,6 +259,8 @@ model Session {
   expires      DateTime
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model VerificationToken {
