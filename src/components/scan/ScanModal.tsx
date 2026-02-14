@@ -1,9 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
-import { BarcodeScanTab } from './BarcodeScanTab';
-import { OcrScanTab } from './OcrScanTab';
+
+const BarcodeScanTab = dynamic(
+  () => import('./BarcodeScanTab').then((m) => ({ default: m.BarcodeScanTab })),
+  { ssr: false }
+);
+const OcrScanTab = dynamic(
+  () => import('./OcrScanTab').then((m) => ({ default: m.OcrScanTab })),
+  { ssr: false }
+);
 
 interface ScanModalProps {
   onResult: (text: string) => void;
