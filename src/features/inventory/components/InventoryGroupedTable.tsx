@@ -40,8 +40,8 @@ function StatusDots({ statusCounts }: { statusCounts: Partial<Record<string, num
   return (
     <div className="flex items-center gap-2">
       {entries.map(([status, count]) => (
-        <span key={status} className="flex items-center gap-1 text-xs text-gray-500 dark:text-zinc-400">
-          <span className={`inline-block h-2 w-2 rounded-full ${statusDotColors[status] ?? 'bg-gray-300'}`} />
+        <span key={status} className="flex items-center gap-1 text-xs text-gray-500 dark:text-zinc-400" aria-label={`${status}: ${count}`}>
+          <span className={`inline-block h-2 w-2 rounded-full ${statusDotColors[status] ?? 'bg-gray-300'}`} aria-hidden="true" />
           {count}
         </span>
       ))}
@@ -255,6 +255,10 @@ function ProductGroupSection({
     <>
       <tr
         onClick={onToggle}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(); } }}
+        tabIndex={0}
+        role="button"
+        aria-expanded={isExpanded}
         className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50 dark:border-zinc-800 dark:hover:bg-zinc-800/30 cursor-pointer"
       >
         <td className="px-3 sm:px-5 py-3 sm:py-3.5">

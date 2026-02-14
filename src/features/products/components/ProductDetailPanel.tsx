@@ -35,7 +35,7 @@ export function ProductDetailPanel({ productId, onClose }: ProductDetailPanelPro
   const product = data?.product;
 
   return (
-    <div className="fixed inset-0 z-50">
+    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={t('detail.details')}>
       <div
         className="absolute inset-0 bg-black/30 transition-opacity"
         onClick={onClose}
@@ -106,7 +106,7 @@ export function ProductDetailPanel({ productId, onClose }: ProductDetailPanelPro
               <h3 className="text-xs uppercase tracking-wider text-gray-400 font-medium mb-3">
                 {t('detail.details')}
               </h3>
-              <div className="grid grid-cols-2 gap-y-3">
+              <dl className="grid grid-cols-2 gap-y-3">
                 <DetailRow label={t('detail.sku')} value={product.sku} />
                 <DetailRow label={t('detail.barcodePrefix')} value={product.barcodePrefix} />
                 <DetailRow label={t('detail.price')} value={product.price} />
@@ -114,7 +114,7 @@ export function ProductDetailPanel({ productId, onClose }: ProductDetailPanelPro
                 <DetailRow label={t('detail.productType')} value={product.productType} />
                 <DetailRow label={t('detail.vendor')} value={product.vendor?.name ?? product.vendorName} />
                 <DetailRow label={t('detail.store')} value={product.shopifyStore?.name} />
-              </div>
+              </dl>
             </div>
 
             {product.shopifyBarcode && (
@@ -132,22 +132,22 @@ export function ProductDetailPanel({ productId, onClose }: ProductDetailPanelPro
               <h3 className="text-xs uppercase tracking-wider text-gray-400 font-medium mb-3">
                 {t('detail.shopifyInfo')}
               </h3>
-              <div className="grid grid-cols-2 gap-y-3">
+              <dl className="grid grid-cols-2 gap-y-3">
                 <DetailRow label={t('detail.shopifyProductId')} value={product.shopifyProductId} />
                 <DetailRow label={t('detail.shopifyVariantId')} value={product.shopifyVariantId} />
                 <DetailRow label={t('detail.synced')} value={product.shopifySynced ? t('detail.yes') : t('detail.no')} />
                 <DetailRow label={t('detail.productGroup')} value={product.productGroup?.name} />
-              </div>
+              </dl>
             </div>
 
             <div className="border-t border-gray-100 dark:border-zinc-800 pt-4">
               <h3 className="text-xs uppercase tracking-wider text-gray-400 font-medium mb-3">
                 {t('detail.timestamps')}
               </h3>
-              <div className="grid grid-cols-2 gap-y-3">
+              <dl className="grid grid-cols-2 gap-y-3">
                 <DetailRow label={t('detail.createdAt')} value={new Date(product.createdAt).toLocaleDateString()} />
                 <DetailRow label={t('detail.updatedAt')} value={new Date(product.updatedAt).toLocaleDateString()} />
-              </div>
+              </dl>
             </div>
           </div>
         )}
@@ -158,9 +158,9 @@ export function ProductDetailPanel({ productId, onClose }: ProductDetailPanelPro
 
 function DetailRow({ label, value }: { label: string; value: string | null | undefined }) {
   return (
-    <>
-      <span className="text-sm text-gray-500 dark:text-zinc-400">{label}</span>
-      <span className="text-sm font-medium">{value ?? '—'}</span>
-    </>
+    <div className="contents" role="group" aria-label={label}>
+      <dt className="text-sm text-gray-500 dark:text-zinc-400">{label}</dt>
+      <dd className="text-sm font-medium">{value ?? '—'}</dd>
+    </div>
   );
 }

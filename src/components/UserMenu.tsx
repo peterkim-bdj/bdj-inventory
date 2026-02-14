@@ -33,7 +33,7 @@ export function UserMenu() {
         className="flex items-center gap-2 rounded-full border border-gray-200 px-3 py-1.5 text-sm transition-colors hover:bg-gray-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
       >
         {session.user.image ? (
-          <Image src={session.user.image} alt="" width={24} height={24} className="h-6 w-6 rounded-full" />
+          <Image src={session.user.image} alt={`${session.user.name || session.user.email}`} width={24} height={24} className="h-6 w-6 rounded-full" />
         ) : (
           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white dark:bg-white dark:text-black">
             {initials}

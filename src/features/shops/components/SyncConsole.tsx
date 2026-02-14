@@ -41,7 +41,7 @@ export function SyncConsole({ progress, shopName, onClose }: SyncConsoleProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-label={t('title')}>
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
@@ -57,6 +57,7 @@ export function SyncConsole({ progress, shopName, onClose }: SyncConsoleProps) {
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            aria-label={t('close')}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -105,6 +106,9 @@ export function SyncConsole({ progress, shopName, onClose }: SyncConsoleProps) {
           <div
             ref={containerRef}
             className="bg-gray-950 rounded-lg p-3 h-72 overflow-y-auto font-mono text-xs leading-relaxed"
+            aria-live="polite"
+            aria-atomic="false"
+            role="log"
           >
             {progress.logs.map((log, i) => (
               <div key={i} className="flex gap-2">

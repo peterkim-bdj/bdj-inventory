@@ -144,8 +144,8 @@ export function OcrScanTab({ onResult }: OcrScanTabProps) {
       )}
 
       {phase === 'processing' && (
-        <div className="flex flex-col items-center justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-black dark:border-zinc-600 dark:border-t-white" />
+        <div className="flex flex-col items-center justify-center py-12" role="status" aria-live="polite">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-black dark:border-zinc-600 dark:border-t-white" aria-hidden="true" />
           <p className="mt-3 text-sm text-gray-500">{t('scan.processing')}</p>
         </div>
       )}

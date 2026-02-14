@@ -70,6 +70,8 @@ export default function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t('field.email')}
           required
+          aria-label={t('field.email')}
+          aria-describedby={error ? 'login-error' : undefined}
           className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent dark:bg-zinc-800 dark:border-zinc-700 dark:focus:ring-zinc-400"
         />
         <input
@@ -78,11 +80,13 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           placeholder={t('field.password')}
           required
+          aria-label={t('field.password')}
+          aria-describedby={error ? 'login-error' : undefined}
           className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent dark:bg-zinc-800 dark:border-zinc-700 dark:focus:ring-zinc-400"
         />
 
         {error && (
-          <p className="text-sm text-red-500">{error}</p>
+          <p id="login-error" className="text-sm text-red-500" role="alert">{error}</p>
         )}
 
         <button

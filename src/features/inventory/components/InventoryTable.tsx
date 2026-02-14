@@ -83,6 +83,7 @@ export function InventoryTable({ items, onItemClick, onProductClick, onPrint, is
                   checked={!!allSelected}
                   ref={(el) => { if (el) el.indeterminate = !!someSelected && !allSelected; }}
                   onChange={handleSelectAll}
+                  aria-label={t('table.selectAll', { defaultValue: 'Select all' })}
                   className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500 cursor-pointer"
                 />
               </th>
@@ -114,6 +115,7 @@ export function InventoryTable({ items, onItemClick, onProductClick, onPrint, is
                       checked={isChecked}
                       onChange={() => {}} // handled by onClick
                       onClick={(e) => handleSelectItem(e, item.id)}
+                      aria-label={`${t('table.select', { defaultValue: 'Select' })} ${item.product.name}`}
                       className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500 cursor-pointer"
                     />
                   </td>

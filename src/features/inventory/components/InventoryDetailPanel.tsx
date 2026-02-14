@@ -70,7 +70,7 @@ export function InventoryDetailPanel({ item, onClose, onProductClick, isAdmin, i
   const isMutating = softDelete.isPending || restore.isPending || permanentDelete.isPending;
 
   return (
-    <div className="fixed inset-0 z-50">
+    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={t('detail.itemInfo')}>
       <div className="absolute inset-0 bg-black/30 transition-opacity" onClick={onClose} />
       <div className="absolute right-0 top-0 h-full w-full max-w-lg overflow-y-auto bg-white shadow-2xl dark:bg-zinc-900 rounded-l-xl">
         <div className="sticky top-0 z-10 flex justify-end p-4 bg-white/80 backdrop-blur-sm dark:bg-zinc-900/80">
@@ -93,6 +93,9 @@ export function InventoryDetailPanel({ item, onClose, onProductClick, isAdmin, i
           <div
             className={`flex items-center gap-4 rounded-xl border border-gray-100 p-4 dark:border-zinc-800 ${onProductClick ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800/50' : ''}`}
             onClick={() => onProductClick?.(item.product.id)}
+            onKeyDown={(e) => { if (onProductClick && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onProductClick(item.product.id); } }}
+            tabIndex={onProductClick ? 0 : undefined}
+            role={onProductClick ? 'button' : undefined}
           >
             {item.product.imageUrl ? (
               <Image src={item.product.imageUrl} alt={item.product.name} width={48} height={48} className="h-12 w-12 rounded-lg object-cover" />
@@ -114,7 +117,7 @@ export function InventoryDetailPanel({ item, onClose, onProductClick, isAdmin, i
           {/* Item details */}
           <div className="border-t border-gray-100 dark:border-zinc-800 pt-4">
             <h3 className="text-xs uppercase tracking-wider text-gray-400 font-medium mb-3">{t('detail.itemInfo')}</h3>
-            <div className="grid grid-cols-2 gap-y-3">
+            <dl className="grid grid-cols-2 gap-y-3">
               <DetailRow label={t('table.status')}>
                 <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[item.status] ?? ''}`}>
                   {t(`status.${item.status}`)}
@@ -126,7 +129,7 @@ export function InventoryDetailPanel({ item, onClose, onProductClick, isAdmin, i
               {item.soldAt && <DetailRow label={t('detail.soldAt')} value={new Date(item.soldAt).toLocaleDateString()} />}
               {item.deletedAt && <DetailRow label={t('delete.deletedAt')} value={new Date(item.deletedAt).toLocaleDateString()} />}
               {item.notes && <DetailRow label={t('detail.notes')} value={item.notes} />}
-            </div>
+            </dl>
           </div>
 
           {/* Admin actions */}
@@ -172,9 +175,9 @@ export function InventoryDetailPanel({ item, onClose, onProductClick, isAdmin, i
 
 function DetailRow({ label, value, children }: { label: string; value?: string; children?: React.ReactNode }) {
   return (
-    <>
-      <span className="text-sm text-gray-500 dark:text-zinc-400">{label}</span>
-      {children ?? <span className="text-sm font-medium">{value ?? '\u2014'}</span>}
-    </>
+    <div className="contents" role="group" aria-label={label}>
+      <dt className="text-sm text-gray-500 dark:text-zinc-400">{label}</dt>
+      <dd className="text-sm font-medium">{children ?? (value ?? '\u2014')}</dd>
+    </div>
   );
 }

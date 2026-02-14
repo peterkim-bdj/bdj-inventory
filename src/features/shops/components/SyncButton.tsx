@@ -102,6 +102,7 @@ export function SyncButton({ shopId, shopName, syncStatus }: SyncButtonProps) {
           <button
             onClick={() => setShowConsole(true)}
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            aria-label={t('progress.openConsole')}
             title={t('progress.openConsole')}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,7 +114,8 @@ export function SyncButton({ shopId, shopName, syncStatus }: SyncButtonProps) {
             onClick={handleReset}
             disabled={resetting}
             className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
-            title="Cancel sync"
+            aria-label={t('button.cancel', { defaultValue: 'Cancel sync' })}
+            title={t('button.cancel', { defaultValue: 'Cancel sync' })}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

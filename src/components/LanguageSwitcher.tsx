@@ -24,6 +24,7 @@ export function LanguageSwitcher() {
         <button
           key={l}
           onClick={() => handleLocaleChange(l)}
+          aria-current={locale === l ? 'true' : undefined}
           className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
             locale === l
               ? 'bg-black text-white dark:bg-white dark:text-black'

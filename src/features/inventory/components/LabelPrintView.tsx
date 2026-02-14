@@ -36,7 +36,7 @@ export function LabelPrintView({ items, productName, onClose }: LabelPrintViewPr
 
   return (
     <>
-    <div className="fixed inset-0 z-50">
+    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={t('labels.title')}>
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
 
       <div className="absolute right-0 top-0 h-full w-full max-w-lg overflow-y-auto bg-white p-6 shadow-2xl dark:bg-zinc-900 rounded-l-xl">
@@ -51,6 +51,7 @@ export function LabelPrintView({ items, productName, onClose }: LabelPrintViewPr
           <button
             onClick={onClose}
             className="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-zinc-800"
+            aria-label={t('labels.close', { defaultValue: 'Close' })}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
