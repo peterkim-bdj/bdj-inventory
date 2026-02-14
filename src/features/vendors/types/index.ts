@@ -32,6 +32,19 @@ export const vendorUpdateSchema = vendorCreateSchema.partial().omit({ name: true
   name: z.string().min(1).max(255).optional(),
 });
 
+export type VendorUpdateData = {
+  name?: string;
+  code?: string | null;
+  contactName?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  website?: string | null;
+  address?: string | null;
+  notes?: string | null;
+  autoNotify?: boolean;
+  minLeadDays?: number;
+};
+
 // === Interfaces ===
 
 export interface VendorListItem {

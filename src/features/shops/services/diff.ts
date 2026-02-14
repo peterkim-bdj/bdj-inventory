@@ -54,6 +54,13 @@ const COMPARE_FIELDS = [
   'variantTitle',
 ] as const;
 
+type CompareField = typeof COMPARE_FIELDS[number];
+type FieldValue = string | number | null;
+
+function getField(obj: TransformedProduct | DbProduct, field: CompareField): FieldValue {
+  return (obj as Record<CompareField, FieldValue>)[field] ?? null;
+}
+
 export function generateDiff(
   shopifyProducts: TransformedProduct[],
   dbProducts: DbProduct[],
@@ -77,29 +84,19 @@ export function generateDiff(
         type: 'NEW',
         shopifyProductId: sp.shopifyProductId,
         shopifyVariantId: sp.shopifyVariantId,
-        data: sp as unknown as Record<string, unknown>,
+        data: { ...sp },
         defaultAction: 'add',
       });
     } else {
       const changes: FieldChange[] = [];
       for (const field of COMPARE_FIELDS) {
-        const oldVal = String(
-          (dbProduct as unknown as Record<string, unknown>)[field] ?? '',
-        );
-        const newVal = String(
-          (sp as unknown as Record<string, unknown>)[field] ?? '',
-        );
+        const oldVal = String(getField(dbProduct, field) ?? '');
+        const newVal = String(getField(sp, field) ?? '');
         if (oldVal !== newVal) {
           changes.push({
             field,
-            old: (dbProduct as unknown as Record<string, unknown>)[field] as
-              | string
-              | number
-              | null,
-            new: (sp as unknown as Record<string, unknown>)[field] as
-              | string
-              | number
-              | null,
+            old: getField(dbProduct, field),
+            new: getField(sp, field),
           });
         }
       }

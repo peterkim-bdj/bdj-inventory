@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { apiError } from '@/lib/api/error';
 import { requireAuth } from '@/lib/auth';
 import { vendorUpdateSchema } from '@/features/vendors/types';
-import type { Prisma } from '@/generated/prisma/client';
+import type { VendorUpdateData } from '@/features/vendors/types';
 
 export async function GET(
   _request: NextRequest,
@@ -60,14 +60,15 @@ export async function PUT(
     });
   }
 
-  const data = Object.fromEntries(
-    Object.entries(parsed.data).map(([k, v]) => [k, v === '' ? null : v]),
-  );
+  const data: VendorUpdateData = {};
+  for (const [k, v] of Object.entries(parsed.data)) {
+    (data as Record<string, unknown>)[k] = v === '' ? null : v;
+  }
 
   try {
     const vendor = await prisma.vendor.update({
       where: { id },
-      data: data as unknown as Prisma.VendorUpdateInput,
+      data,
     });
     return NextResponse.json(vendor);
   } catch (err: unknown) {
