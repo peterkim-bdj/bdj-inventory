@@ -32,6 +32,16 @@ async function permanentDeleteItem(id: string) {
   return res.json();
 }
 
+async function batchAction({ ids, action }: { ids: string[]; action: 'restore' | 'permanentDelete' }) {
+  const res = await fetch('/api/inventory/batch', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids, action }),
+  });
+  if (!res.ok) throw new Error(`Failed to batch ${action}`);
+  return res.json();
+}
+
 export function useInventoryMutation() {
   const queryClient = useQueryClient();
 
@@ -55,5 +65,15 @@ export function useInventoryMutation() {
     onSuccess: invalidate,
   });
 
-  return { softDelete, restore, permanentDelete };
+  const batchRestore = useMutation({
+    mutationFn: (ids: string[]) => batchAction({ ids, action: 'restore' }),
+    onSuccess: invalidate,
+  });
+
+  const batchPermanentDelete = useMutation({
+    mutationFn: (ids: string[]) => batchAction({ ids, action: 'permanentDelete' }),
+    onSuccess: invalidate,
+  });
+
+  return { softDelete, restore, permanentDelete, batchRestore, batchPermanentDelete };
 }

@@ -8,6 +8,7 @@ import { ViewToggle } from '@/components/ViewToggle';
 import { Pagination } from '@/components/Pagination';
 import { useInventory } from '@/features/inventory/hooks/useInventory';
 import { useGroupedInventory } from '@/features/inventory/hooks/useGroupedInventory';
+import { useInventoryMutation } from '@/features/inventory/hooks/useInventoryMutation';
 import { useLocations } from '@/features/inventory/hooks/useLocations';
 import { InventoryStats } from '@/features/inventory/components/InventoryStats';
 import { InventoryTable } from '@/features/inventory/components/InventoryTable';
@@ -26,6 +27,7 @@ export default function InventoryPage() {
   const t = useTranslations('inventory');
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === 'ADMIN';
+  const { batchRestore, batchPermanentDelete } = useInventoryMutation();
 
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
@@ -42,6 +44,9 @@ export default function InventoryPage() {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [printData, setPrintData] = useState<PrintLabelData | null>(null);
+
+  // Trash selection state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   // Shared filter params
   const filterParams = {
@@ -97,6 +102,7 @@ export default function InventoryPage() {
     setTrash((prev) => !prev);
     setPage(1);
     setSelectedItemId(null);
+    setSelectedIds(new Set());
   }, []);
 
   const handleItemClick = useCallback((id: string) => {
@@ -120,6 +126,19 @@ export default function InventoryPage() {
   const handleMutationSuccess = useCallback(() => {
     setSelectedItemId(null);
   }, []);
+
+  const handleBatchRestore = useCallback(async () => {
+    if (selectedIds.size === 0) return;
+    await batchRestore.mutateAsync(Array.from(selectedIds));
+    setSelectedIds(new Set());
+  }, [selectedIds, batchRestore]);
+
+  const handleBatchPermanentDelete = useCallback(async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(t('delete.confirmBatchPermanentDelete', { count: selectedIds.size }))) return;
+    await batchPermanentDelete.mutateAsync(Array.from(selectedIds));
+    setSelectedIds(new Set());
+  }, [selectedIds, batchPermanentDelete, t]);
 
   const selectedItem = data?.items?.find((i: InventoryItemDetail) => i.id === selectedItemId) ?? null;
 
@@ -190,15 +209,37 @@ export default function InventoryPage() {
         </div>
       </div>
 
-      {/* Trash banner */}
+      {/* Trash banner + bulk actions */}
       {trash && (
-        <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900/50 dark:bg-amber-900/20 dark:text-amber-400">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="3 6 5 6 21 6" />
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-          </svg>
-          {t('delete.trashBanner')}
+        <div className="flex items-center justify-between gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900/50 dark:bg-amber-900/20 dark:text-amber-400">
+          <div className="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg>
+            {selectedIds.size > 0
+              ? t('delete.selectedCount', { count: selectedIds.size })
+              : t('delete.trashBanner')}
+          </div>
+          {selectedIds.size > 0 && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleBatchRestore}
+                disabled={batchRestore.isPending}
+                className="rounded-lg bg-blue-500 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-blue-600 disabled:opacity-50"
+              >
+                {t('delete.restoreSelected', { count: selectedIds.size })}
+              </button>
+              <button
+                onClick={handleBatchPermanentDelete}
+                disabled={batchPermanentDelete.isPending}
+                className="rounded-lg bg-red-500 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-red-600 disabled:opacity-50"
+              >
+                {t('delete.deleteSelected', { count: selectedIds.size })}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -283,6 +324,8 @@ export default function InventoryPage() {
               onPrint={handlePrint}
               isAdmin={isAdmin}
               isTrash={trash}
+              selectedIds={trash ? selectedIds : undefined}
+              onSelectionChange={trash ? setSelectedIds : undefined}
             />
           ) : (
             <InventoryGrid

@@ -127,7 +127,11 @@
     "deletedAt": "삭제일",
     "deleteSuccess": "삭제되었습니다",
     "restoreSuccess": "복원되었습니다",
-    "permanentDeleteSuccess": "영구 삭제되었습니다"
+    "permanentDeleteSuccess": "영구 삭제되었습니다",
+    "selectedCount": "{count}개 선택됨",
+    "restoreSelected": "{count}개 복원",
+    "deleteSelected": "{count}개 삭제",
+    "confirmBatchPermanentDelete": "{count}개 항목을 영구 삭제하시겠습니까? 복구할 수 없습니다."
   },
   "pagination": {
     "showing": "{total}개 중 {from}-{to}",

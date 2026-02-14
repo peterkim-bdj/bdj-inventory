@@ -127,7 +127,11 @@
     "deletedAt": "Deleted",
     "deleteSuccess": "Item moved to trash",
     "restoreSuccess": "Item restored",
-    "permanentDeleteSuccess": "Item permanently deleted"
+    "permanentDeleteSuccess": "Item permanently deleted",
+    "selectedCount": "{count, plural, one {# item selected} other {# items selected}}",
+    "restoreSelected": "Restore {count}",
+    "deleteSelected": "Delete {count}",
+    "confirmBatchPermanentDelete": "Permanently delete {count, plural, one {# item} other {# items}}? This cannot be undone."
   },
   "pagination": {
     "showing": "Showing {from}-{to} of {total}",
