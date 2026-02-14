@@ -11,6 +11,7 @@ import { ProductList } from '@/features/products/components/ProductList';
 import { ProductGrid } from '@/features/products/components/ProductGrid';
 import { QuickFilters } from '@/features/products/components/QuickFilters';
 import { ProductDetailPanel } from '@/features/products/components/ProductDetailPanel';
+import { TableSkeleton, CardGridSkeleton } from '@/components/Skeleton';
 
 export default function ProductsPage() {
   const t = useTranslations('products');
@@ -111,9 +112,7 @@ export default function ProductsPage() {
       <QuickFilters activeFilters={quickFilters} onToggle={handleQuickFilterToggle} />
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <p className="text-lg text-gray-400">{tCommon('status.loading')}</p>
-        </div>
+        view === 'list' ? <TableSkeleton rows={6} cols={5} /> : <CardGridSkeleton count={6} />
       ) : !data || data.products.length === 0 ? (
         <div className="flex items-center justify-center py-20">
           <p className="text-lg text-gray-400">{tCommon('status.noData')}</p>

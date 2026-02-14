@@ -4,6 +4,7 @@ import { useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { TableSkeleton } from '@/components/Skeleton';
 
 interface User {
   id: string;
@@ -59,7 +60,7 @@ export default function AdminUsersPage() {
       <h1 className="text-3xl font-bold tracking-tight">{t('users.title')}</h1>
 
       {isLoading ? (
-        <p className="py-20 text-center text-gray-400">{t('users.loading')}</p>
+        <TableSkeleton rows={4} cols={5} />
       ) : (
         <div className="rounded-xl border border-gray-200 bg-white dark:bg-zinc-900 dark:border-zinc-800 overflow-hidden">
           <table className="w-full text-sm">

@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Barcode } from '@/components/Barcode';
+import { DetailPanelSkeleton } from '@/components/Skeleton';
 import { useProduct } from '../hooks/useProduct';
 
 function stripHtml(html: string): string {
@@ -56,9 +57,7 @@ export function ProductDetailPanel({ productId, onClose }: ProductDetailPanelPro
         </div>
 
         {isLoading ? (
-          <div className="flex items-center justify-center py-20">
-            <p className="text-lg text-gray-400">{tCommon('status.loading')}</p>
-          </div>
+          <DetailPanelSkeleton />
         ) : !product ? (
           <div className="flex items-center justify-center py-20">
             <p className="text-lg text-gray-400">{tCommon('error.notFound')}</p>

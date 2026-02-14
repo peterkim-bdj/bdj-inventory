@@ -19,6 +19,7 @@ import { InventoryFilters } from '@/features/inventory/components/InventoryFilte
 import { InventoryDetailPanel } from '@/features/inventory/components/InventoryDetailPanel';
 import { LabelPrintView } from '@/features/inventory/components/LabelPrintView';
 import { ProductDetailPanel } from '@/features/products/components/ProductDetailPanel';
+import { StatsSkeleton, TableSkeleton, GroupedTableSkeleton, CardGridSkeleton } from '@/components/Skeleton';
 import type { InventoryItemDetail, PrintLabelData } from '@/features/inventory/types';
 
 type InventoryViewMode = 'list' | 'grouped' | 'card';
@@ -297,8 +298,15 @@ export default function InventoryPage() {
 
       {/* Content */}
       {activeLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <p className="text-lg text-gray-400">{t('loading')}</p>
+        <div className="space-y-6">
+          {!trash && <StatsSkeleton />}
+          {effectiveView === 'grouped' ? (
+            <GroupedTableSkeleton rows={5} />
+          ) : effectiveView === 'list' ? (
+            <TableSkeleton rows={6} cols={6} />
+          ) : (
+            <CardGridSkeleton count={6} />
+          )}
         </div>
       ) : !hasData ? (
         <div className="flex flex-col items-center justify-center py-20">

@@ -11,6 +11,7 @@ import { useVendors } from '@/features/vendors/hooks/useVendors';
 import { VendorTable } from '@/features/vendors/components/VendorTable';
 import { VendorGrid } from '@/features/vendors/components/VendorGrid';
 import { VendorFilters } from '@/features/vendors/components/VendorFilters';
+import { TableSkeleton, CardGridSkeleton } from '@/components/Skeleton';
 
 export default function VendorsPage() {
   const t = useTranslations('vendors');
@@ -124,9 +125,7 @@ export default function VendorsPage() {
 
       {/* Content */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <p className="text-lg text-gray-400">{tCommon('status.loading')}</p>
-        </div>
+        view === 'list' ? <TableSkeleton rows={5} cols={5} /> : <CardGridSkeleton count={6} />
       ) : !data?.vendors || data.vendors.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20">
           <p className="text-lg text-gray-400">{t('noVendors')}</p>

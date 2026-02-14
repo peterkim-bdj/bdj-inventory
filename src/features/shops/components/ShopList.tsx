@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { ShopDeleteDialog } from './ShopDeleteDialog';
 import { SyncButton } from './SyncButton';
+import { TableSkeleton } from '@/components/Skeleton';
 
 export function ShopList() {
   const t = useTranslations('shops');
@@ -17,7 +18,7 @@ export function ShopList() {
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string; productCount: number } | null>(null);
 
   if (isLoading) {
-    return <p className="text-gray-400">{tCommon('status.loading')}</p>;
+    return <TableSkeleton rows={4} cols={6} />;
   }
 
   if (!shops || shops.length === 0) {
