@@ -2,7 +2,12 @@
 
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { BarcodeScanner } from '@/features/inventory/components/BarcodeScanner';
+import dynamic from 'next/dynamic';
+
+const BarcodeScanner = dynamic(
+  () => import('@/features/inventory/components/BarcodeScanner').then((m) => ({ default: m.BarcodeScanner })),
+  { ssr: false }
+);
 import { ProductMatchCard } from '@/features/inventory/components/ProductMatchCard';
 import { RegisterForm } from '@/features/inventory/components/RegisterForm';
 import { RecentRegistrations } from '@/features/inventory/components/RecentRegistrations';

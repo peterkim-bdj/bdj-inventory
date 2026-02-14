@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -88,10 +88,10 @@ export default function InventoryPage() {
     setPage(1);
   }, []);
 
-  const resetFilter = (setter: (v: string) => void) => (val: string) => {
-    setter(val);
-    setPage(1);
-  };
+  const handleStatusChange = useCallback((val: string) => { setStatus(val); setPage(1); }, []);
+  const handleLocationChange = useCallback((val: string) => { setLocationId(val); setPage(1); }, []);
+  const handleStoreChange = useCallback((val: string) => { setShopifyStoreId(val); setPage(1); }, []);
+  const handleVendorChange = useCallback((val: string) => { setVendorId(val); setPage(1); }, []);
 
   const handleViewChange = useCallback((v: InventoryViewMode) => {
     setView(v);
@@ -127,18 +127,28 @@ export default function InventoryPage() {
     setSelectedItemId(null);
   }, []);
 
+  const handleCloseItem = useCallback(() => setSelectedItemId(null), []);
+  const handleCloseProduct = useCallback(() => setSelectedProductId(null), []);
+  const handleClosePrint = useCallback(() => setPrintData(null), []);
+
+  // Use refs for mutation objects to avoid unstable useCallback deps
+  const batchRestoreRef = useRef(batchRestore);
+  batchRestoreRef.current = batchRestore;
+  const batchPermanentDeleteRef = useRef(batchPermanentDelete);
+  batchPermanentDeleteRef.current = batchPermanentDelete;
+
   const handleBatchRestore = useCallback(async () => {
     if (selectedIds.size === 0) return;
-    await batchRestore.mutateAsync(Array.from(selectedIds));
+    await batchRestoreRef.current.mutateAsync(Array.from(selectedIds));
     setSelectedIds(new Set());
-  }, [selectedIds, batchRestore]);
+  }, [selectedIds]);
 
   const handleBatchPermanentDelete = useCallback(async () => {
     if (selectedIds.size === 0) return;
     if (!confirm(t('delete.confirmBatchPermanentDelete', { count: selectedIds.size }))) return;
-    await batchPermanentDelete.mutateAsync(Array.from(selectedIds));
+    await batchPermanentDeleteRef.current.mutateAsync(Array.from(selectedIds));
     setSelectedIds(new Set());
-  }, [selectedIds, batchPermanentDelete, t]);
+  }, [selectedIds, t]);
 
   const selectedItem = data?.items?.find((i: InventoryItemDetail) => i.id === selectedItemId) ?? null;
 
@@ -257,10 +267,10 @@ export default function InventoryPage() {
             selectedLocationId={locationId}
             selectedStoreId={shopifyStoreId}
             selectedVendorId={vendorId}
-            onStatusChange={resetFilter(setStatus)}
-            onLocationChange={resetFilter(setLocationId)}
-            onStoreChange={resetFilter(setShopifyStoreId)}
-            onVendorChange={resetFilter(setVendorId)}
+            onStatusChange={handleStatusChange}
+            onLocationChange={handleLocationChange}
+            onStoreChange={handleStoreChange}
+            onVendorChange={handleVendorChange}
           />
         )}
         {effectiveView !== 'grouped' && (
@@ -364,7 +374,7 @@ export default function InventoryPage() {
       {/* Inventory Detail Panel */}
       <InventoryDetailPanel
         item={selectedItem}
-        onClose={() => setSelectedItemId(null)}
+        onClose={handleCloseItem}
         onProductClick={handleProductClick}
         isAdmin={isAdmin}
         isTrash={trash}
@@ -374,7 +384,7 @@ export default function InventoryPage() {
       {/* Product Detail Panel */}
       <ProductDetailPanel
         productId={selectedProductId}
-        onClose={() => setSelectedProductId(null)}
+        onClose={handleCloseProduct}
       />
 
       {/* Print Label */}
@@ -382,7 +392,7 @@ export default function InventoryPage() {
         <LabelPrintView
           items={printData.items}
           productName={printData.productName}
-          onClose={() => setPrintData(null)}
+          onClose={handleClosePrint}
         />
       )}
     </div>

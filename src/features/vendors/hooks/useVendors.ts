@@ -27,5 +27,6 @@ export function useVendors(params: UseVendorsParams = {}) {
   return useQuery({
     queryKey: ['vendors', params],
     queryFn: () => fetchVendors(params),
+    staleTime: 30_000,
   });
 }

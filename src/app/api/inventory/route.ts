@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     : sortBy === 'productName' ? { product: { name: sortOrder ?? 'asc' } }
     : { receivedAt: sortOrder ?? 'desc' };
 
-  const [items, total] = await Promise.all([
+  const [items, total, stats, locationStats, storeFilters, vendorFilters] = await Promise.all([
     prisma.inventoryItem.findMany({
       where,
       orderBy,
@@ -77,23 +77,16 @@ export async function GET(request: NextRequest) {
       },
     }),
     prisma.inventoryItem.count({ where }),
-  ]);
-
-  // Aggregate stats (only non-deleted items)
-  const stats = await prisma.inventoryItem.groupBy({
-    by: ['status'],
-    _count: true,
-    where: { deletedAt: null },
-  });
-
-  const locationStats = await prisma.inventoryItem.groupBy({
-    by: ['locationId'],
-    _count: true,
-    where: { locationId: { not: null }, deletedAt: null },
-  });
-
-  // Filter metadata for store/vendor dropdowns (only non-deleted items)
-  const [storeFilters, vendorFilters] = await Promise.all([
+    prisma.inventoryItem.groupBy({
+      by: ['status'],
+      _count: true,
+      where: { deletedAt: null },
+    }),
+    prisma.inventoryItem.groupBy({
+      by: ['locationId'],
+      _count: true,
+      where: { locationId: { not: null }, deletedAt: null },
+    }),
     prisma.$queryRaw<Array<{ id: string; name: string; count: number }>>`
       SELECT s.id, s.name, COUNT(i.id)::int as count
       FROM "InventoryItem" i

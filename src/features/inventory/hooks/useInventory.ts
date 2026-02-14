@@ -59,5 +59,6 @@ export function useInventory(params: UseInventoryParams = {}) {
     queryKey: ['inventory', fetchParams],
     queryFn: () => fetchInventory(fetchParams),
     enabled,
+    staleTime: 30_000,
   });
 }

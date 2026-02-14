@@ -39,5 +39,6 @@ export function useGroupedInventory(params: UseGroupedInventoryParams = {}) {
     queryKey: ['inventory-grouped', fetchParams],
     queryFn: () => fetchGroupedInventory(fetchParams),
     enabled,
+    staleTime: 30_000,
   });
 }

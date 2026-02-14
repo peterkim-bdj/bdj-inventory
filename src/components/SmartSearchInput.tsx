@@ -1,7 +1,12 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { ScanModal } from '@/components/scan/ScanModal';
+import dynamic from 'next/dynamic';
+
+const ScanModal = dynamic(
+  () => import('@/components/scan/ScanModal').then((m) => ({ default: m.ScanModal })),
+  { ssr: false }
+);
 
 interface SmartSearchInputProps {
   value: string;

@@ -91,6 +91,13 @@ export async function POST(request: NextRequest) {
   let created = 0, updated = 0, skipped = 0, errorCount = 0;
   const importErrors: Array<{ row: number; field: string; message: string }> = [];
 
+  // Pre-fetch all existing vendors by name in one query (avoid N+1)
+  const validNames = rows.map((r) => String(r.name || '').trim()).filter(Boolean);
+  const existingVendors = validNames.length > 0
+    ? await prisma.vendor.findMany({ where: { name: { in: validNames } }, select: { id: true, name: true } })
+    : [];
+  const existingMap = new Map(existingVendors.map((v) => [v.name, v]));
+
   for (const row of rows) {
     const name = String(row.name || '').trim();
     if (!name) {
@@ -99,7 +106,7 @@ export async function POST(request: NextRequest) {
       continue;
     }
 
-    const existing = await prisma.vendor.findUnique({ where: { name } });
+    const existing = existingMap.get(name);
 
     const data: Record<string, unknown> = {};
     for (const field of ['code', 'contactName', 'phone', 'email', 'website', 'address', 'notes']) {
@@ -123,7 +130,8 @@ export async function POST(request: NextRequest) {
           skipped++;
         }
       } else {
-        await prisma.vendor.create({ data: { name, ...data } });
+        const created_vendor = await prisma.vendor.create({ data: { name, ...data } });
+        existingMap.set(name, { id: created_vendor.id, name });
         created++;
       }
     } catch {

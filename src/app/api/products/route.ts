@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
           ? { vendorName: sortOrder ?? 'asc' }
           : { name: sortOrder ?? 'asc' };
 
-  const [products, total] = await Promise.all([
+  const [products, total, stores, vendors, types] = await Promise.all([
     prisma.product.findMany({
       where,
       orderBy,
@@ -91,10 +91,6 @@ export async function GET(request: NextRequest) {
       },
     }),
     prisma.product.count({ where }),
-  ]);
-
-  // Get filter options
-  const [stores, vendors, types] = await Promise.all([
     prisma.product.groupBy({
       by: ['shopifyStoreId'],
       where: { isActive: true, shopifyStoreId: { not: null } },

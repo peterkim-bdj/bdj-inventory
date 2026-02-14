@@ -63,28 +63,53 @@ export async function GET(request: NextRequest) {
 
   const productIds = (sortBy === 'productName' ? sortedGroups : paginatedGroups).map((g) => g.productId);
 
-  // Step 2: Get product info
-  const products = await prisma.product.findMany({
-    where: { id: { in: productIds } },
-    select: {
-      id: true,
-      name: true,
-      variantTitle: true,
-      sku: true,
-      imageUrl: true,
-      shopifyStoreId: true,
-      vendorName: true,
-    },
-  });
+  // Steps 2-5: Run in parallel (all depend only on phase 1 productIds)
+  const [products, statusCounts, stats, storeFilters, vendorFilters] = await Promise.all([
+    // Step 2: Get product info
+    prisma.product.findMany({
+      where: { id: { in: productIds } },
+      select: {
+        id: true,
+        name: true,
+        variantTitle: true,
+        sku: true,
+        imageUrl: true,
+        shopifyStoreId: true,
+        vendorName: true,
+      },
+    }),
+    // Step 3: Get status counts per product
+    prisma.inventoryItem.groupBy({
+      by: ['productId', 'status'],
+      where: { productId: { in: productIds }, ...where },
+      _count: true,
+    }),
+    // Stats
+    prisma.inventoryItem.groupBy({
+      by: ['status'],
+      where,
+      _count: true,
+    }),
+    // Filter metadata
+    prisma.$queryRaw<Array<{ id: string; name: string; count: number }>>`
+      SELECT s.id, s.name, COUNT(i.id)::int as count
+      FROM "InventoryItem" i
+      JOIN "Product" p ON i."productId" = p.id
+      JOIN "ShopifyStore" s ON p."shopifyStoreId" = s.id
+      WHERE i."deletedAt" IS NULL
+      GROUP BY s.id, s.name ORDER BY s.name
+    `,
+    prisma.$queryRaw<Array<{ id: string; name: string; count: number }>>`
+      SELECT v.id, v.name, COUNT(i.id)::int as count
+      FROM "InventoryItem" i
+      JOIN "Product" p ON i."productId" = p.id
+      JOIN "Vendor" v ON p."vendorId" = v.id
+      WHERE i."deletedAt" IS NULL
+      GROUP BY v.id, v.name ORDER BY v.name
+    `,
+  ]);
 
   const productMap = new Map(products.map((p) => [p.id, p]));
-
-  // Step 3: Get status counts per product
-  const statusCounts = await prisma.inventoryItem.groupBy({
-    by: ['productId', 'status'],
-    where: { productId: { in: productIds }, ...where },
-    _count: true,
-  });
 
   const statusMap = new Map<string, Record<string, number>>();
   for (const sc of statusCounts) {
@@ -118,34 +143,7 @@ export async function GET(request: NextRequest) {
     groups = groups.slice((page - 1) * limit, page * limit);
   }
 
-  // Stats (reuse from all items matching the filter)
-  const stats = await prisma.inventoryItem.groupBy({
-    by: ['status'],
-    where,
-    _count: true,
-  });
-
   const totalItems = stats.reduce((sum, s) => sum + s._count, 0);
-
-  // Filter metadata (only non-deleted items)
-  const [storeFilters, vendorFilters] = await Promise.all([
-    prisma.$queryRaw<Array<{ id: string; name: string; count: number }>>`
-      SELECT s.id, s.name, COUNT(i.id)::int as count
-      FROM "InventoryItem" i
-      JOIN "Product" p ON i."productId" = p.id
-      JOIN "ShopifyStore" s ON p."shopifyStoreId" = s.id
-      WHERE i."deletedAt" IS NULL
-      GROUP BY s.id, s.name ORDER BY s.name
-    `,
-    prisma.$queryRaw<Array<{ id: string; name: string; count: number }>>`
-      SELECT v.id, v.name, COUNT(i.id)::int as count
-      FROM "InventoryItem" i
-      JOIN "Product" p ON i."productId" = p.id
-      JOIN "Vendor" v ON p."vendorId" = v.id
-      WHERE i."deletedAt" IS NULL
-      GROUP BY v.id, v.name ORDER BY v.name
-    `,
-  ]);
 
   return NextResponse.json({
     groups,
