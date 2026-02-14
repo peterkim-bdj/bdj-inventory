@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Barcode } from '@/components/Barcode';
 import { useInventory } from '../hooks/useInventory';
+import { useInventoryMutation } from '../hooks/useInventoryMutation';
 import type { ProductInventoryGroup, InventoryItemDetail } from '../types';
 
 const statusDotColors: Record<string, string> = {
@@ -29,6 +30,7 @@ interface InventoryGroupedTableProps {
   onProductClick?: (productId: string) => void;
   onPrint?: (item: InventoryItemDetail) => void;
   onBatchPrint?: (items: Array<{ barcode: string }>, productName: string) => void;
+  isAdmin?: boolean;
 }
 
 function StatusDots({ statusCounts }: { statusCounts: Partial<Record<string, number>> }) {
@@ -52,13 +54,16 @@ function ExpandedItemRows({
   filters,
   onItemClick,
   onPrint,
+  isAdmin,
 }: {
   productId: string;
   filters: { status?: string; locationId?: string; shopifyStoreId?: string; vendorId?: string };
   onItemClick?: (id: string) => void;
   onPrint?: (item: InventoryItemDetail) => void;
+  isAdmin?: boolean;
 }) {
   const t = useTranslations('inventory');
+  const { softDelete } = useInventoryMutation();
   const { data, isLoading } = useInventory({
     productId,
     ...filters,
@@ -66,6 +71,12 @@ function ExpandedItemRows({
     sortBy: 'receivedAt',
     sortOrder: 'desc',
   });
+
+  const handleSoftDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (!confirm(t('delete.confirmDelete'))) return;
+    await softDelete.mutateAsync(id);
+  };
 
   if (isLoading) {
     return (
@@ -122,6 +133,20 @@ function ExpandedItemRows({
                   </svg>
                 </button>
               )}
+              {isAdmin && (
+                <button
+                  onClick={(e) => handleSoftDelete(e, item.id)}
+                  className="rounded-full p-1 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
+                  aria-label={t('delete.delete')}
+                  title={t('delete.softDelete')}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  </svg>
+                </button>
+              )}
             </div>
           </td>
         </tr>
@@ -136,6 +161,7 @@ export function InventoryGroupedTable({
   onProductClick,
   onPrint,
   onBatchPrint,
+  isAdmin,
   filters,
 }: InventoryGroupedTableProps & { filters?: { status?: string; locationId?: string; shopifyStoreId?: string; vendorId?: string } }) {
   const t = useTranslations('inventory');
@@ -191,6 +217,7 @@ export function InventoryGroupedTable({
                 onProductClick={onProductClick}
                 onPrint={onPrint}
                 onBatchPrint={onBatchPrint ? () => handleBatchPrint(group) : undefined}
+                isAdmin={isAdmin}
                 filters={filters}
               />
             );
@@ -209,6 +236,7 @@ function ProductGroupSection({
   onProductClick,
   onPrint,
   onBatchPrint,
+  isAdmin,
   filters,
 }: {
   group: ProductInventoryGroup;
@@ -218,6 +246,7 @@ function ProductGroupSection({
   onProductClick?: (productId: string) => void;
   onPrint?: (item: InventoryItemDetail) => void;
   onBatchPrint?: () => void;
+  isAdmin?: boolean;
   filters?: { status?: string; locationId?: string; shopifyStoreId?: string; vendorId?: string };
 }) {
   const t = useTranslations('inventory');
@@ -317,6 +346,7 @@ function ProductGroupSection({
           filters={filters ?? {}}
           onItemClick={onItemClick}
           onPrint={onPrint}
+          isAdmin={isAdmin}
         />
       )}
     </>

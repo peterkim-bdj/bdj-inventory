@@ -9,6 +9,7 @@ interface UseInventoryParams {
   productId?: string;
   shopifyStoreId?: string;
   vendorId?: string;
+  trash?: boolean;
   sortBy?: string;
   sortOrder?: string;
   page?: number;
@@ -41,6 +42,7 @@ async function fetchInventory(params: UseInventoryParams): Promise<InventoryResp
   if (params.productId) searchParams.set('productId', params.productId);
   if (params.shopifyStoreId) searchParams.set('shopifyStoreId', params.shopifyStoreId);
   if (params.vendorId) searchParams.set('vendorId', params.vendorId);
+  if (params.trash) searchParams.set('trash', 'true');
   if (params.sortBy) searchParams.set('sortBy', params.sortBy);
   if (params.sortOrder) searchParams.set('sortOrder', params.sortOrder);
   if (params.page) searchParams.set('page', String(params.page));

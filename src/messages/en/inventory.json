@@ -114,6 +114,21 @@
     "notes": "Notes",
     "print": "Print Label"
   },
+  "delete": {
+    "delete": "Delete",
+    "softDelete": "Move to Trash",
+    "restore": "Restore",
+    "permanentDelete": "Permanently Delete",
+    "trash": "Trash",
+    "trashEmpty": "Trash is empty",
+    "trashBanner": "Viewing deleted items",
+    "confirmDelete": "Delete this item?",
+    "confirmPermanentDelete": "This cannot be undone. Permanently delete?",
+    "deletedAt": "Deleted",
+    "deleteSuccess": "Item moved to trash",
+    "restoreSuccess": "Item restored",
+    "permanentDeleteSuccess": "Item permanently deleted"
+  },
   "pagination": {
     "showing": "Showing {from}-{to} of {total}",
     "previous": "Previous",

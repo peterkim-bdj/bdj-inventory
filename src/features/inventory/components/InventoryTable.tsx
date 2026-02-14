@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Barcode } from '@/components/Barcode';
+import { useInventoryMutation } from '../hooks/useInventoryMutation';
 import type { InventoryItemDetail } from '../types';
 
 const statusColors: Record<string, string> = {
@@ -18,10 +19,30 @@ interface InventoryTableProps {
   onItemClick?: (id: string) => void;
   onProductClick?: (productId: string) => void;
   onPrint?: (item: InventoryItemDetail) => void;
+  isAdmin?: boolean;
+  isTrash?: boolean;
 }
 
-export function InventoryTable({ items, onItemClick, onProductClick, onPrint }: InventoryTableProps) {
+export function InventoryTable({ items, onItemClick, onProductClick, onPrint, isAdmin, isTrash }: InventoryTableProps) {
   const t = useTranslations('inventory');
+  const { softDelete, restore, permanentDelete } = useInventoryMutation();
+
+  const handleSoftDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (!confirm(t('delete.confirmDelete'))) return;
+    await softDelete.mutateAsync(id);
+  };
+
+  const handleRestore = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    await restore.mutateAsync(id);
+  };
+
+  const handlePermanentDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (!confirm(t('delete.confirmPermanentDelete'))) return;
+    await permanentDelete.mutateAsync(id);
+  };
 
   return (
     <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-zinc-700">
@@ -33,7 +54,9 @@ export function InventoryTable({ items, onItemClick, onProductClick, onPrint }: 
             <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-gray-500 font-medium">{t('table.location')}</th>
             <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-gray-500 font-medium">{t('table.status')}</th>
             <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-gray-500 font-medium">{t('table.condition')}</th>
-            <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-gray-500 font-medium">{t('table.receivedAt')}</th>
+            <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-gray-500 font-medium">
+              {isTrash ? t('delete.deletedAt') : t('table.receivedAt')}
+            </th>
             <th className="px-5 py-3 w-10"></th>
           </tr>
         </thead>
@@ -77,22 +100,75 @@ export function InventoryTable({ items, onItemClick, onProductClick, onPrint }: 
                 </span>
               </td>
               <td className="px-5 py-4 text-gray-500 dark:text-zinc-400">{t(`condition.${item.condition}`)}</td>
-              <td className="px-5 py-4 text-gray-500 dark:text-zinc-400">{new Date(item.receivedAt).toLocaleDateString()}</td>
+              <td className="px-5 py-4 text-gray-500 dark:text-zinc-400">
+                {isTrash && item.deletedAt
+                  ? new Date(item.deletedAt).toLocaleDateString()
+                  : new Date(item.receivedAt).toLocaleDateString()}
+              </td>
               <td className="px-5 py-4">
-                {onPrint && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onPrint(item); }}
-                    className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-zinc-800"
-                    aria-label={t('detail.print')}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="6 9 6 2 18 2 18 9" />
-                      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                      <rect x="6" y="14" width="12" height="8" />
-                    </svg>
-                  </button>
-                )}
+                <div className="flex items-center gap-1">
+                  {isTrash && isAdmin ? (
+                    <>
+                      {/* Restore */}
+                      <button
+                        onClick={(e) => handleRestore(e, item.id)}
+                        className="rounded-full p-1.5 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                        aria-label={t('delete.restore')}
+                        title={t('delete.restore')}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="1 4 1 10 7 10" />
+                          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                        </svg>
+                      </button>
+                      {/* Permanent delete */}
+                      <button
+                        onClick={(e) => handlePermanentDelete(e, item.id)}
+                        className="rounded-full p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        aria-label={t('delete.permanentDelete')}
+                        title={t('delete.permanentDelete')}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {onPrint && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); onPrint(item); }}
+                          className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-zinc-800"
+                          aria-label={t('detail.print')}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9" />
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                            <rect x="6" y="14" width="12" height="8" />
+                          </svg>
+                        </button>
+                      )}
+                      {isAdmin && (
+                        <button
+                          onClick={(e) => handleSoftDelete(e, item.id)}
+                          className="rounded-full p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
+                          aria-label={t('delete.delete')}
+                          title={t('delete.softDelete')}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                          </svg>
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
               </td>
             </tr>
           ))}

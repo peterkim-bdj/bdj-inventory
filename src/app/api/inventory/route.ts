@@ -18,9 +18,16 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const { search, status, locationId, productId, shopifyStoreId, vendorId, sortBy, sortOrder, page, limit } = parsed.data;
+  const { search, status, locationId, productId, shopifyStoreId, vendorId, trash, sortBy, sortOrder, page, limit } = parsed.data;
 
   const where: Prisma.InventoryItemWhereInput = {};
+
+  // Soft-delete filter: show only active items by default, trash items when trash=true
+  if (trash) {
+    where.deletedAt = { not: null };
+  } else {
+    where.deletedAt = null;
+  }
 
   if (search) {
     where.OR = [
@@ -72,25 +79,27 @@ export async function GET(request: NextRequest) {
     prisma.inventoryItem.count({ where }),
   ]);
 
-  // Aggregate stats
+  // Aggregate stats (only non-deleted items)
   const stats = await prisma.inventoryItem.groupBy({
     by: ['status'],
     _count: true,
+    where: { deletedAt: null },
   });
 
   const locationStats = await prisma.inventoryItem.groupBy({
     by: ['locationId'],
     _count: true,
-    where: { locationId: { not: null } },
+    where: { locationId: { not: null }, deletedAt: null },
   });
 
-  // Filter metadata for store/vendor dropdowns
+  // Filter metadata for store/vendor dropdowns (only non-deleted items)
   const [storeFilters, vendorFilters] = await Promise.all([
     prisma.$queryRaw<Array<{ id: string; name: string; count: number }>>`
       SELECT s.id, s.name, COUNT(i.id)::int as count
       FROM "InventoryItem" i
       JOIN "Product" p ON i."productId" = p.id
       JOIN "ShopifyStore" s ON p."shopifyStoreId" = s.id
+      WHERE i."deletedAt" IS NULL
       GROUP BY s.id, s.name ORDER BY s.name
     `,
     prisma.$queryRaw<Array<{ id: string; name: string; count: number }>>`
@@ -98,6 +107,7 @@ export async function GET(request: NextRequest) {
       FROM "InventoryItem" i
       JOIN "Product" p ON i."productId" = p.id
       JOIN "Vendor" v ON p."vendorId" = v.id
+      WHERE i."deletedAt" IS NULL
       GROUP BY v.id, v.name ORDER BY v.name
     `,
   ]);

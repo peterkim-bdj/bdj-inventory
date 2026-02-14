@@ -1,15 +1,19 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Barcode } from '@/components/Barcode';
+import { useInventoryMutation } from '../hooks/useInventoryMutation';
 import type { InventoryItemDetail } from '../types';
 
 interface InventoryDetailPanelProps {
   item: InventoryItemDetail | null;
   onClose: () => void;
   onProductClick?: (productId: string) => void;
+  isAdmin?: boolean;
+  isTrash?: boolean;
+  onMutationSuccess?: () => void;
 }
 
 const statusColors: Record<string, string> = {
@@ -20,9 +24,11 @@ const statusColors: Record<string, string> = {
   DAMAGED: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
 };
 
-export function InventoryDetailPanel({ item, onClose, onProductClick }: InventoryDetailPanelProps) {
+export function InventoryDetailPanel({ item, onClose, onProductClick, isAdmin, isTrash, onMutationSuccess }: InventoryDetailPanelProps) {
   const t = useTranslations('inventory');
   const tCommon = useTranslations('common');
+  const { softDelete, restore, permanentDelete } = useInventoryMutation();
+  const [confirmPermanent, setConfirmPermanent] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -34,7 +40,34 @@ export function InventoryDetailPanel({ item, onClose, onProductClick }: Inventor
     }
   }, [item, onClose]);
 
+  useEffect(() => {
+    setConfirmPermanent(false);
+  }, [item?.id]);
+
   if (!item) return null;
+
+  const handleSoftDelete = async () => {
+    if (!confirm(t('delete.confirmDelete'))) return;
+    await softDelete.mutateAsync(item.id);
+    onMutationSuccess?.();
+  };
+
+  const handleRestore = async () => {
+    await restore.mutateAsync(item.id);
+    onMutationSuccess?.();
+  };
+
+  const handlePermanentDelete = async () => {
+    if (!confirmPermanent) {
+      setConfirmPermanent(true);
+      return;
+    }
+    await permanentDelete.mutateAsync(item.id);
+    setConfirmPermanent(false);
+    onMutationSuccess?.();
+  };
+
+  const isMutating = softDelete.isPending || restore.isPending || permanentDelete.isPending;
 
   return (
     <div className="fixed inset-0 z-50">
@@ -91,9 +124,46 @@ export function InventoryDetailPanel({ item, onClose, onProductClick }: Inventor
               <DetailRow label={t('table.location')} value={item.location ? `${item.location.name} (${item.location.code})` : '\u2014'} />
               <DetailRow label={t('table.receivedAt')} value={new Date(item.receivedAt).toLocaleDateString()} />
               {item.soldAt && <DetailRow label={t('detail.soldAt')} value={new Date(item.soldAt).toLocaleDateString()} />}
+              {item.deletedAt && <DetailRow label={t('delete.deletedAt')} value={new Date(item.deletedAt).toLocaleDateString()} />}
               {item.notes && <DetailRow label={t('detail.notes')} value={item.notes} />}
             </div>
           </div>
+
+          {/* Admin actions */}
+          {isAdmin && (
+            <div className="border-t border-gray-100 dark:border-zinc-800 pt-4 space-y-2">
+              {isTrash ? (
+                <>
+                  <button
+                    onClick={handleRestore}
+                    disabled={isMutating}
+                    className="w-full rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-600 disabled:opacity-50"
+                  >
+                    {t('delete.restore')}
+                  </button>
+                  <button
+                    onClick={handlePermanentDelete}
+                    disabled={isMutating}
+                    className={`w-full rounded-xl px-4 py-2.5 text-sm font-medium transition-colors disabled:opacity-50 ${
+                      confirmPermanent
+                        ? 'bg-red-600 text-white hover:bg-red-700'
+                        : 'bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30'
+                    }`}
+                  >
+                    {confirmPermanent ? t('delete.confirmPermanentDelete') : t('delete.permanentDelete')}
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={handleSoftDelete}
+                  disabled={isMutating}
+                  className="w-full rounded-xl bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100 disabled:opacity-50 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
+                >
+                  {t('delete.softDelete')}
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

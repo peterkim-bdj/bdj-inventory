@@ -21,7 +21,9 @@ export async function GET(request: NextRequest) {
   const { search, status, locationId, shopifyStoreId, vendorId, sortBy, sortOrder, page, limit } = parsed.data;
 
   // Build where clause for InventoryItem
-  const where: Prisma.InventoryItemWhereInput = {};
+  const where: Prisma.InventoryItemWhereInput = {
+    deletedAt: null, // Only show non-deleted items in grouped view
+  };
 
   if (search) {
     where.OR = [
@@ -125,13 +127,14 @@ export async function GET(request: NextRequest) {
 
   const totalItems = stats.reduce((sum, s) => sum + s._count, 0);
 
-  // Filter metadata
+  // Filter metadata (only non-deleted items)
   const [storeFilters, vendorFilters] = await Promise.all([
     prisma.$queryRaw<Array<{ id: string; name: string; count: number }>>`
       SELECT s.id, s.name, COUNT(i.id)::int as count
       FROM "InventoryItem" i
       JOIN "Product" p ON i."productId" = p.id
       JOIN "ShopifyStore" s ON p."shopifyStoreId" = s.id
+      WHERE i."deletedAt" IS NULL
       GROUP BY s.id, s.name ORDER BY s.name
     `,
     prisma.$queryRaw<Array<{ id: string; name: string; count: number }>>`
@@ -139,6 +142,7 @@ export async function GET(request: NextRequest) {
       FROM "InventoryItem" i
       JOIN "Product" p ON i."productId" = p.id
       JOIN "Vendor" v ON p."vendorId" = v.id
+      WHERE i."deletedAt" IS NULL
       GROUP BY v.id, v.name ORDER BY v.name
     `,
   ]);

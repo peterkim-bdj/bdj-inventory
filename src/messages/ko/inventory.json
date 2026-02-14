@@ -114,6 +114,21 @@
     "notes": "메모",
     "print": "라벨 인쇄"
   },
+  "delete": {
+    "delete": "삭제",
+    "softDelete": "삭제 (휴지통으로)",
+    "restore": "복원",
+    "permanentDelete": "영구 삭제",
+    "trash": "휴지통",
+    "trashEmpty": "휴지통이 비어있습니다",
+    "trashBanner": "삭제된 항목을 보고 있습니다",
+    "confirmDelete": "이 항목을 삭제하시겠습니까?",
+    "confirmPermanentDelete": "영구 삭제하면 복구할 수 없습니다. 계속하시겠습니까?",
+    "deletedAt": "삭제일",
+    "deleteSuccess": "삭제되었습니다",
+    "restoreSuccess": "복원되었습니다",
+    "permanentDeleteSuccess": "영구 삭제되었습니다"
+  },
   "pagination": {
     "showing": "{total}개 중 {from}-{to}",
     "previous": "이전",

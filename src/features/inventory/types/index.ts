@@ -38,10 +38,19 @@ export const inventoryQuerySchema = z.object({
   productId: z.string().optional(),
   shopifyStoreId: z.string().optional(),
   vendorId: z.string().optional(),
+  trash: z.coerce.boolean().optional(),
   sortBy: z.enum(['barcode', 'receivedAt', 'status', 'productName']).optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),
   page: z.coerce.number().min(1).optional().default(1),
   limit: z.coerce.number().min(1).max(100).optional().default(20),
+});
+
+export const inventoryActionSchema = z.object({
+  action: z.enum(['softDelete', 'restore']),
+});
+
+export const inventoryDeleteSchema = z.object({
+  confirm: z.literal(true),
 });
 
 export const locationQuerySchema = z.object({
@@ -78,6 +87,7 @@ export interface InventoryItemDetail {
   notes: string | null;
   receivedAt: string;
   soldAt: string | null;
+  deletedAt: string | null;
   product: {
     id: string;
     name: string;

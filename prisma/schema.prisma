@@ -195,6 +195,7 @@ model InventoryItem {
   notes      String?
   receivedAt DateTime        @default(now())
   soldAt     DateTime?
+  deletedAt  DateTime?
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
 
@@ -202,6 +203,7 @@ model InventoryItem {
   @@index([locationId])
   @@index([status])
   @@index([barcode])
+  @@index([deletedAt])
 }
 
 // ---- Auth Models ----
