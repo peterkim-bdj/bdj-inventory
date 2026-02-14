@@ -150,6 +150,11 @@ export function LabelPrintView({ items, productName, onClose }: LabelPrintViewPr
           </div>
         </div>
 
+        {/* Mobile paper size tip */}
+        <p className="text-xs text-gray-400 dark:text-zinc-500 mb-3">
+          {t('labels.paperSizeTip', { width: labelSize.width, height: labelSize.height })}
+        </p>
+
         {/* Print Button */}
         <button
           onClick={handlePrint}
@@ -174,6 +179,12 @@ export function LabelPrintView({ items, productName, onClose }: LabelPrintViewPr
           margin: 0;
         }
         @media print {
+          html, body {
+            background: white !important;
+            color: black !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
           body > *:not(.print-labels-portal) {
             display: none !important;
           }

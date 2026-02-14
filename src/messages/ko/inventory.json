@@ -53,7 +53,8 @@
     "size": "라벨 사이즈",
     "custom": "커스텀",
     "preview": "미리보기",
-    "printAll": "전체 라벨 인쇄"
+    "printAll": "전체 라벨 인쇄",
+    "paperSizeTip": "인쇄 설정에서 용지 크기를 {width}\" × {height}\"로 변경하세요"
   },
   "status": {
     "AVAILABLE": "이용 가능",

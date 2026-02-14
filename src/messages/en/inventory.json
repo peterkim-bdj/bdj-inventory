@@ -53,7 +53,8 @@
     "size": "Label Size",
     "custom": "Custom",
     "preview": "Preview",
-    "printAll": "Print All Labels"
+    "printAll": "Print All Labels",
+    "paperSizeTip": "Set Paper Size to {width}\" × {height}\" in print dialog"
   },
   "status": {
     "AVAILABLE": "Available",
