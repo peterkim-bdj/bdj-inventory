@@ -49,7 +49,7 @@ export function useShops() {
     queryKey: ['shops'],
     queryFn: fetchShops,
     select: (data) => data.shops,
-    staleTime: 30_000,
+    staleTime: 2 * 60_000,
   });
 }
 

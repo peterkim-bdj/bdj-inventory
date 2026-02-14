@@ -32,7 +32,7 @@ export default function AdminUsersPage() {
       if (!res.ok) throw new Error('Failed to fetch');
       return res.json() as Promise<{ users: User[] }>;
     },
-    staleTime: 30_000,
+    staleTime: 2 * 60_000,
   });
 
   const mutation = useMutation({
