@@ -18,7 +18,7 @@ export function ViewToggle<T extends string>({ view, onViewChange, options }: Vi
         <button
           key={opt.value}
           onClick={() => onViewChange(opt.value)}
-          className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+          className={`rounded-full px-2.5 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-medium transition-colors ${
             view === opt.value
               ? 'bg-black text-white dark:bg-white dark:text-black'
               : 'text-gray-500 hover:text-gray-700 dark:hover:text-zinc-300'

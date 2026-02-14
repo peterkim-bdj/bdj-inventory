@@ -87,15 +87,15 @@ function ExpandedItemRows({
           onClick={() => onItemClick?.(item.id)}
           className={`border-b border-gray-50 last:border-b-0 bg-gray-50/50 hover:bg-gray-100/50 dark:bg-zinc-900/30 dark:border-zinc-800/50 dark:hover:bg-zinc-800/40 ${onItemClick ? 'cursor-pointer' : ''}`}
         >
-          <td className="py-2.5 pl-14 pr-5">
-            <div className="flex items-center gap-3">
+          <td className="py-2 sm:py-2.5 pl-8 sm:pl-14 pr-3 sm:pr-5">
+            <div className="flex items-center gap-2 sm:gap-3">
               <Barcode value={item.barcode} height={20} width={1} fontSize={8} />
             </div>
           </td>
-          <td className="px-5 py-2.5 text-xs text-gray-500 dark:text-zinc-400">
+          <td className="px-3 sm:px-5 py-2 sm:py-2.5 text-xs text-gray-500 dark:text-zinc-400">
             {item.location ? `${item.location.name} (${item.location.code})` : '\u2014'}
           </td>
-          <td className="px-5 py-2.5">
+          <td className="hidden sm:table-cell px-3 sm:px-5 py-2 sm:py-2.5">
             <div className="flex items-center gap-2">
               <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeColors[item.status] ?? ''}`}>
                 {t(`status.${item.status}`)}
@@ -103,9 +103,9 @@ function ExpandedItemRows({
               <span className="text-xs text-gray-400">{t(`condition.${item.condition}`)}</span>
             </div>
           </td>
-          <td className="px-5 py-2.5">
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400">
+          <td className="px-2 sm:px-5 py-2 sm:py-2.5">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <span className="hidden sm:inline text-xs text-gray-400">
                 {new Date(item.receivedAt).toLocaleDateString()}
               </span>
               {onPrint && (
@@ -172,10 +172,10 @@ export function InventoryGroupedTable({
       <table className="w-full text-sm">
         <thead>
           <tr className="bg-gray-50 dark:bg-zinc-800/50">
-            <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-gray-500 font-medium">{t('grouped.product')}</th>
-            <th className="px-5 py-3 text-center text-xs uppercase tracking-wider text-gray-500 font-medium w-20">{t('grouped.qty')}</th>
-            <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-gray-500 font-medium">{t('grouped.statusSummary')}</th>
-            <th className="px-5 py-3 w-10"></th>
+            <th className="px-3 sm:px-5 py-3 text-left text-xs uppercase tracking-wider text-gray-500 font-medium">{t('grouped.product')}</th>
+            <th className="px-3 sm:px-5 py-3 text-center text-xs uppercase tracking-wider text-gray-500 font-medium w-16 sm:w-20">{t('grouped.qty')}</th>
+            <th className="hidden sm:table-cell px-3 sm:px-5 py-3 text-left text-xs uppercase tracking-wider text-gray-500 font-medium">{t('grouped.statusSummary')}</th>
+            <th className="px-2 sm:px-5 py-3 w-8 sm:w-10"></th>
           </tr>
         </thead>
         <tbody>
@@ -228,8 +228,8 @@ function ProductGroupSection({
         onClick={onToggle}
         className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50 dark:border-zinc-800 dark:hover:bg-zinc-800/30 cursor-pointer"
       >
-        <td className="px-5 py-3.5">
-          <div className="flex items-center gap-3">
+        <td className="px-3 sm:px-5 py-3 sm:py-3.5">
+          <div className="flex items-center gap-2 sm:gap-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="14"
@@ -240,7 +240,7 @@ function ProductGroupSection({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className={`text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+              className={`flex-shrink-0 text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
             >
               <polyline points="9 18 15 12 9 6" />
             </svg>
@@ -250,14 +250,14 @@ function ProductGroupSection({
                 alt={group.product.name}
                 width={32}
                 height={32}
-                className="h-8 w-8 rounded-lg object-cover"
+                className="hidden sm:block h-8 w-8 rounded-lg object-cover flex-shrink-0"
               />
             ) : (
-              <div className="h-8 w-8 rounded-lg bg-gray-100 dark:bg-zinc-800" />
+              <div className="hidden sm:block h-8 w-8 rounded-lg bg-gray-100 dark:bg-zinc-800 flex-shrink-0" />
             )}
             <div className="min-w-0">
               <p
-                className={`font-medium truncate max-w-[300px] ${onProductClick ? 'hover:underline' : ''}`}
+                className={`font-medium text-sm sm:text-base truncate max-w-[180px] sm:max-w-[300px] ${onProductClick ? 'hover:underline' : ''}`}
                 onClick={(e) => {
                   if (onProductClick) {
                     e.stopPropagation();
@@ -270,24 +270,28 @@ function ProductGroupSection({
                   <span className="ml-1 font-normal text-gray-400">— {group.product.variantTitle}</span>
                 )}
               </p>
-              {group.product.sku && (
-                <p className="text-xs text-gray-400 truncate">{group.product.sku}</p>
-              )}
+              <div className="flex items-center gap-2">
+                {group.product.sku && (
+                  <p className="text-xs text-gray-400 truncate">{group.product.sku}</p>
+                )}
+                {/* Show status dots inline on mobile (hidden on sm+) */}
+                <span className="sm:hidden"><StatusDots statusCounts={group.statusCounts} /></span>
+              </div>
             </div>
           </div>
         </td>
-        <td className="px-5 py-3.5 text-center">
-          <span className="inline-flex h-7 min-w-[28px] items-center justify-center rounded-full bg-gray-100 px-2 text-sm font-semibold dark:bg-zinc-800">
+        <td className="px-3 sm:px-5 py-3 sm:py-3.5 text-center">
+          <span className="inline-flex h-6 sm:h-7 min-w-[24px] sm:min-w-[28px] items-center justify-center rounded-full bg-gray-100 px-1.5 sm:px-2 text-xs sm:text-sm font-semibold dark:bg-zinc-800">
             {group.totalCount}
           </span>
         </td>
-        <td className="px-5 py-3.5">
+        <td className="hidden sm:table-cell px-3 sm:px-5 py-3 sm:py-3.5">
           <StatusDots statusCounts={group.statusCounts} />
         </td>
-        <td className="px-5 py-3.5">
-          <div className="flex items-center gap-2">
+        <td className="px-2 sm:px-5 py-3 sm:py-3.5">
+          <div className="flex items-center gap-1 sm:gap-2">
             {group.product.vendorName && (
-              <span className="text-xs text-gray-400 truncate">{group.product.vendorName}</span>
+              <span className="hidden sm:inline text-xs text-gray-400 truncate">{group.product.vendorName}</span>
             )}
             {onBatchPrint && (
               <button

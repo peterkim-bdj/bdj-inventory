@@ -117,9 +117,9 @@ export default function InventoryPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-baseline gap-3">
-          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('title')}</h1>
           {activePagination && (
             <span className="text-sm text-gray-400">
               {view === 'grouped'
@@ -128,7 +128,7 @@ export default function InventoryPage() {
             </span>
           )}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <ViewToggle
             view={view}
             onViewChange={handleViewChange}
@@ -140,7 +140,7 @@ export default function InventoryPage() {
           />
           <Link
             href="/inventory/register"
-            className="rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+            className="rounded-full bg-black px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-white whitespace-nowrap transition-colors hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
           >
             {t('registerButton')}
           </Link>
