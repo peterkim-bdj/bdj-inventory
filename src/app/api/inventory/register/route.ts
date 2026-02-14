@@ -19,24 +19,23 @@ export async function POST(request: NextRequest) {
 
   const { productId, locationId, quantity, condition, notes } = parsed.data;
 
-  // Verify product exists
-  const product = await prisma.product.findFirst({
-    where: { id: productId, isActive: true },
-    select: { id: true, name: true, barcodePrefix: true },
-  });
+  // Verify product and location exist in parallel
+  const [product, location] = await Promise.all([
+    prisma.product.findFirst({
+      where: { id: productId, isActive: true },
+      select: { id: true, name: true, barcodePrefix: true },
+    }),
+    locationId
+      ? prisma.location.findFirst({ where: { id: locationId, isActive: true } })
+      : Promise.resolve(null),
+  ]);
 
   if (!product) {
     return apiError('NOT_FOUND', 'Product not found', 404);
   }
 
-  // Verify location if provided
-  if (locationId) {
-    const location = await prisma.location.findFirst({
-      where: { id: locationId, isActive: true },
-    });
-    if (!location) {
-      return apiError('NOT_FOUND', 'Location not found', 404);
-    }
+  if (locationId && !location) {
+    return apiError('NOT_FOUND', 'Location not found', 404);
   }
 
   // Use a serializable transaction to prevent race conditions on barcode sequence

@@ -22,12 +22,13 @@ export async function POST(req: NextRequest) {
 
   const { name, email, password } = parsed.data;
 
-  const existing = await prisma.user.findUnique({ where: { email } });
+  const [existing, passwordHash] = await Promise.all([
+    prisma.user.findUnique({ where: { email } }),
+    bcrypt.hash(password, 12),
+  ]);
   if (existing) {
     return apiError('CONFLICT', 'Email already registered', 409);
   }
-
-  const passwordHash = await bcrypt.hash(password, 12);
 
   const user = await prisma.user.create({
     data: { name, email, passwordHash },
