@@ -122,7 +122,7 @@ function ExpandedItemRows({
               {onPrint && (
                 <button
                   onClick={(e) => { e.stopPropagation(); onPrint(item); }}
-                  className="rounded-full p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-zinc-700"
+                  className="rounded-full p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
                   aria-label={t('detail.print')}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
@@ -329,7 +329,7 @@ function ProductGroupSection({
             {onBatchPrint && (
               <button
                 onClick={(e) => { e.stopPropagation(); onBatchPrint(); }}
-                className="rounded-full p-1.5 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-zinc-700"
+                className="rounded-full p-1.5 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
                 aria-label={t('labels.printAll')}
                 title={t('labels.printAll')}
               >

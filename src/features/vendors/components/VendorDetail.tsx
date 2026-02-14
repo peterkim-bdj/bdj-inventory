@@ -64,17 +64,17 @@ export function VendorDetail({ vendor }: VendorDetailProps) {
           <DetailRow label={t('form.phone')}>
             {vendor.phone ? (
               <a href={`tel:${vendor.phone}`} className="text-blue-600 hover:underline dark:text-blue-400">{vendor.phone}</a>
-            ) : <span className="text-gray-300">&mdash;</span>}
+            ) : <span className="text-gray-300 dark:text-zinc-600">&mdash;</span>}
           </DetailRow>
           <DetailRow label={t('form.email')}>
             {vendor.email ? (
               <a href={`mailto:${vendor.email}`} className="text-blue-600 hover:underline dark:text-blue-400">{vendor.email}</a>
-            ) : <span className="text-gray-300">&mdash;</span>}
+            ) : <span className="text-gray-300 dark:text-zinc-600">&mdash;</span>}
           </DetailRow>
           <DetailRow label={t('form.website')}>
             {vendor.website ? (
               <a href={vendor.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline dark:text-blue-400">{vendor.website}</a>
-            ) : <span className="text-gray-300">&mdash;</span>}
+            ) : <span className="text-gray-300 dark:text-zinc-600">&mdash;</span>}
           </DetailRow>
           <DetailRow label={t('form.address')} value={vendor.address} className="col-span-2" />
         </div>
@@ -108,7 +108,7 @@ function DetailRow({
   return (
     <div className={className}>
       <p className="text-xs text-gray-400 mb-1">{label}</p>
-      {children ?? <p className="text-sm font-medium">{value || <span className="text-gray-300">&mdash;</span>}</p>}
+      {children ?? <p className="text-sm font-medium">{value || <span className="text-gray-300 dark:text-zinc-600">&mdash;</span>}</p>}
     </div>
   );
 }

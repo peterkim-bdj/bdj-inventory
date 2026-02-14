@@ -36,7 +36,7 @@ export function VendorCard({ vendor, onClick }: VendorCardProps) {
         {vendor.contactName ? (
           <p className="text-sm text-gray-600 dark:text-zinc-400">{vendor.contactName}</p>
         ) : (
-          <p className="text-sm text-orange-400">{t('missingContact')}</p>
+          <p className="text-sm text-orange-400 dark:text-orange-300">{t('missingContact')}</p>
         )}
 
         {vendor.phone && (

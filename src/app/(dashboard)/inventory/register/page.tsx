@@ -101,7 +101,7 @@ export default function InventoryRegisterPage() {
               <h2 className="text-xs uppercase tracking-wider text-gray-400 font-medium mb-4">
                 {t('scan.results')}
                 {scanResult && (
-                  <span className="ml-2 text-gray-300">
+                  <span className="ml-2 text-gray-300 dark:text-zinc-600">
                     ({scanResult.products.length} {t('scan.found')})
                   </span>
                 )}

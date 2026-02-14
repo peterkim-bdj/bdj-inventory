@@ -186,7 +186,7 @@ export default function InventoryPage() {
               className={`rounded-full p-2 sm:p-2.5 transition-colors ${
                 trash
                   ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
-                  : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-zinc-800'
+                  : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300'
               }`}
               aria-label={t('delete.trash')}
               title={t('delete.trash')}

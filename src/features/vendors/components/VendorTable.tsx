@@ -40,7 +40,7 @@ export function VendorTable({ vendors, onVendorClick }: VendorTableProps) {
               </td>
               <td className="px-5 py-4 text-gray-500 dark:text-zinc-400">
                 {vendor.contactName || (
-                  <span className="text-orange-400 text-xs">{t('missingContact')}</span>
+                  <span className="text-orange-400 dark:text-orange-300 text-xs">{t('missingContact')}</span>
                 )}
               </td>
               <td className="px-5 py-4">

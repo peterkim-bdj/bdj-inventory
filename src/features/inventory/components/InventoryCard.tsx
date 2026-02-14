@@ -70,7 +70,7 @@ export function InventoryCard({ item, onClick, onPrint }: InventoryCardProps) {
         {onPrint && (
           <button
             onClick={(e) => { e.stopPropagation(); onPrint(); }}
-            className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-zinc-800"
+            className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
             aria-label={t('detail.print')}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"

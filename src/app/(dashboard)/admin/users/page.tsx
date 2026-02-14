@@ -99,7 +99,7 @@ export default function AdminUsersPage() {
                     {user.role === 'PENDING' && (
                       <button
                         onClick={() => handleRoleChange(user.id, 'USER')}
-                        className="rounded-full bg-green-600 px-3 py-1 text-xs font-medium text-white hover:bg-green-700"
+                        className="rounded-full bg-green-600 px-3 py-1 text-xs font-medium text-white hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
                       >
                         {t('users.approve')}
                       </button>
