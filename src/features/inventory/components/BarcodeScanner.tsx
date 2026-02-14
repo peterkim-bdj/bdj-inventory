@@ -28,21 +28,37 @@ const BARCODE_FORMATS = [
 type ScanMode = 'input' | 'barcode' | 'ocr';
 type OcrPhase = 'preview' | 'processing' | 'result';
 
+interface SuggestionProduct {
+  id: string;
+  name: string;
+  sku: string | null;
+  variantTitle: string | null;
+  imageUrl: string | null;
+}
+
 interface BarcodeScannerProps {
   onScan: (barcode: string) => void;
   onSkuCandidates?: (candidates: string[]) => void;
+  onProductSelect?: (productId: string, searchTerm: string) => void;
   autoFocus?: boolean;
 }
 
 const READER_ID = 'barcode-reader';
 
-export function BarcodeScanner({ onScan, onSkuCandidates, autoFocus = true }: BarcodeScannerProps) {
+export function BarcodeScanner({ onScan, onSkuCandidates, onProductSelect, autoFocus = true }: BarcodeScannerProps) {
   const t = useTranslations('inventory');
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState('');
   const [scanMode, setScanMode] = useState<ScanMode>('input');
   const [cameraError, setCameraError] = useState('');
   const scannerRef = useRef<Html5Qrcode | null>(null);
+
+  // Live search suggestions
+  const [suggestions, setSuggestions] = useState<SuggestionProduct[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   // OCR state
   const [ocrPhase, setOcrPhase] = useState<OcrPhase>('preview');
@@ -58,11 +74,71 @@ export function BarcodeScanner({ onScan, onSkuCandidates, autoFocus = true }: Ba
     }
   }, [autoFocus, scanMode]);
 
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Debounced live search
+  const fetchSuggestions = useCallback((query: string) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (query.length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      setIsFetchingSuggestions(true);
+      try {
+        const res = await fetch(`/api/inventory/scan?barcode=${encodeURIComponent(query)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setSuggestions(data.products?.slice(0, 5) || []);
+          setShowSuggestions(true);
+        }
+      } catch {
+        // ignore fetch errors for suggestions
+      } finally {
+        setIsFetchingSuggestions(false);
+      }
+    }, 300);
+  }, []);
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value;
+    setValue(v);
+    fetchSuggestions(v);
+  }, [fetchSuggestions]);
+
+  const handleSuggestionSelect = useCallback((product: SuggestionProduct) => {
+    setShowSuggestions(false);
+    setValue('');
+    setSuggestions([]);
+    if (onProductSelect) {
+      onProductSelect(product.id, product.sku || product.name);
+    } else {
+      onScan(product.sku || product.name);
+    }
+  }, [onScan, onProductSelect]);
+
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && value.trim()) {
       e.preventDefault();
+      setShowSuggestions(false);
+      setSuggestions([]);
       onScan(value.trim());
       setValue('');
+    }
+    if (e.key === 'Escape') {
+      setShowSuggestions(false);
     }
   }, [value, onScan]);
 
@@ -313,14 +389,14 @@ export function BarcodeScanner({ onScan, onSkuCandidates, autoFocus = true }: Ba
 
   return (
     <div className="space-y-3">
-      {/* Text input mode */}
+      {/* Text input mode with live suggestions */}
       {scanMode === 'input' && (
-        <div className="relative">
+        <div className="relative" ref={wrapperRef}>
           <svg
             xmlns="http://www.w3.org/2000/svg" width="18" height="18"
             viewBox="0 0 24 24" fill="none" stroke="currentColor"
             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10"
           >
             <path d="M3 7V5a2 2 0 0 1 2-2h2" />
             <path d="M17 3h2a2 2 0 0 1 2 2v2" />
@@ -332,12 +408,51 @@ export function BarcodeScanner({ onScan, onSkuCandidates, autoFocus = true }: Ba
             ref={inputRef}
             type="text"
             value={value}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
             placeholder={t('scan.placeholder')}
             suppressHydrationWarning
+            autoComplete="off"
             className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-lg placeholder:text-gray-400 focus:border-transparent focus:ring-2 focus:ring-black dark:border-zinc-700 dark:bg-zinc-900 dark:focus:ring-zinc-400"
           />
+          {value.length >= 2 && (
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-300 dark:text-zinc-600">
+              {isFetchingSuggestions ? '...' : 'Enter'}
+            </span>
+          )}
+
+          {/* Suggestions dropdown */}
+          {showSuggestions && suggestions.length > 0 && (
+            <div className="absolute left-0 right-0 top-full z-20 mt-1 rounded-xl border border-gray-200 bg-white shadow-lg dark:border-zinc-700 dark:bg-zinc-900 overflow-hidden">
+              {suggestions.map((product) => (
+                <button
+                  key={product.id}
+                  onClick={() => handleSuggestionSelect(product)}
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm transition-colors hover:bg-gray-50 dark:hover:bg-zinc-800 border-b border-gray-100 last:border-b-0 dark:border-zinc-800"
+                >
+                  {product.imageUrl ? (
+                    <img src={product.imageUrl} alt="" className="h-8 w-8 rounded object-cover flex-shrink-0" />
+                  ) : (
+                    <div className="flex h-8 w-8 items-center justify-center rounded bg-gray-100 text-xs text-gray-400 flex-shrink-0 dark:bg-zinc-800 dark:text-zinc-500">
+                      ?
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium text-gray-900 dark:text-zinc-100">
+                      {product.name}
+                      {product.variantTitle && (
+                        <span className="font-normal text-gray-400 dark:text-zinc-500"> — {product.variantTitle}</span>
+                      )}
+                    </p>
+                    {product.sku && (
+                      <p className="truncate text-xs text-gray-400 font-mono dark:text-zinc-500">{product.sku}</p>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

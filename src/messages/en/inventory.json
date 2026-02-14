@@ -24,7 +24,8 @@
     "fullText": "Full Text",
     "retake": "Retake",
     "searchWithSku": "Search",
-    "ocrHint": "Point camera at the SKU label and capture"
+    "ocrHint": "Point camera at the SKU label and capture",
+    "typeToSearch": "Type 2+ chars to see suggestions"
   },
   "register": {
     "title": "Register Inventory",

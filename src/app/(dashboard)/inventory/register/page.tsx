@@ -47,6 +47,13 @@ export default function InventoryRegisterPage() {
     setShowNewProductForm(false);
   }, []);
 
+  const handleProductSelect = useCallback((productId: string, searchTerm: string) => {
+    setScannedBarcode(searchTerm);
+    setSkuCandidates(null);
+    setSelectedProductId(productId);
+    setShowNewProductForm(false);
+  }, []);
+
   const handleRegister = useCallback((data: {
     quantity: number;
     locationId?: string;
@@ -107,7 +114,7 @@ export default function InventoryRegisterPage() {
             <h2 className="text-xs uppercase tracking-wider text-gray-400 font-medium mb-4">
               {t('scan.title')}
             </h2>
-            <BarcodeScanner onScan={handleScan} onSkuCandidates={handleSkuCandidates} />
+            <BarcodeScanner onScan={handleScan} onSkuCandidates={handleSkuCandidates} onProductSelect={handleProductSelect} />
           </div>
 
           {(scannedBarcode || skuCandidates) && (
