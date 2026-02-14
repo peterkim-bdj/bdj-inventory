@@ -11,7 +11,10 @@ export type ItemCondition = (typeof ITEM_CONDITION)[number];
 // === API Schemas ===
 
 export const scanQuerySchema = z.object({
-  barcode: z.string().min(1),
+  barcode: z.string().min(1).optional(),
+  candidates: z.string().optional(),
+}).refine(data => data.barcode || data.candidates, {
+  message: 'barcode or candidates is required',
 });
 
 export const registerSchema = z.object({

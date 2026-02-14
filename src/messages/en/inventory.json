@@ -14,7 +14,17 @@
     "searching": "Searching...",
     "noMatch": "No matching product found",
     "cameraUnavailable": "Camera requires HTTPS. Use the text input instead.",
-    "createNew": "Create New Product"
+    "createNew": "Create New Product",
+    "textScan": "Text Scan",
+    "barcodeScan": "Barcode Scan",
+    "captureText": "Capture Text",
+    "processing": "Recognizing text...",
+    "skuCandidates": "SKU Candidates",
+    "noSkuFound": "No SKU patterns detected. You can edit the text below.",
+    "fullText": "Full Text",
+    "retake": "Retake",
+    "searchWithSku": "Search",
+    "ocrHint": "Point camera at the SKU label and capture"
   },
   "register": {
     "title": "Register Inventory",

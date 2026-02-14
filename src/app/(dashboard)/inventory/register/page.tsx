@@ -21,16 +21,28 @@ export default function InventoryRegisterPage() {
   const t = useTranslations('inventory');
 
   const [scannedBarcode, setScannedBarcode] = useState<string | null>(null);
+  const [skuCandidates, setSkuCandidates] = useState<string[] | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [recentRegistrations, setRecentRegistrations] = useState<RegisterResult[]>([]);
   const [showNewProductForm, setShowNewProductForm] = useState(false);
   const [printData, setPrintData] = useState<{ items: Array<{ barcode: string }>; productName: string } | null>(null);
 
-  const { data: scanResult, isLoading: isScanning } = useScanProduct(scannedBarcode);
+  const { data: scanResult, isLoading: isScanning } = useScanProduct({
+    barcode: scannedBarcode,
+    candidates: skuCandidates,
+  });
   const registerMutation = useRegisterInventory();
 
   const handleScan = useCallback((barcode: string) => {
     setScannedBarcode(barcode);
+    setSkuCandidates(null);
+    setSelectedProductId(null);
+    setShowNewProductForm(false);
+  }, []);
+
+  const handleSkuCandidates = useCallback((candidates: string[]) => {
+    setSkuCandidates(candidates);
+    setScannedBarcode(null);
     setSelectedProductId(null);
     setShowNewProductForm(false);
   }, []);
@@ -49,6 +61,7 @@ export default function InventoryRegisterPage() {
         onSuccess: (result) => {
           setRecentRegistrations((prev) => [result, ...prev].slice(0, 5));
           setScannedBarcode(null);
+          setSkuCandidates(null);
           setSelectedProductId(null);
         },
       }
@@ -73,6 +86,7 @@ export default function InventoryRegisterPage() {
       setSelectedProductId(product.id);
       setShowNewProductForm(false);
       setScannedBarcode(null);
+      setSkuCandidates(null);
     }
   }, []);
 
@@ -93,10 +107,10 @@ export default function InventoryRegisterPage() {
             <h2 className="text-xs uppercase tracking-wider text-gray-400 font-medium mb-4">
               {t('scan.title')}
             </h2>
-            <BarcodeScanner onScan={handleScan} />
+            <BarcodeScanner onScan={handleScan} onSkuCandidates={handleSkuCandidates} />
           </div>
 
-          {scannedBarcode && (
+          {(scannedBarcode || skuCandidates) && (
             <div className="rounded-xl border border-gray-200 p-6 dark:border-zinc-700">
               <h2 className="text-xs uppercase tracking-wider text-gray-400 font-medium mb-4">
                 {t('scan.results')}
@@ -135,7 +149,7 @@ export default function InventoryRegisterPage() {
               {showNewProductForm && (
                 <div className="mt-4 border-t border-gray-100 pt-4 dark:border-zinc-800">
                   <NewProductForm
-                    initialBarcode={scannedBarcode}
+                    initialBarcode={scannedBarcode ?? undefined}
                     onSubmit={handleCreateProduct}
                     isSubmitting={false}
                     onCancel={() => setShowNewProductForm(false)}

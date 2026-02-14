@@ -14,7 +14,17 @@
     "searching": "검색 중...",
     "noMatch": "일치하는 상품이 없습니다",
     "cameraUnavailable": "카메라는 HTTPS가 필요합니다. 텍스트 입력을 사용하세요.",
-    "createNew": "신규 상품 생성"
+    "createNew": "신규 상품 생성",
+    "textScan": "텍스트 스캔",
+    "barcodeScan": "바코드 스캔",
+    "captureText": "텍스트 캡처",
+    "processing": "텍스트 인식 중...",
+    "skuCandidates": "SKU 후보",
+    "noSkuFound": "SKU 패턴이 감지되지 않았습니다. 아래 텍스트를 수정할 수 있습니다.",
+    "fullText": "전체 텍스트",
+    "retake": "다시 촬영",
+    "searchWithSku": "검색",
+    "ocrHint": "카메라를 SKU 라벨에 맞추고 캡처하세요"
   },
   "register": {
     "title": "재고 등록",

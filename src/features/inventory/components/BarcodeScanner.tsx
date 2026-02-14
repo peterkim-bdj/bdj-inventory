@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import { extractSkuCandidates } from '@/lib/sku-detector';
 
 // All 1D + 2D formats for maximum compatibility
 const BARCODE_FORMATS = [
@@ -24,26 +25,38 @@ const BARCODE_FORMATS = [
   Html5QrcodeSupportedFormats.RSS_EXPANDED,
 ];
 
+type ScanMode = 'input' | 'barcode' | 'ocr';
+type OcrPhase = 'preview' | 'processing' | 'result';
+
 interface BarcodeScannerProps {
   onScan: (barcode: string) => void;
+  onSkuCandidates?: (candidates: string[]) => void;
   autoFocus?: boolean;
 }
 
 const READER_ID = 'barcode-reader';
 
-export function BarcodeScanner({ onScan, autoFocus = true }: BarcodeScannerProps) {
+export function BarcodeScanner({ onScan, onSkuCandidates, autoFocus = true }: BarcodeScannerProps) {
   const t = useTranslations('inventory');
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState('');
-  const [isCameraMode, setIsCameraMode] = useState(false);
+  const [scanMode, setScanMode] = useState<ScanMode>('input');
   const [cameraError, setCameraError] = useState('');
   const scannerRef = useRef<Html5Qrcode | null>(null);
 
+  // OCR state
+  const [ocrPhase, setOcrPhase] = useState<OcrPhase>('preview');
+  const [ocrText, setOcrText] = useState('');
+  const [skuCandidates, setSkuCandidates] = useState<string[]>([]);
+  const ocrVideoRef = useRef<HTMLVideoElement>(null);
+  const ocrCanvasRef = useRef<HTMLCanvasElement>(null);
+  const ocrStreamRef = useRef<MediaStream | null>(null);
+
   useEffect(() => {
-    if (autoFocus && inputRef.current && !isCameraMode) {
+    if (autoFocus && inputRef.current && scanMode === 'input') {
       inputRef.current.focus();
     }
-  }, [autoFocus, isCameraMode]);
+  }, [autoFocus, scanMode]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && value.trim()) {
@@ -53,7 +66,9 @@ export function BarcodeScanner({ onScan, autoFocus = true }: BarcodeScannerProps
     }
   }, [value, onScan]);
 
-  const stopCamera = useCallback(async () => {
+  // === Barcode Camera ===
+
+  const stopBarcodeCamera = useCallback(async () => {
     if (scannerRef.current) {
       try {
         await scannerRef.current.stop();
@@ -62,18 +77,16 @@ export function BarcodeScanner({ onScan, autoFocus = true }: BarcodeScannerProps
       }
       scannerRef.current = null;
     }
-    setIsCameraMode(false);
+    setScanMode('input');
   }, []);
 
-  const startCamera = useCallback(async () => {
+  const startBarcodeCamera = useCallback(() => {
     setCameraError('');
-    setIsCameraMode(true);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setScanMode('barcode');
   }, []);
 
-  // Start scanner after container div is mounted
   useEffect(() => {
-    if (!isCameraMode) return;
+    if (scanMode !== 'barcode') return;
 
     let cancelled = false;
 
@@ -104,7 +117,7 @@ export function BarcodeScanner({ onScan, autoFocus = true }: BarcodeScannerProps
               onScan(decodedText);
               scanner.stop().catch(() => {});
               scannerRef.current = null;
-              setIsCameraMode(false);
+              setScanMode('input');
             }
           },
           () => {
@@ -114,7 +127,7 @@ export function BarcodeScanner({ onScan, autoFocus = true }: BarcodeScannerProps
       } catch {
         if (!cancelled) {
           setCameraError(t('scan.cameraUnavailable'));
-          setIsCameraMode(false);
+          setScanMode('input');
         }
       }
     };
@@ -129,7 +142,121 @@ export function BarcodeScanner({ onScan, autoFocus = true }: BarcodeScannerProps
       }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCameraMode]);
+  }, [scanMode]);
+
+  // === OCR Camera ===
+
+  const stopOcrCamera = useCallback(() => {
+    if (ocrStreamRef.current) {
+      ocrStreamRef.current.getTracks().forEach(track => track.stop());
+      ocrStreamRef.current = null;
+    }
+    setOcrPhase('preview');
+    setOcrText('');
+    setSkuCandidates([]);
+    setScanMode('input');
+  }, []);
+
+  const startOcrCamera = useCallback(() => {
+    setCameraError('');
+    setOcrPhase('preview');
+    setOcrText('');
+    setSkuCandidates([]);
+    setScanMode('ocr');
+  }, []);
+
+  useEffect(() => {
+    if (scanMode !== 'ocr') return;
+
+    let cancelled = false;
+
+    const initCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+        });
+        if (cancelled) {
+          stream.getTracks().forEach(t => t.stop());
+          return;
+        }
+        ocrStreamRef.current = stream;
+        if (ocrVideoRef.current) {
+          ocrVideoRef.current.srcObject = stream;
+        }
+      } catch {
+        if (!cancelled) {
+          setCameraError(t('scan.cameraUnavailable'));
+          setScanMode('input');
+        }
+      }
+    };
+
+    initCamera();
+
+    return () => {
+      cancelled = true;
+      if (ocrStreamRef.current) {
+        ocrStreamRef.current.getTracks().forEach(t => t.stop());
+        ocrStreamRef.current = null;
+      }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scanMode]);
+
+  const handleOcrCapture = useCallback(async () => {
+    if (!ocrVideoRef.current || !ocrCanvasRef.current) return;
+
+    const video = ocrVideoRef.current;
+    const canvas = ocrCanvasRef.current;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.drawImage(video, 0, 0);
+
+    setOcrPhase('processing');
+
+    try {
+      const { createWorker } = await import('tesseract.js');
+      const worker = await createWorker('eng', 1, { logger: () => {} });
+      await worker.setParameters({
+        tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_. ',
+      });
+
+      const { data: { text } } = await worker.recognize(canvas);
+      await worker.terminate();
+
+      const candidates = extractSkuCandidates(text);
+      setOcrText(text.trim());
+      setSkuCandidates(candidates);
+      setOcrPhase('result');
+    } catch {
+      setCameraError(t('scan.cameraUnavailable'));
+      stopOcrCamera();
+    }
+  }, [t, stopOcrCamera]);
+
+  const handleSkuSelect = useCallback((sku: string) => {
+    if (onSkuCandidates) {
+      onSkuCandidates([sku]);
+    } else {
+      onScan(sku);
+    }
+    stopOcrCamera();
+  }, [onScan, onSkuCandidates, stopOcrCamera]);
+
+  const handleOcrTextSubmit = useCallback(() => {
+    if (ocrText.trim()) {
+      onScan(ocrText.trim());
+      stopOcrCamera();
+    }
+  }, [ocrText, onScan, stopOcrCamera]);
+
+  const handleOcrRetake = useCallback(() => {
+    setOcrPhase('preview');
+    setOcrText('');
+    setSkuCandidates([]);
+  }, []);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -137,12 +264,16 @@ export function BarcodeScanner({ onScan, autoFocus = true }: BarcodeScannerProps
       if (scannerRef.current) {
         scannerRef.current.stop().catch(() => {});
       }
+      if (ocrStreamRef.current) {
+        ocrStreamRef.current.getTracks().forEach(t => t.stop());
+      }
     };
   }, []);
 
   return (
     <div className="space-y-3">
-      {!isCameraMode && (
+      {/* Text input mode */}
+      {scanMode === 'input' && (
         <div className="relative">
           <svg
             xmlns="http://www.w3.org/2000/svg" width="18" height="18"
@@ -169,11 +300,12 @@ export function BarcodeScanner({ onScan, autoFocus = true }: BarcodeScannerProps
         </div>
       )}
 
-      {isCameraMode && (
+      {/* Barcode camera mode */}
+      {scanMode === 'barcode' && (
         <div className="relative overflow-hidden rounded-xl">
           <div id={READER_ID} className="w-full" />
           <button
-            onClick={stopCamera}
+            onClick={stopBarcodeCamera}
             className="absolute bottom-3 right-3 z-10 rounded-full bg-black/70 px-4 py-2 text-sm text-white"
           >
             {t('scan.stopCamera')}
@@ -181,24 +313,147 @@ export function BarcodeScanner({ onScan, autoFocus = true }: BarcodeScannerProps
         </div>
       )}
 
+      {/* OCR camera mode */}
+      {scanMode === 'ocr' && (
+        <div className="space-y-3">
+          {ocrPhase === 'preview' && (
+            <div className="relative overflow-hidden rounded-xl">
+              <video
+                ref={ocrVideoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full rounded-xl"
+              />
+              {/* Guide overlay */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="border-2 border-dashed border-white/50 rounded-lg w-4/5 h-1/3" />
+              </div>
+              <p className="absolute top-3 left-0 right-0 text-center text-xs text-white/80 bg-black/30 py-1">
+                {t('scan.ocrHint')}
+              </p>
+              <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-3">
+                <button
+                  onClick={handleOcrCapture}
+                  className="rounded-full bg-white px-5 py-2 text-sm font-medium text-black shadow-lg"
+                >
+                  {t('scan.captureText')}
+                </button>
+                <button
+                  onClick={stopOcrCamera}
+                  className="rounded-full bg-black/70 px-4 py-2 text-sm text-white"
+                >
+                  {t('scan.stopCamera')}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {ocrPhase === 'processing' && (
+            <div className="flex flex-col items-center justify-center py-12 rounded-xl border border-gray-200 dark:border-zinc-700">
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-black dark:border-zinc-600 dark:border-t-white" />
+              <p className="mt-3 text-sm text-gray-500">{t('scan.processing')}</p>
+            </div>
+          )}
+
+          {ocrPhase === 'result' && (
+            <div className="space-y-3 rounded-xl border border-gray-200 p-4 dark:border-zinc-700">
+              {skuCandidates.length > 0 ? (
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-gray-400 font-medium mb-2">
+                    {t('scan.skuCandidates')}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {skuCandidates.map((sku) => (
+                      <button
+                        key={sku}
+                        onClick={() => handleSkuSelect(sku)}
+                        className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm font-mono font-medium transition-colors hover:border-black hover:bg-black hover:text-white dark:border-zinc-600 dark:bg-zinc-800 dark:hover:border-white dark:hover:bg-white dark:hover:text-black"
+                      >
+                        {sku}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">{t('scan.noSkuFound')}</p>
+              )}
+
+              <div>
+                <p className="text-xs uppercase tracking-wider text-gray-400 font-medium mb-1">
+                  {t('scan.fullText')}
+                </p>
+                <input
+                  type="text"
+                  value={ocrText}
+                  onChange={(e) => setOcrText(e.target.value)}
+                  className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={handleOcrRetake}
+                  className="flex-1 rounded-full border border-gray-200 px-4 py-2 text-sm transition-colors hover:bg-gray-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
+                >
+                  {t('scan.retake')}
+                </button>
+                <button
+                  onClick={handleOcrTextSubmit}
+                  className="flex-1 rounded-full bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                >
+                  {t('scan.searchWithSku')}
+                </button>
+              </div>
+            </div>
+          )}
+
+          <canvas ref={ocrCanvasRef} className="hidden" />
+        </div>
+      )}
+
       {cameraError && (
         <p className="text-sm text-red-500">{cameraError}</p>
       )}
 
-      <button
-        onClick={isCameraMode ? stopCamera : startCamera}
-        className="flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-800 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-          viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-        >
-          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-          <circle cx="12" cy="13" r="4" />
-        </svg>
-        {isCameraMode ? t('scan.stopCamera') : t('scan.useCamera')}
-      </button>
+      {/* Mode buttons */}
+      {scanMode === 'input' && (
+        <div className="flex gap-2">
+          <button
+            onClick={startBarcodeCamera}
+            className="flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-800 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            >
+              <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+              <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+              <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+              <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+              <line x1="7" y1="12" x2="17" y2="12" />
+            </svg>
+            {t('scan.barcodeScan')}
+          </button>
+          <button
+            onClick={startOcrCamera}
+            className="flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-800 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            >
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
+            {t('scan.textScan')}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
